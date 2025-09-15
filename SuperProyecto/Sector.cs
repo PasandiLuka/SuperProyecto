@@ -2,7 +2,10 @@ namespace SuperProyecto
 {
     public class Sector
     {
-        public string sector { get; set; }
+        public int IdSector { get; set; }
+        public string sector { get; private set; }
+        public Local local { get; set; }
+        public int IdLocal{get; set;}
         
         /* 
             Platea
