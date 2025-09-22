@@ -23,7 +23,8 @@ using var bitmap = SKBitmap.Decode(qrCodeBytes);
 using var image = SKImage.FromBitmap(bitmap);
 using var data = image.Encode(SKEncodedImageFormat.Png, 100);
 File.WriteAllBytes("qrCode.png", data.ToArray()); */
-var Cliente = new List<Cliente>
+
+/* var Cliente = new List<Cliente>
 {
     new Cliente { Nombre = "Juan", apellido = "Perez", DNI = 12345678, Telefono = 1122334455 },
     new Cliente { Nombre = "Maria", apellido = "Gomez", DNI = 87654321, Telefono = 5544332211 },
@@ -127,4 +128,4 @@ app.mapget("/api/tarifa", () => "Hello World!");
 app.mapget("/api/sector", () => "Hello World!");
 app.mapget("/api/funcion", () => "Hello World!");
 app.mapget("/api/entrada", () => "Hello World!");
-app.mapget("/api/orden", () => "Hello World!");
+app.mapget("/api/orden", () => "Hello World!"); */

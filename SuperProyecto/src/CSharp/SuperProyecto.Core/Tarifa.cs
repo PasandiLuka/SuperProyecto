@@ -1,4 +1,4 @@
-namespace SuperProyecto;
+namespace SuperProyecto.Core;
 
 public class Tarifa
 {

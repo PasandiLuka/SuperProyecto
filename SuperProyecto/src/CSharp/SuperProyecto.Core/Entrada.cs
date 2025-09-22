@@ -1,6 +1,6 @@
 using Microsoft.VisualBasic;
 
-namespace SuperProyecto;
+namespace SuperProyecto.Core;
 
 public class Entrada
 {
