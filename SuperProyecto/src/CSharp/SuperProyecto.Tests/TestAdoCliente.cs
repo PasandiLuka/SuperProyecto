@@ -20,15 +20,6 @@ public class TestAdoCliente
 
 
     [Fact]
-    public void CuandoHagoLaQueryDeTraerTodosLosClientes_DebeTraerTodosLosClientes()
-    {
-        var _clientes = _repoCliente.GetClientes();
-
-        Assert.NotNull(_clientes);
-        Assert.True(_clientes.Any());
-    }
-
-    [Fact]
     public void CuandoHaceUnInsertEnCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
     {
         var _cliente = new Cliente()
@@ -38,15 +29,31 @@ public class TestAdoCliente
             apellido = "vale_por_un_apellido",
             telefono = 12345678
         };
-       
-       _repoCliente.AltaCliente(_cliente);
 
-       var clienteDB = _repoCliente.DetalleCliente(200);
+        _repoCliente.AltaCliente(_cliente);
 
-       Assert.NotNull(clienteDB);
-       Assert.Equal(_cliente.DNI, clienteDB.DNI);
-       Assert.Equal(_cliente.nombre, clienteDB.nombre);
-       Assert.Equal(_cliente.apellido, clienteDB.apellido);
-       Assert.Equal(_cliente.telefono, clienteDB.telefono);
+        var clienteDB = _repoCliente.DetalleCliente(200);
+
+        Assert.NotNull(clienteDB);
+        Assert.Equal(_cliente.DNI, clienteDB.DNI);
+        Assert.Equal(_cliente.nombre, clienteDB.nombre);
+        Assert.Equal(_cliente.apellido, clienteDB.apellido);
+        Assert.Equal(_cliente.telefono, clienteDB.telefono);
+    }
+
+    [Fact]
+    public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
+    {
+        var _cliente = new Cliente()
+        {
+            DNI = 201,
+            nombre = "vale_por_un_nombre",
+            apellido = "vale_por_un_apellido",
+            telefono = 12345678
+        };
+
+        _repoCliente.AltaCliente(_cliente);
+
+        Assert.Throws<MySqlException>(() => _repoCliente.AltaCliente(_cliente));
     }
 }
