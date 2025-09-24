@@ -1,20 +1,16 @@
-﻿using System.Data;
-using SuperProyecto.Core;
+﻿using SuperProyecto.Core;
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
 
 namespace SuperProyecto.Tests;
 
-public class TestAdoCliente
+public class TestAdoCliente : TestAdo
 {
-    protected IDbConnection _conexion { get; private set; }
     private IRepoCliente _repoCliente;
 
     public TestAdoCliente()
     {
-        string cadenaConexion = @"Server=localhost;Database=bd_boleteria;Uid=5to_agbd;Pwd=Trigg3rs!;";
-        _conexion = new MySqlConnection(cadenaConexion);
         _repoCliente = new RepoCliente(_conexion);
     }
 
