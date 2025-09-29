@@ -7,7 +7,8 @@ public class TestAdo
 
     public TestAdo()
     {
-        string cadenaConexion = @"Server=localhost;Database=bd_boleteria;Uid=5to_agbd;Pwd=Trigg3rs!;";
+        // string cadenaConexion = @"Server=localhost;Database=bd_boleteria;Uid=5to_agbd;Pwd=Trigg3rs!;";
+        string cadenaConexion = @"Server=localhost;Database=bd_boleteria;Uid=root;Pwd=root;";
         _conexion = new MySqlConnection(cadenaConexion);
     }
 }
