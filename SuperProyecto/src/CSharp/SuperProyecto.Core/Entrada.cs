@@ -4,8 +4,10 @@ public class Entrada
 {
     public int idEntrada { get; set; }
     public int idTarifa { get; set; }
+    public int idFuncion { get; set; }
     public Tarifa tarifa { get; set; }
     public string QR { get; set; }
     public Funcion funcion { get; set; }
+    public int numeroOrden { get; set; }
     public bool usada { get; set; } 
 }
