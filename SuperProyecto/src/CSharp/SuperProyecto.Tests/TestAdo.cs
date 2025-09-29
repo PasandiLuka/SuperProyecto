@@ -3,7 +3,7 @@ using MySqlConnector;
 
 public class TestAdo
 {
-    protected IDbConnection _conexion { get; private set; }
+    public /* protected */ IDbConnection _conexion { get; private set; }
 
     public TestAdo()
     {

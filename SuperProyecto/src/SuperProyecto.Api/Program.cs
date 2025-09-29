@@ -2,40 +2,33 @@ using SuperProyecto.Dapper;
 using SuperProyecto.Tests;
 using SuperProyecto.Core;
 
-
 TestAdo _testAdo = new TestAdo();
 
 RepoCliente _repoCliente = new RepoCliente(_testAdo._conexion);
 RepoFuncion _repoFuncion = new RepoFuncion(_testAdo._conexion);
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
 
 ////////
 
+
 app.MapGet("api/clientes/{id:int}", (int? id) => _repoCliente.DetalleCliente((int)id) is null ? Results.NotFound() : Results.Ok(_repoCliente.DetalleCliente((int)id)));
 
 app.MapGet("api/clientes", () => Results.Ok(_repoCliente.GetClientes()));
 
-
 app.MapGet("api/funcion/{id:int}", (int? id) => _repoFuncion.DetalleFuncion((int)id) is null ? Results.NotFound() : Results.Ok(_repoFuncion.DetalleFuncion((int)id)));
 
-app.MapGet("api/funciones", () => Results.Ok(_repoFuncion.GetFunciones()));
+app.MapGet("api/funciones", () => Results.Ok(_repoFuncion.GetFuncion()));
 
 ////////
 
