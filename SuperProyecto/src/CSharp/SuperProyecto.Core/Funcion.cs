@@ -2,9 +2,11 @@ namespace SuperProyecto.Core;
 
 public class Funcion
 {
-    public string Descripcion { get; set; }
-    public DateTime FechaHora { get; set; }
-    public List<Entrada> Entradas { get; set; }
+    public int idFuncion { get; set; }
+    public string descripcion { get; set; }
+    public DateTime fechaHora { get; set; }
+    public int idEvento { get; set; }
+    public List<Entrada> entradas { get; set; }
 
     /* 
         CantaLali a las:

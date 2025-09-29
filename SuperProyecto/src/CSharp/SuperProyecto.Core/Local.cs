@@ -2,11 +2,10 @@ namespace SuperProyecto.Core;
 
 public class Local
 {
-    public int IdLocal { get; set; }
-    public string nombre { get; private set; }
-    public string direccion { get; private set; }
-    public int CapacidadMax { get; private set; }
-    public List<Sector> Sectores { get; set; } = new List<Sector>(); 
+    public int idLocal { get; set; }
+    public string direccion { get;  set; }
+    public int capacidadMax { get; set; }
+    public List<Sector> sectores { get; set; } = new List<Sector>(); 
     /* 
     Lali canta en la rural
         */
