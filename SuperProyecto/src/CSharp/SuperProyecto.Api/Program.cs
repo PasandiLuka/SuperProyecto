@@ -28,14 +28,34 @@ app.UseHttpsRedirection();
 
 ////////
 
-app.MapGet("api/clientes/{id:int}", (int? id) => _repoCliente.DetalleCliente((int)id) is null ? Results.NotFound() : Results.Ok(_repoCliente.DetalleCliente((int)id)));
+#region EndPointsCliente
 
-app.MapGet("api/clientes", () => Results.Ok(_repoCliente.GetClientes()));
+app.MapGet("api/cliente/{id:int}", (int? id) =>
+{
+    var cliente = _repoCliente.DetalleCliente((int)id);
+    return cliente is not null ? Results.Ok(cliente) : Results.NotFound();
+});
 
+app.MapGet("api/cliente", () =>
+{
+    var clientes = _repoCliente.GetClientes();
+    return clientes.Any() ? Results.Ok(clientes) : Results.NoContent();
+}
+);
 
-app.MapGet("api/funcion/{id:int}", (int? id) => _repoFuncion.DetalleFuncion((int)id) is null ? Results.NotFound() : Results.Ok(_repoFuncion.DetalleFuncion((int)id)));
+#endregion
 
-app.MapGet("api/funciones", () => Results.Ok(_repoFuncion.GetFunciones()));
+app.MapGet("api/funcion/{id:int}", (int? id) =>
+{
+    var funcion = _repoFuncion.DetalleFuncion((int)id);
+    return funcion is not null ?  Results.Ok(funcion) : Results.NotFound();
+});
+
+app.MapGet("api/funcion", () =>
+{
+    var funciones = _repoFuncion.GetFunciones();
+    return funciones.Any() ? Results.Ok(funciones) : Results.NoContent();
+});
 
 ////////
 

@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;
@@ -21,4 +21,11 @@ public class RepoEntrada : Repo, IRepoEntrada
     private static readonly string _queryDetalleEntrada
         = @"SELECT * FROM Entradas WHERE idEntrada = @idEntrada";
     public Entrada? DetalleEntrada(int idEntrada) => _conexion.QueryFirstOrDefault<Entrada>(_queryDetalleEntrada, new { idEntrada });
+
+    private static readonly string _queryUpdateEntrada
+        = @"UPDATE Entrada SET idEntrada = @unIdEntrada, idTarifa = @unIdTarifa, numeroOrden = @unNumeroOrden, idFuncion = @unIdFuncion, QR = @unQR, usada = @unUsada";
+    public void UpdateEntrada(Entrada entrada, int id)
+    {
+        _conexion.Execute(_queryUpdateEntrada, new { unIdEntrada = entrada.idEntrada, unNumeroOrden = entrada.numeroOrden, unIdFuncion = entrada.idFuncion, unQR = entrada.QR, unUsada = entrada.usada});
+    }
 }

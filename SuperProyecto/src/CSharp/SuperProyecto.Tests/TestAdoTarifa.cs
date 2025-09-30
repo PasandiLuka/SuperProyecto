@@ -1,5 +1,5 @@
 using SuperProyecto.Core;
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
 

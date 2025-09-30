@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;
@@ -24,6 +24,13 @@ public class RepoLocal : Repo, IRepoLocal
         @"SELECT * FROM Local WHERE idLocal = @idLocal";
     public Local? DetalleLocal(int IdLocal)
     {
-        return _conexion.QueryFirstOrDefault<Local>(_queryDetalleLocal, new { idLocal=IdLocal  });
+        return _conexion.QueryFirstOrDefault<Local>(_queryDetalleLocal, new { idLocal = IdLocal });
+    }
+    
+    private static readonly string _queryUpdateLocal
+        = @"UPDATE Funcion SET idLocal = @unIdLocal, direccion = @unaDireccion, capacidadMax = @unaCapacidad";
+    public void UpdateLocal(Local local, int id)
+    {
+        _conexion.Execute(_queryUpdateLocal, new { unIdLocal =  local.idLocal, unaDireccion = local.direccion, unaCapacidad = local.capacidadMax});
     }
 }

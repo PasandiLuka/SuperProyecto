@@ -1,5 +1,5 @@
 ﻿using SuperProyecto.Core;
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
 
@@ -51,5 +51,37 @@ public class TestAdoCliente : TestAdo
         _repoCliente.AltaCliente(_cliente);
 
         Assert.Throws<MySqlException>(() => _repoCliente.AltaCliente(_cliente));
+    }
+
+    [Fact]
+    public void CuandoHagoUnUpdateEnLaTablaCliente_DebeHacerLasRespectivasModificaciones()
+    {
+        var _cliente = new Cliente()
+        {
+            DNI = 202,
+            nombre = "vale_por_un_nombre",
+            apellido = "vale_por_un_apellido",
+            telefono = 12345678
+        };
+
+        _repoCliente.AltaCliente(_cliente);
+
+        var _clienteUpdate = new Cliente()
+        {
+            DNI = 300,
+            nombre = "vale_por_un_nombreUpdate",
+            apellido = "vale_por_un_apellidoUpdate",
+            telefono = 123456789
+        };
+
+        _repoCliente.UpdateCliente(_clienteUpdate, _cliente.DNI);
+
+        var _clienteUpdateBD = _repoCliente.DetalleCliente(_clienteUpdate.DNI);
+
+        Assert.NotNull(_clienteUpdateBD);
+        Assert.Equal(_clienteUpdateBD.DNI, _clienteUpdate.DNI);
+        Assert.Equal(_clienteUpdateBD.nombre, _clienteUpdate.nombre);
+        Assert.Equal(_clienteUpdateBD.apellido, _clienteUpdate.apellido);
+        Assert.Equal(_clienteUpdateBD.telefono, _clienteUpdate.telefono);
     }
 }

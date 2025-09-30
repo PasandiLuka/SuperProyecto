@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;
@@ -26,5 +26,12 @@ public class RepoSector : Repo, IRepoSector
     public Sector? DetalleSector(int IdSector)
     {
         return _conexion.QueryFirstOrDefault<Sector>(_queryDetalleSector, new { idSector = IdSector });
+    }
+
+    private static readonly string _queryUpdateSector
+        = @"UPDATE Sector SET idSector = @unIdSector, sector = @unSector";
+    public void UpdateSector(Sector sector, int id)
+    {
+        _conexion.Execute(_queryUpdateSector, new { unIdSector = sector.idSector, unSector = sector.sector });
     }
 }

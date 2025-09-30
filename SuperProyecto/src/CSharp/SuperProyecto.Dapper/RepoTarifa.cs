@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;
@@ -22,9 +22,16 @@ public class RepoTarifa : Repo, IRepoTarifa
     }
 
     private static readonly string _queryDetalleTarifa
-        = @"SELECT * FROM Tarifa WHERE  idTarifa= @idTarifa";
+        = @"SELECT * FROM Tarifa WHERE idTarifa= @idTarifa";
     public Tarifa? DetalleTarifa(int IdTarifa)
     {
         return _conexion.QueryFirstOrDefault<Tarifa>(_queryDetalleTarifa, new { idTarifa = IdTarifa });
+    }
+
+    private static readonly string _queryUpdateTarifa
+        = @"UPDATE Sector SET idTarifa = @unIdTarifa, precio = @unPrecio";
+    public void UpdateTarifa(Tarifa tarifa, int id)
+    {
+        _conexion.Execute(_queryUpdateTarifa, new { unIdTarifa = tarifa.idTarifa, unPrecio = tarifa.precio });
     }
 }
