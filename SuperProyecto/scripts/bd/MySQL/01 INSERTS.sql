@@ -112,7 +112,7 @@ VALUES
    (15, 'Festival gastronomico inicio', '2025-12-05 12:00:00');
 
 
-INSERT INTO Orden (numeroOrden, fechaHoraCompra, precioTotal, DNI)
+INSERT INTO Orden (numeroOrden, fechaCompra, precioTotal, DNI)
 VALUES
    (1, '2025-09-01 12:00:00', 300.00, 1),
    (2, '2025-09-02 13:00:00', 450.00, 2),

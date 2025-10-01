@@ -12,7 +12,14 @@ public class RepoSector : Repo, IRepoSector
 
     private static readonly string _querySector
         = "SELECT * FROM Sector";
-    public IEnumerable<Sector> GetSector() => _conexion.Query<Sector>(_querySector);
+    public IEnumerable<Sector> GetSectores() => _conexion.Query<Sector>(_querySector);
+    
+    private static readonly string _queryDetalleSector
+        = @"SELECT * FROM Sector WHERE  idSector= @idSector";
+    public Sector? DetalleSector(int IdSector)
+    {
+        return _conexion.QueryFirstOrDefault<Sector>(_queryDetalleSector, new { idSector = IdSector });
+    }
 
     private static readonly string _queryAltaSector
         = @"INSERT INTO Sector (idSector, sector) VALUES (@idSector, @sector)";
@@ -21,17 +28,10 @@ public class RepoSector : Repo, IRepoSector
         _conexion.Execute(_queryAltaSector, new { idSector = sector.idSector, sector = sector.sector });
     }
 
-    private static readonly string _queryDetalleSector
-        = @"SELECT * FROM Sector WHERE  idSector= @idSector";
-    public Sector? DetalleSector(int IdSector)
-    {
-        return _conexion.QueryFirstOrDefault<Sector>(_queryDetalleSector, new { idSector = IdSector });
-    }
-
     private static readonly string _queryUpdateSector
-        = @"UPDATE Sector SET idSector = @unIdSector, sector = @unSector";
+        = @"UPDATE Sector SET sector = @unSector WHERE idSector = @unIdSector";
     public void UpdateSector(Sector sector, int id)
     {
-        _conexion.Execute(_queryUpdateSector, new { unIdSector = sector.idSector, unSector = sector.sector });
+        _conexion.Execute(_queryUpdateSector, new { unIdSector = id, unSector = sector.sector });
     }
 }

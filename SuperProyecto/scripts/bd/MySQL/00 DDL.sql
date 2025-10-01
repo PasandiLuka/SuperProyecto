@@ -64,9 +64,9 @@ CREATE TABLE Funcion(
 
 CREATE TABLE Orden(
    numeroOrden INT,
-   fechaHoraCompra DATETIME,
-   precioTotal DECIMAL,
    DNI INT,
+   fechaCompra DATETIME,
+   precioTotal DECIMAL,
 
    CONSTRAINT PK_Orden PRIMARY KEY (numeroOrden),
    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI)

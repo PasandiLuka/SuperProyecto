@@ -68,7 +68,7 @@ public class TestAdoCliente : TestAdo
 
         var _clienteUpdate = new Cliente()
         {
-            DNI = 300,
+            DNI = 1,
             nombre = "vale_por_un_nombreUpdate",
             apellido = "vale_por_un_apellidoUpdate",
             telefono = 123456789
@@ -79,7 +79,7 @@ public class TestAdoCliente : TestAdo
         var _clienteUpdateBD = _repoCliente.DetalleCliente(_clienteUpdate.DNI);
 
         Assert.NotNull(_clienteUpdateBD);
-        Assert.Equal(_clienteUpdateBD.DNI, _clienteUpdate.DNI);
+        Assert.Equal(_cliente.DNI, _clienteUpdate.DNI);
         Assert.Equal(_clienteUpdateBD.nombre, _clienteUpdate.nombre);
         Assert.Equal(_clienteUpdateBD.apellido, _clienteUpdate.apellido);
         Assert.Equal(_clienteUpdateBD.telefono, _clienteUpdate.telefono);
