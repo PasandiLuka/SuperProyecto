@@ -3,14 +3,17 @@ using Dapper;
 
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
+using System.Linq.Expressions;
 
 namespace SuperProyecto.Dapper;
 
 public class RepoCliente : Repo, IRepoCliente
 {
-    public RepoCliente(IDbConnection conexion) : base(conexion) { }
-    public RepoCliente(string conexion) : base(conexion) { }
-    
+    /* public RepoCliente(IDbConnection conexion) : base(conexion) { }
+    public RepoCliente(string conexion) : base(conexion) { } */
+
+    public RepoCliente(IAdo _ado) : base(_ado) { }
+
     private static readonly string _queryClientes
         = "SELECT * FROM Cliente";
     public IEnumerable<Cliente> GetClientes() => _conexion.Query<Cliente>(_queryClientes);

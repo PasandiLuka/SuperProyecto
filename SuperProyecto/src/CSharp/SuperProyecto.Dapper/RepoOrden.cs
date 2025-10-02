@@ -9,8 +9,10 @@ namespace SuperProyecto.Dapper;
 
 public class RepoOrden : Repo, IRepoOrden
 {
-    public RepoOrden(IDbConnection conexion) : base(conexion) { }
-    public RepoOrden(string conexion) : base(conexion) { }
+    /* public RepoOrden(IDbConnection conexion) : base(conexion) { }
+    public RepoOrden(string conexion) : base(conexion) { } */
+
+    public RepoOrden(IAdo _ado) : base(_ado) { }
 
 
     private static readonly string _queryOrdenes

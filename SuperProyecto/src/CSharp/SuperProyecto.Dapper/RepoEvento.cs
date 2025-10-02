@@ -8,9 +8,10 @@ namespace SuperProyecto.Dapper;
 
 public class RepoEvento : Repo, IRepoEvento
 {
-    public RepoEvento(IDbConnection conexion) : base(conexion) { }
-    public RepoEvento(string conexion) : base(conexion) { }
+    /* public RepoEvento(IDbConnection conexion) : base(conexion) { }
+    public RepoEvento(string conexion) : base(conexion) { } */
 
+    public RepoEvento(IAdo _ado) : base(_ado) { }
     
     private static readonly string _queryEventos
         = @"SELECT * FROM Evento";

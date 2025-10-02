@@ -8,9 +8,10 @@ namespace SuperProyecto.Dapper;
 
 public class RepoLocal : Repo, IRepoLocal
 {
-    public RepoLocal(IDbConnection conexion) : base(conexion) { }
-    public RepoLocal(string conexion) : base(conexion) { }
+    /* public RepoLocal(IDbConnection conexion) : base(conexion) { }
+    public RepoLocal(string conexion) : base(conexion) { } */
 
+    public RepoLocal(IAdo _ado) : base(_ado) { }
 
     private static readonly string _queryDetalleLocal =
         @"SELECT * FROM Local WHERE idLocal = @idLocal";
