@@ -1,4 +1,3 @@
-using System.Data;
 using FluentValidation;
 
 namespace SuperProyecto.Core.Services.Validators;
