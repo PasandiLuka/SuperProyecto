@@ -6,10 +6,6 @@ public class FuncionValidator : AbstractValidator<Funcion>
 {
     public FuncionValidator()
     {
-        RuleFor(f => f.idFuncion)
-            .NotEmpty().WithMessage("El idFuncion es obligatorio.")
-            .GreaterThan(0).WithMessage("El idFuncion debe ser mayor a 0.");
-
         RuleFor(f => f.idEvento)
             .NotEmpty().WithMessage("El idEvento es obligatorio.")
             .GreaterThan(0).WithMessage("El idEvento debe ser mayor a 0.");

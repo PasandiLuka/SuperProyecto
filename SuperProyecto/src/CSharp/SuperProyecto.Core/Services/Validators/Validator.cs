@@ -8,5 +8,5 @@ namespace SuperProyecto.Core.Services.Validators;
 
 public class Validator
 {
-    
+
 }

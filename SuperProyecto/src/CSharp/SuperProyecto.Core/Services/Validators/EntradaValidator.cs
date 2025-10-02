@@ -6,10 +6,6 @@ public class EntradaValidator : AbstractValidator<Entrada>
 {
     public EntradaValidator()
     {
-        RuleFor(e => e.idEntrada)
-            .NotEmpty().WithMessage("El idEntrada es obligatorio.")
-            .GreaterThan(0).WithMessage("El idEntrada debe ser mayor a 0.");
-
         RuleFor(e => e.idTarifa)
             .NotEmpty().WithMessage("El idTarifa es obligatorio.")
             .GreaterThan(0).WithMessage("El idTarifa debe ser mayor a 0.");

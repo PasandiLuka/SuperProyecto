@@ -5,11 +5,7 @@ namespace SuperProyecto.Core.Services.Validators;
 public class EventoValidator : AbstractValidator<Evento>
 {
     public EventoValidator()
-    {
-        RuleFor(e => e.idEvento)
-            .NotEmpty().WithMessage("El idEvento es obligatorio.")
-            .GreaterThan(0).WithMessage("El idEvento debe ser mayor a 0.");
-        
+    {      
         RuleFor(e => e.idLocal)
             .NotEmpty().WithMessage("El idLocal es obligatorio.")
             .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.");

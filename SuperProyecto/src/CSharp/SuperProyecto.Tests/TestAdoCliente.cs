@@ -14,7 +14,6 @@ public class TestAdoCliente : TestAdo
         _repoCliente = new RepoCliente(_conexion);
     }
 
-
     [Fact]
     public void CuandoHaceUnInsertEnCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
     {
@@ -28,7 +27,7 @@ public class TestAdoCliente : TestAdo
 
         _repoCliente.AltaCliente(_cliente);
 
-        var clienteDB = _repoCliente.DetalleCliente(200);
+        var clienteDB = _repoCliente.DetalleCliente(_cliente.DNI);
 
         Assert.NotNull(clienteDB);
         Assert.Equal(_cliente.DNI, clienteDB.DNI);
@@ -76,10 +75,10 @@ public class TestAdoCliente : TestAdo
 
         _repoCliente.UpdateCliente(_clienteUpdate, _cliente.DNI);
 
-        var _clienteUpdateBD = _repoCliente.DetalleCliente(_clienteUpdate.DNI);
+        var _clienteUpdateBD = _repoCliente.DetalleCliente(_cliente.DNI);
 
         Assert.NotNull(_clienteUpdateBD);
-        Assert.Equal(_cliente.DNI, _clienteUpdate.DNI);
+        Assert.Equal(_cliente.DNI, _clienteUpdateBD.DNI);
         Assert.Equal(_clienteUpdateBD.nombre, _clienteUpdate.nombre);
         Assert.Equal(_clienteUpdateBD.apellido, _clienteUpdate.apellido);
         Assert.Equal(_clienteUpdateBD.telefono, _clienteUpdate.telefono);

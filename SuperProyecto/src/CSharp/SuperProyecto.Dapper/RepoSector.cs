@@ -9,6 +9,8 @@ namespace SuperProyecto.Dapper;
 public class RepoSector : Repo, IRepoSector
 {
     public RepoSector(IDbConnection conexion) : base(conexion) { }
+    public RepoSector(string conexion) : base(conexion) { }
+
 
     private static readonly string _querySector
         = "SELECT * FROM Sector";

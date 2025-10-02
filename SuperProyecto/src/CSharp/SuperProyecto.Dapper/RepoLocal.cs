@@ -9,6 +9,8 @@ namespace SuperProyecto.Dapper;
 public class RepoLocal : Repo, IRepoLocal
 {
     public RepoLocal(IDbConnection conexion) : base(conexion) { }
+    public RepoLocal(string conexion) : base(conexion) { }
+
 
     private static readonly string _queryDetalleLocal =
         @"SELECT * FROM Local WHERE idLocal = @idLocal";
@@ -28,7 +30,7 @@ public class RepoLocal : Repo, IRepoLocal
     }
     
     private static readonly string _queryUpdateLocal
-        = @"UPDATE Funcion SET idLocal = @unIdLocal, direccion = @unaDireccion, capacidadMax = @unaCapacidad WHERE idLocal = @unIdLocal";
+        = @"UPDATE Local SET direccion = @unaDireccion, capacidadMax = @unaCapacidad WHERE idLocal = @unIdLocal";
     public void UpdateLocal(Local local, int id)
     {
         _conexion.Execute(_queryUpdateLocal, new { unIdLocal =  id, unaDireccion = local.direccion, unaCapacidad = local.capacidadMax});

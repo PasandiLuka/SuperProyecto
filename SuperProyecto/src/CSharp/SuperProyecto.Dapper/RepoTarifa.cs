@@ -9,7 +9,9 @@ namespace SuperProyecto.Dapper;
 public class RepoTarifa : Repo, IRepoTarifa
 {
     public RepoTarifa(IDbConnection conexion) : base(conexion) { }
+    public RepoTarifa(string conexion) : base(conexion) { }
 
+    
     private static readonly string _queryTarifa
         = "SELECT * FROM Tarifa";
     public IEnumerable<Tarifa> GetTarifa() => _conexion.Query<Tarifa>(_queryTarifa);

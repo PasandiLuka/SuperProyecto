@@ -7,10 +7,6 @@ public class LocalValidator : AbstractValidator<Local>
 {
     public LocalValidator()
     {
-        RuleFor(l => l.idLocal)
-            .NotEmpty().WithMessage("El idLocal es obligatorio.")
-            .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.");
-        
         RuleFor(l => l.direccion)
             .NotEmpty().WithMessage("La descripcion es obligatoria.")
             .MinimumLength(3).WithMessage("La direccion debe contener al menos 3 caracteres");

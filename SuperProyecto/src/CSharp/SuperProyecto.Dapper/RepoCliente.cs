@@ -9,16 +9,17 @@ namespace SuperProyecto.Dapper;
 public class RepoCliente : Repo, IRepoCliente
 {
     public RepoCliente(IDbConnection conexion) : base(conexion) { }
-
+    public RepoCliente(string conexion) : base(conexion) { }
+    
     private static readonly string _queryClientes
         = "SELECT * FROM Cliente";
     public IEnumerable<Cliente> GetClientes() => _conexion.Query<Cliente>(_queryClientes);
 
     private static readonly string _queryDetalleCliente
-        = @"SELECT * FROM Cliente WHERE DNI = @DNI";
+        = @"SELECT * FROM Cliente WHERE DNI = @unDNI";
     public Cliente? DetalleCliente(int DNI)
     {
-        return _conexion.QueryFirstOrDefault<Cliente>(_queryDetalleCliente, new { DNI });
+        return _conexion.QueryFirstOrDefault<Cliente>(_queryDetalleCliente, new { unDNI = DNI });
     }
 
     private static readonly string _queryAltaCliente

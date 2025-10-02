@@ -9,7 +9,9 @@ namespace SuperProyecto.Dapper;
 public class RepoEntrada : Repo, IRepoEntrada
 {
     public RepoEntrada(IDbConnection conexion) : base(conexion) { }
+    public RepoEntrada(string conexion) : base(conexion) { }
 
+    
     private static readonly string _queryEntradas
         = "SELECT * FROM Entradas";
     public IEnumerable<Entrada> GetEntradas() => _conexion.Query<Entrada>(_queryEntradas);

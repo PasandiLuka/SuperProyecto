@@ -9,7 +9,9 @@ namespace SuperProyecto.Dapper;
 public class RepoFuncion : Repo, IRepoFuncion
 {
     public RepoFuncion(IDbConnection conexion) : base(conexion) { }
+    public RepoFuncion(string conexion) : base(conexion) { }
 
+    
     private static readonly string _queryFuncion
         = "SELECT * FROM Funcion";
     public IEnumerable<Funcion> GetFunciones() => _conexion.Query<Funcion>(_queryFuncion);

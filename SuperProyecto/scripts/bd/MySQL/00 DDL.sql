@@ -1,8 +1,3 @@
-DROP DATABASE IF EXISTS bd_boleteria;
-CREATE DATABASE bd_boleteria;
-USE bd_boleteria;
-
-
 CREATE TABLE Local(
    idLocal INT AUTO_INCREMENT,
    direccion VARCHAR(45),
@@ -29,10 +24,10 @@ CREATE TABLE Tarifa(
 
 
 CREATE TABLE Cliente(
-   DNI INT AUTO_INCREMENT,
+   DNI INT,
    nombre VARCHAR(45),
    apellido VARCHAR(45),
-   telefono int,
+   telefono INT,
 
    CONSTRAINT pk_Cliente PRIMARY KEY (DNI)
 );

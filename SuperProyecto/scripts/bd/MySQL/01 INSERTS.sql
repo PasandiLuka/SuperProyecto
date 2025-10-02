@@ -55,23 +55,23 @@ VALUES
    (800.00);
 
 
-INSERT INTO Cliente (nombre, apellido, telefono)
+INSERT INTO Cliente (DNI, nombre, apellido, telefono)
 VALUES
-   ('Juan', 'Perez', 12345678),
-   ('Maria', 'Lopez', 87654321),
-   ('Carlos', 'Gomez', 23456789),
-   ('Ana', 'Martinez', 98765432),
-   ('Luis', 'Rodriguez', 34567890),
-   ('Sofia', 'Fernandez', 45678901),
-   ('Pedro', 'Sanchez', 56789012),
-   ('Laura', 'Diaz', 67890123),
-   ('Diego', 'Torres', 78901234),
-   ('Marta', 'Ruiz', 89012345),
-   ('Jose', 'Vargas', 90123456),
-   ('Elena', 'Castro', 11223344),
-   ('Andres', 'Gonzalez', 22334455),
-   ('Clara', 'Ramos', 33445566),
-   ('Ricardo', 'Flores', 44556677);
+   (1, 'Juan', 'Perez', 12345678),
+   (2, 'Maria', 'Lopez', 87654321),
+   (3, 'Carlos', 'Gomez', 23456789),
+   (4, 'Ana', 'Martinez', 98765432),
+   (5, 'Luis', 'Rodriguez', 34567890),
+   (6, 'Sofia', 'Fernandez', 45678901),
+   (7, 'Pedro', 'Sanchez', 56789012),
+   (8, 'Laura', 'Diaz', 67890123),
+   (9, 'Diego', 'Torres', 78901234),
+   (10, 'Marta', 'Ruiz', 89012345),
+   (11, 'Jose', 'Vargas', 90123456),
+   (12, 'Elena', 'Castro', 11223344),
+   (13, 'Andres', 'Gonzalez', 22334455),
+   (14, 'Clara', 'Ramos', 33445566),
+   (15, 'Ricardo', 'Flores', 44556677);
 
 
 INSERT INTO Evento (idLocal, fechaIncio, descripcion)

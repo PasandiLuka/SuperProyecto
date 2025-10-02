@@ -1,21 +1,39 @@
 using SuperProyecto.Dapper;
-using SuperProyecto.Tests;
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Validators;
-using Xunit.Sdk;
+using System.Data;
+using MySqlConnector;
+using Dapper;
+using Microsoft.VisualBasic;
 
 
-TestAdo _testAdo = new TestAdo();
+string _conexionString = "Server=localhost;Database=bd_boleteria;Uid=root;Pwd=48460731;";
+// string _conexionString = "Server=localhost;Database=bd_boleteria;Uid=5to_agbd;Pwd=Trigg3rs!;";
 
-IRepoCliente _repoCliente = new RepoCliente(_testAdo._conexion);
-IRepoEntrada _repoEntrada = new RepoEntrada(_testAdo._conexion);
-IRepoEvento _repoEvento = new RepoEvento(_testAdo._conexion);
-IRepoFuncion _repoFuncion = new RepoFuncion(_testAdo._conexion);
-IRepoLocal _repoLocal = new RepoLocal(_testAdo._conexion);
-IRepoOrden _repoOrden = new RepoOrden(_testAdo._conexion);
-IRepoSector _repoSector = new RepoSector(_testAdo._conexion);
-IRepoTarifa _repoTarifa = new RepoTarifa(_testAdo._conexion);
+string schemaDDL = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/00 DDL.sql");
+string schemaINSERTS = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/01 INSERTS.sql");
+
+string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaINSERTS);
+
+using (IDbConnection db = new MySqlConnection(_conexionString))
+{
+    db.Open();
+
+    db.Execute("DROP DATABASE IF EXISTS bd_boleteria; CREATE DATABASE IF NOT EXISTS bd_boleteria CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+
+    db.Execute("USE bd_boleteria; " + schemaSql);
+}
+
+
+IRepoCliente _repoCliente = new RepoCliente(_conexionString);
+IRepoEntrada _repoEntrada = new RepoEntrada(_conexionString);
+IRepoEvento _repoEvento = new RepoEvento(_conexionString);
+IRepoFuncion _repoFuncion = new RepoFuncion(_conexionString);
+IRepoLocal _repoLocal = new RepoLocal(_conexionString);
+IRepoOrden _repoOrden = new RepoOrden(_conexionString);
+IRepoSector _repoSector = new RepoSector(_conexionString);
+IRepoTarifa _repoTarifa = new RepoTarifa(_conexionString);
 
 var builder = WebApplication.CreateBuilder(args);
 
