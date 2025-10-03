@@ -41,12 +41,19 @@ public class SectorController : ControllerBase
         return Ok(sectorUpdate);
     }
 
-    /* [HttpPost]
+    [HttpPost]
     public IActionResult AltaSector([FromBody] SectorDto sectorDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var sectorAlta = new
-    } */
+        var sectorAlta = new Sector
+        {
+            idLocal = sectorDto.idLocal,
+            nombre = sectorDto.nombre,
+            capacidad = sectorDto.capacidad
+        };
+        _repoSector.AltaSector(sectorAlta);
+        return Created();
+    }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteSector(int id)

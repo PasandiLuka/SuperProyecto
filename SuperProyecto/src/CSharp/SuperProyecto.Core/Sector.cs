@@ -13,5 +13,5 @@ public class Sector
         Platea
         Popular
         Sector Vip
-        */
+    */
 }

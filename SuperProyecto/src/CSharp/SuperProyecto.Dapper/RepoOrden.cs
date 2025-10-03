@@ -21,7 +21,7 @@ public class RepoOrden : Repo, IRepoOrden
     public Orden? DetalleOrden(int numeroOrden) => _conexion.QueryFirstOrDefault<Orden>(_queryDetalleOrden, new { unIdOrden = numeroOrden });
 
     private static readonly string _queryAltaOrden
-        = @"INSERT INTO Orden (DNI, fecha, estado, total) VALUES (@DNI, @fecha, @estado, @total)";
+        = @"INSERT INTO Orden (DNI, fecha, total) VALUES (@DNI, @fecha, @total)";
     public void AltaOrden(Orden orden)
     {
         _conexion.Execute(
@@ -30,13 +30,12 @@ public class RepoOrden : Repo, IRepoOrden
             {
                 orden.DNI,
                 orden.fecha,
-                orden.estado,
                 orden.total
             });
     } 
 
     private static readonly string _queryUpdateOrden
-        = @"UPDATE Orden SET DNI = @DNI, fecha  = @fecha, estado = @estado, total = @total WHERE idOrden = @idOrden";
+        = @"UPDATE Orden SET DNI = @DNI, fecha  = @fecha, total = @total WHERE idOrden = @idOrden";
     public void UpdateOrden(Orden orden, int id)
     {
         _conexion.Execute(
@@ -45,7 +44,6 @@ public class RepoOrden : Repo, IRepoOrden
             {
                 orden.DNI,
                 orden.fecha,
-                orden.estado,
                 orden.total,
                 idOrden = id
             });
