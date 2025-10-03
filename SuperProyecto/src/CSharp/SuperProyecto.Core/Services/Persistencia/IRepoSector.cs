@@ -6,4 +6,5 @@ public interface IRepoSector
     Sector? DetalleSector(int idSector);
     void AltaSector(Sector sector);
     void UpdateSector(Sector sector, int id);
+    void DeleteSector (int idSector);
 }

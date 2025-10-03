@@ -36,4 +36,10 @@ public class RepoLocal : Repo, IRepoLocal
     {
         _conexion.Execute(_queryUpdateLocal, new { unIdLocal =  id, unaDireccion = local.direccion, unaCapacidad = local.capacidadMax});
     }
+    private static readonly string _queryDeleteLocal
+    = @"DELETE FROM Local WHERE idLocal = @idLocal";
+    public void DeleteLocal(int IdLocal)
+    {
+        _conexion.Execute(_queryDeleteLocal, new { idLocal = IdLocal });
+    }
 }

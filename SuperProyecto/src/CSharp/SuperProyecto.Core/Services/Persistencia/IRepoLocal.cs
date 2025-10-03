@@ -7,4 +7,5 @@ public interface IRepoLocal
     Local? DetalleLocal(int idLocal);
     void AltaLocal(Local local);
     void UpdateLocal(Local local, int id);
+    void DeleteLocal (int idLocal);
 }

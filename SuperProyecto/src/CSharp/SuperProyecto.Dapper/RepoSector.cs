@@ -37,4 +37,10 @@ public class RepoSector : Repo, IRepoSector
     {
         _conexion.Execute(_queryUpdateSector, new { unIdSector = id, unSector = sector.sector });
     }
+    private static readonly string _queryDeleteSector
+    = @"DELETE FROM Sector WHERE idSector = @idSector";
+    public void DeleteLocal(int IdSector)
+    {
+        _conexion.Execute(_queryDeleteSector, new { idSector = IdSector });
+    }
 }
