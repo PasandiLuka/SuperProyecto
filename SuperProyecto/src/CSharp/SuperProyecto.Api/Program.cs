@@ -14,6 +14,10 @@ string conectionString = @"Server=localhost;Database=bd_boleteria;Uid=5to_agbd;P
 #region ReposScoped
 builder.Services.AddScoped<IAdo>(sp => new Ado(conectionString));
 builder.Services.AddScoped<IRepoCliente, RepoCliente>();
+builder.Services.AddScoped<IRepoTarifa, RepoTarifa>();
+builder.Services.AddScoped<IRepoLocal, RepoLocal>();
+builder.Services.AddScoped<IRepoFuncion, RepoFuncion>();
+builder.Services.AddScoped<IRepoSector, RepoSector>();
 #endregion
 
 var app = builder.Build();

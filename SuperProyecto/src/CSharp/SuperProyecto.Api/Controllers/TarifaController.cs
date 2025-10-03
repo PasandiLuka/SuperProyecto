@@ -39,3 +39,4 @@ public class TarifaController : ControllerBase
         _repoTarifa.UpdateTarifa(tarifaUpdate, (int)id);
         return Ok(tarifaUpdate);
     }
+}
