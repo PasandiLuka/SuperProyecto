@@ -1,15 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using SuperProyecto.Core;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class SectorController : ControllerBase
 {
-    readonly IReposector _repoSector;
-    public SectorController(IRepoSector RepoSector )
+    readonly IRepoSector _repoSector;
+    public SectorController(IRepoSector RepoSector)
     {
         _repoSector = RepoSector;
     }
@@ -29,33 +32,38 @@ public class SectorController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateSector(int id, [FromBody] Tarifa sectorUpdate)
+    public IActionResult UpdateSector(int id, [FromBody] Sector sectorUpdate)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var sector = _repoSector.DetalleSector((int)id);
-        if(sector is null)
-            return NotFound();
-
-        _repoTarifa.UpdateTarifa(sectorUpdate, (int)id);
+        if (sector is null) return NotFound();
+        _repoSector.UpdateSector(sectorUpdate, (int)id);
         return Ok(sectorUpdate);
     }
 
-     [HttpDelete("{id}")]
-     public IActionResult DeleteSector(int id)
+    /* [HttpPost]
+    public IActionResult AltaSector([FromBody] SectorDto sectorDto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var sectorAlta = new
+    } */
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteSector(int id)
     {
         var sector = _repoSector.DetalleSector(id);
-         if (sector is null)
-         return NotFound();
+        if (sector is null)
+            return NotFound();
 
-         try
+        try
         {
-             _repoSector.DeleteSector(id);
-             return NoContent();
+            _repoSector.DeleteSector(id);
+            return NoContent();
         }
-             catch (InvalidOperationException ex)
-       {
+        catch (InvalidOperationException ex)
+        {
             // Si tu repo lanza una excepción cuando hay funciones vigentes
             return Conflict(new { message = ex.Message });
         }
-   }
+    }
 }

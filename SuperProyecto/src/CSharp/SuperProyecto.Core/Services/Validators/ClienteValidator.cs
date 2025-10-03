@@ -1,4 +1,5 @@
 using FluentValidation;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Core.Services.Validators;
 

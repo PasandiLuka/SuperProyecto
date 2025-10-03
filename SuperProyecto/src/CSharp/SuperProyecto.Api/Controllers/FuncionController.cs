@@ -1,15 +1,17 @@
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using SuperProyecto.Core;
 
 namespace SuperProyecto.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class FuncionController : ControllerBase
 {
     readonly IRepoFuncion _repoFuncion;
+
     public FuncionController(IRepoFuncion repoFuncion)
     {
         _repoFuncion = repoFuncion;
@@ -34,9 +36,7 @@ public class FuncionController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var funcion = _repoFuncion.DetalleFuncion((int)id);
-        if (funcion is null)
-            return NotFound();
-
+        if (funcion is null) return NotFound();
         _repoFuncion.UpdateFuncion(funcionUpdate, (int)id);
         return Ok(funcionUpdate);
     }

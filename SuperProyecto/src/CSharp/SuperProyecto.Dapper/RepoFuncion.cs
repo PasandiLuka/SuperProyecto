@@ -8,9 +8,6 @@ namespace SuperProyecto.Dapper;
 
 public class RepoFuncion : Repo, IRepoFuncion
 {
-    /* public RepoFuncion(IDbConnection conexion) : base(conexion) { }
-    public RepoFuncion(string conexion) : base(conexion) { } */
-
     public RepoFuncion(IAdo _ado) : base(_ado) { }
     
     private static readonly string _queryFuncion
@@ -25,21 +22,32 @@ public class RepoFuncion : Repo, IRepoFuncion
     }
 
     private static readonly string _queryAltaFuncion
-        = @"INSERT INTO Funcion (idFuncion ,idEvento, descripcion, fechaHora) VALUES (@idFuncion , @idEvento, @descripcion, @fechaHora)";
-
+        = @"INSERT INTO Funcion (idEvento, descripcion, fechaHora) VALUES (@idEvento, @descripcion, @fechaHora)";
     public void AltaFuncion(Funcion funcion)
     {
-        _conexion.Execute(_queryAltaFuncion, new { funcion.idFuncion, funcion.idEvento, funcion.descripcion, funcion.fechaHora });
+        _conexion.Execute(
+            _queryAltaFuncion,
+            new
+            {
+                funcion.idEvento,
+                funcion.idSector,
+                funcion.fechaHora
+            });
     }
     
     private static readonly string _queryUpdateFuncion
-        = @"UPDATE Funcion SET idEvento = @unIdEvento, descripcion = @unaDescripcion, fechaHora = @unaFechaHora WHERE idFuncion = @unIdFuncion";
+        = @"UPDATE Funcion SET idEvento = @idEvento, idSector = @idSector, fechaHora = @fechaHora WHERE idFuncion = @unIdFuncion";
     public void UpdateFuncion(Funcion funcion, int id)
     {
-        _conexion.Execute(_queryUpdateFuncion, new { unIdFuncion = id, unIdEvento = funcion.idEvento, unaDescripcion = funcion.descripcion, unaFechaHora = funcion.fechaHora });
+        _conexion.Execute(
+            _queryUpdateFuncion,
+            new
+            {
+                funcion.idFuncion,
+                funcion.idEvento,
+                funcion.idSector,
+                funcion.fechaHora,
+                unIdFuncion = id
+            });
     }
 }
-
-    
-   
-    

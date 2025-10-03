@@ -9,9 +9,6 @@ namespace SuperProyecto.Dapper;
 
 public class RepoCliente : Repo, IRepoCliente
 {
-    /* public RepoCliente(IDbConnection conexion) : base(conexion) { }
-    public RepoCliente(string conexion) : base(conexion) { } */
-
     public RepoCliente(IAdo _ado) : base(_ado) { }
 
     private static readonly string _queryClientes
@@ -26,16 +23,25 @@ public class RepoCliente : Repo, IRepoCliente
     }
 
     private static readonly string _queryAltaCliente
-        = @"INSERT INTO Cliente (DNI, nombre, apellido, telefono) VALUES (@DNI, @nombre, @apellido, @telefono)";
+        = @"INSERT INTO Cliente (DNI, nombre, apellido, email, telefono) VALUES (@unDNI, @unNombre, @unApellido, @unEmail, @unTelefono)";
     public void AltaCliente(Cliente cliente)
     {
-        _conexion.Execute(_queryAltaCliente, new { cliente.DNI, cliente.nombre, cliente.apellido, cliente.telefono });
+        _conexion.Execute(_queryAltaCliente, new { unDNI = cliente.DNI, unNombre = cliente.nombre, unApellido = cliente.apellido, unEmail = cliente.email, unTelefono = cliente.telefono });
     }
 
     private static readonly string _queryUpdateCliente
-        = @"UPDATE Cliente SET nombre = @unNombre, apellido = @unApellido, telefono = @unTelefono WHERE DNI = @unId";
+        = @"UPDATE Cliente SET nombre = @nombre, apellido = @apellido, email = @email, telefono = @telefono WHERE DNI = @DNI";
     public void UpdateCliente(Cliente cliente, int id)
     {
-        _conexion.Execute(_queryUpdateCliente, new { unId = id, unNombre = cliente.nombre, unApellido = cliente.apellido, unTelefono = cliente.telefono });
+        _conexion.Execute(
+            _queryUpdateCliente,
+            new
+            {
+                cliente.nombre,
+                cliente.apellido,
+                cliente.email,
+                cliente.telefono,
+                DNI = id
+            });
     }
 }

@@ -9,9 +9,6 @@ namespace SuperProyecto.Dapper;
 
 public class RepoOrden : Repo, IRepoOrden
 {
-    /* public RepoOrden(IDbConnection conexion) : base(conexion) { }
-    public RepoOrden(string conexion) : base(conexion) { } */
-
     public RepoOrden(IAdo _ado) : base(_ado) { }
 
 
@@ -24,10 +21,33 @@ public class RepoOrden : Repo, IRepoOrden
     public Orden? DetalleOrden(int numeroOrden) => _conexion.QueryFirstOrDefault<Orden>(_queryDetalleOrden, new { unIdOrden = numeroOrden });
 
     private static readonly string _queryAltaOrden
-        = @"INSERT INTO Orden (DNI ,fechaHoraCompra, precioTotal) VALUES (@unDNI, @unaFechaCompra, @unPrecioTotal)";
-    public void AltaOrden(Orden orden) => _conexion.Execute(_queryAltaOrden, new { unDNI = orden.DNI, unaFechaCompra = orden.fechaCompra, unPrecioTotal = orden.precioTotal });
+        = @"INSERT INTO Orden (DNI, fecha, estado, total) VALUES (@DNI, @fecha, @estado, @total)";
+    public void AltaOrden(Orden orden)
+    {
+        _conexion.Execute(
+            _queryAltaOrden,
+            new
+            {
+                orden.DNI,
+                orden.fecha,
+                orden.estado,
+                orden.total
+            });
+    } 
 
     private static readonly string _queryUpdateOrden
-        = @"UPDATE Orden SET DNI = @unDNI, fechaCompra = @unaFechaCompra, precioTotal = @unPrecioTotal WHERE numeroOrden = @unNumeroOrden"; 
-    public void UpdateOrden(Orden orden, int id) => _conexion.Execute(_queryUpdateOrden, new { unNumeroOrden = id, unDNI = orden.DNI, unaFechaCompra = orden.fechaCompra, unPrecioTotal = orden.precioTotal });
+        = @"UPDATE Orden SET DNI = @DNI, fecha  = @fecha, estado = @estado, total = @total WHERE idOrden = @idOrden";
+    public void UpdateOrden(Orden orden, int id)
+    {
+        _conexion.Execute(
+            _queryUpdateOrden,
+            new
+            {
+                orden.DNI,
+                orden.fecha,
+                orden.estado,
+                orden.total,
+                idOrden = id
+            });
+    } 
 }

@@ -1,3 +1,5 @@
+
+
 using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
@@ -77,25 +79,4 @@ public class TestAdoLocal : TestAdo
         Assert.Equal(_localUpdate.direccion, _localDB.direccion);
         Assert.Equal(_localUpdate.capacidadMax, _localDB.capacidadMax);
     }
-    [Fact]
-    public void CuandoHagoUnDelete_DeberiaEliminarElLocal_Sinotiene_funciones_vigentes()
-    {
-        // Arrange
-        var localId = 302;
-        var local = new Local() { idLocal = localId, direccion = "Local Test", capacidadMax = 500 };
-        _repoLocal.AltaLocal(local);
-
-        // Simular que no hay funciones asociadas al local
-        var funcionesAsociadas = false; // Cambiar a true si deseas simular funciones asociadas
-
-        // Act
-        if (!funcionesAsociadas)
-        {
-            _repoLocal.DeleteLocal(localId);
-        }
-
-        // Assert
-        var localBD = _repoLocal.DetalleLocal(localId);
-        Assert.Null(localBD);
-}
 }

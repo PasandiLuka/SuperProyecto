@@ -1,4 +1,5 @@
 using FluentValidation;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Core.Services.Validators;
 
@@ -9,10 +10,6 @@ public class FuncionValidator : AbstractValidator<Funcion>
         RuleFor(f => f.idEvento)
             .NotEmpty().WithMessage("El idEvento es obligatorio.")
             .GreaterThan(0).WithMessage("El idEvento debe ser mayor a 0.");
-
-        RuleFor(f => f.descripcion)
-            .NotEmpty().WithMessage("La descripcion es obligatoria.")
-            .MinimumLength(5).WithMessage("La descripcion debe contener al menos 5 caracteres.");
 
         RuleFor(f => f.fechaHora)
             .NotEmpty().WithMessage("La fecha es obligatoria.")

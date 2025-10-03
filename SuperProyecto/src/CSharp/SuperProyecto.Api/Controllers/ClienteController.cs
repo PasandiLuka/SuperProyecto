@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SuperProyecto.Core;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Api.Controllers;
 
@@ -29,15 +30,30 @@ public class ClienteController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateCliente(int id, [FromBody] Cliente clienteUpdate)
+    public IActionResult UpdateCliente(int id, [FromBody] ClienteDTO clienteDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var cliente = _repoCliente.DetalleCliente((int)id);
-        if(cliente is null)
+        if (cliente is null)
             return NotFound();
-
+        var clienteUpdate = new Cliente
+        {
+            DNI = id,
+            nombre = clienteDto.nombre,
+            apellido = clienteDto.apellido,
+            email = clienteDto.email,
+            telefono = clienteDto.telefono
+        };
         _repoCliente.UpdateCliente(clienteUpdate, (int)id);
         return Ok(clienteUpdate);
+    }
+
+    [HttpPost]
+    public IActionResult AltaCliente([FromBody] Cliente clienteAlta)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        _repoCliente.AltaCliente(clienteAlta);
+        return Created();
     }
 
     /* #region EndPointsCliente

@@ -8,9 +8,6 @@ namespace SuperProyecto.Dapper;
 
 public class RepoSector : Repo, IRepoSector
 {
-    /* public RepoSector(IDbConnection conexion) : base(conexion) { }
-    public RepoSector(string conexion) : base(conexion) { }
- */
     public RepoSector(IAdo _ado) : base(_ado) { }
 
     private static readonly string _querySector
@@ -25,22 +22,38 @@ public class RepoSector : Repo, IRepoSector
     }
 
     private static readonly string _queryAltaSector
-        = @"INSERT INTO Sector (idSector, sector) VALUES (@idSector, @sector)";
+        = @"INSERT INTO Sector (idLocal, nombre, capacidad) VALUES (@idLocal, @nombre, @capacidad)";
     public void AltaSector(Sector sector)
     {
-        _conexion.Execute(_queryAltaSector, new { idSector = sector.idSector, sector = sector.sector });
+        _conexion.Execute(
+            _queryAltaSector,
+            new
+            {
+                sector.idLocal,
+                sector.nombre,
+                sector.capacidad
+            });
     }
 
     private static readonly string _queryUpdateSector
-        = @"UPDATE Sector SET sector = @unSector WHERE idSector = @unIdSector";
+        = @"UPDATE Sector SET idLocal = @idLocal, nombre = @nombre, capacidad = @capacidad WHERE idSector = @idSector";
     public void UpdateSector(Sector sector, int id)
     {
-        _conexion.Execute(_queryUpdateSector, new { unIdSector = id, unSector = sector.sector });
+        _conexion.Execute(
+            _queryUpdateSector,
+            new
+            {
+                sector.idLocal,
+                sector.nombre,
+                sector.capacidad,
+                idSector = id
+            });
     }
+
     private static readonly string _queryDeleteSector
-    = @"DELETE FROM Sector WHERE idSector = @idSector";
-    public void DeleteLocal(int IdSector)
+        = @"DELETE FROM Sector WHERE idSector = @idSector";
+    public void DeleteSector(int id)
     {
-        _conexion.Execute(_queryDeleteSector, new { idSector = IdSector });
+        _conexion.Execute(_queryDeleteSector, new { id });
     }
 }

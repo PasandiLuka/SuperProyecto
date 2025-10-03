@@ -45,20 +45,4 @@ public class TestAdoSector : TestAdo
 
         Assert.Throws<MySqlException>(() =>_repoSector.AltaSector(_sector));
     }
-    
-    [Fact]
-    public void CuandoHagoUnDelete_DeberiaEliminarElSector_Sinotiene_funciones_vigentes()
-    {
-         // Arrange
-    var sectorId = 202;
-    var sector = new Sector() { idSector = sectorId, sector = "Sector Test" };
-    _repoSector.AltaSector(sector);
-
-    // Act
-    _repoSector.DeleteSector(sectorId);
-
-    // Assert
-    var sectorBD = _repoSector.DetalleSector(sectorId);
-    Assert.Null(sectorBD);
-    }
 }

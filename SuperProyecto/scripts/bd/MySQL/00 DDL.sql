@@ -1,87 +1,93 @@
-CREATE TABLE Local(
-   idLocal INT AUTO_INCREMENT,
-   direccion VARCHAR(45),
-   capacidadMax INT,
-
-   CONSTRAINT PK_Local PRIMARY KEY (idLocal)
+CREATE TABLE Cliente (
+    DNI INT PRIMARY KEY,
+    nombre VARCHAR(45),
+    apellido VARCHAR(45),
+    email VARCHAR(45),
+    telefono INT
 );
 
-
-CREATE TABLE Sector(
-   idSector INT AUTO_INCREMENT,
-   sector VARCHAR(45),
-
-   CONSTRAINT PK_Sector PRIMARY KEY (idSector)
+CREATE TABLE Local (
+    idLocal INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(45),
+    direccion VARCHAR(45)
 );
 
-
-CREATE TABLE Tarifa(
-   idTarifa INT AUTO_INCREMENT,
-   precio DECIMAL(10,2),
-
-   CONSTRAINT PK_Tarifa PRIMARY KEY (idTarifa)
+CREATE TABLE Evento (
+    idEvento INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(45),
+    descripcion VARCHAR(45),
+    fechaPublicacion DATETIME,
+    publicado BOOLEAN
 );
 
-
-CREATE TABLE Cliente(
-   DNI INT,
-   nombre VARCHAR(45),
-   apellido VARCHAR(45),
-   telefono INT,
-
-   CONSTRAINT pk_Cliente PRIMARY KEY (DNI)
+CREATE TABLE Rol (
+    idRol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(45)
 );
 
+CREATE TABLE Sector (
+    idSector INT AUTO_INCREMENT PRIMARY KEY,
+    idLocal INT,
+    nombre VARCHAR(45),
+    capacidad INT,
 
-CREATE TABLE Evento(
-   idEvento INT AUTO_INCREMENT,
-   idLocal INT,
-   fechaIncio DATE,
-   descripcion VARCHAR(45),
-
-   CONSTRAINT PK_Evento PRIMARY KEY (idEvento),
-   CONSTRAINT FK_Evento_Local FOREIGN KEY (idLocal)
-       REFERENCES Local (idLocal)
+    CONSTRAINT FK_Sector_Local FOREIGN KEY (idLocal)
+        REFERENCES Local (idLocal)
 );
 
+CREATE TABLE Usuario (
+    idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    DNI INT,
+    username VARCHAR(45),
+    passwordHash VARCHAR(45),
 
-CREATE TABLE Funcion(
-   idFuncion INT AUTO_INCREMENT,
-   idEvento INT,
-   descripcion VARCHAR(45),
-   fechaHora DATETIME,
-
-   CONSTRAINT PK_Funcion PRIMARY KEY (idFuncion),
-   CONSTRAINT FK_Funcion_Evento FOREIGN KEY (idEvento)
-       REFERENCES Evento (idEvento)
+    CONSTRAINT FK_Usuario_Cliente FOREIGN KEY (DNI) 
+        REFERENCES Cliente (DNI)
 );
 
+CREATE TABLE Orden (
+    idOrden INT AUTO_INCREMENT PRIMARY KEY,
+    DNI INT,
+    fecha DATETIME,
+    total DECIMAL(10,2),
 
-CREATE TABLE Orden(
-   numeroOrden INT,
-   DNI INT,
-   fechaCompra DATETIME,
-   precioTotal DECIMAL,
-
-   CONSTRAINT PK_Orden PRIMARY KEY (numeroOrden),
-   CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI)
-       REFERENCES Cliente (DNI)
+    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI) 
+        REFERENCES Cliente (DNI)
 );
 
+CREATE TABLE Funcion (
+    idFuncion INT AUTO_INCREMENT PRIMARY KEY,
+    idEvento INT,
+    idSector INT,
+    fechaHora DATETIME,
+    cancelada BOOLEAN DEFAULT FALSE,
 
-CREATE TABLE Entrada(
-   idEntrada INT,
-   idTarifa INT,
-   numeroOrden INT,
-   idFuncion INT,
-   QR VARCHAR(45),
-   usada bool,
+    CONSTRAINT FK_Funcion_Evento FOREIGN KEY (idEvento) 
+        REFERENCES Evento (idEvento),
+    CONSTRAINT FK_Funcion_Sector FOREIGN KEY (idSector) 
+        REFERENCES Sector (idSector)
+);
 
-   CONSTRAINT PK_Entrada PRIMARY KEY (idEntrada),
-   CONSTRAINT FK_Entrada_Tarifa FOREIGN KEY (idTarifa)
-       REFERENCES Tarifa (idTarifa),
-   CONSTRAINT FK_Entrada_Orden FOREIGN KEY (numeroOrden)
-       REFERENCES Orden (numeroOrden),
-   CONSTRAINT FK_Entrada_Funcion FOREIGN KEY (idFuncion)
-       REFERENCES Funcion (idFuncion)
+CREATE TABLE Tarifa (
+    idTarifa INT AUTO_INCREMENT PRIMARY KEY,
+    idFuncion INT,
+    nombre VARCHAR(45),
+    precio DECIMAL(10,2),
+    stock INT,
+
+    CONSTRAINT FK_Tarifa_Funcion FOREIGN KEY (idFuncion) 
+        REFERENCES Funcion (idFuncion)
+);
+
+CREATE TABLE Entrada (
+    idEntrada INT AUTO_INCREMENT PRIMARY KEY,
+    idOrden INT,
+    idFuncion INT,
+    codigoQr VARCHAR(45),
+    usada BOOLEAN DEFAULT FALSE,
+
+    CONSTRAINT FK_Entrada_Orden FOREIGN KEY (idOrden) 
+        REFERENCES Orden (idOrden),
+    CONSTRAINT FK_Entrada_Funcion FOREIGN KEY (idFuncion) 
+        REFERENCES Funcion (idFuncion)
 );
