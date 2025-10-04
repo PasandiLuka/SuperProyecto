@@ -38,15 +38,16 @@ classDiagram
     }
 
     class Cliente {
-        +int idCliente
+        +int DNI
         +string nombre
         +string apellido
         +string email
+        +int telefono
     }
 
     class Orden {
         +int idOrden
-        +int idCliente
+        +int DNI
         +datetime fecha
         +string estado
         +decimal total
@@ -62,14 +63,14 @@ classDiagram
 
     class Usuario {
         +int idUsuario
-        +int idCliente
+        +int DNI
         +string username
         +string passwordHash
     }
 
-    class Rol {
-        +int idRol
-        +string nombre
+    class ERol {
+        Administrador,
+        Cliente
     }
 
     %% Relaciones
@@ -80,7 +81,7 @@ classDiagram
     Cliente "1" -- "*" Orden 
     Orden "1" -- "*" Entrada
     Funcion "1" -- "*" Entrada 
-    Usuario "1" -- "*" Rol
+    Usuario "1" -- "1" ERol
     Cliente <|-- Usuario
 ```
 
@@ -104,7 +105,7 @@ erDiagram
         VARCHAR(45) nombre
         VARCHAR(45) descripcion
         DATETIME fechaPublicacion
-        bool publicado
+        BOOL publicado
     }
 
     Funcion {
@@ -124,7 +125,7 @@ erDiagram
     }
 
     Cliente {
-        INT idCliente PK
+        INT DNI PK
         VARCHAR(45) nombre
         VARCHAR(45) apellido
         VARCHAR(45) email
@@ -132,7 +133,7 @@ erDiagram
 
     Orden {
         INT idOrden PK
-        INT idCliente FK
+        INT DNI FK
         DATETIME fecha
         VARCHAR(45) estado
         DECIMAL(10-2) total
@@ -148,14 +149,9 @@ erDiagram
 
     Usuario {
         INT idUsuario PK
-        INT idCliente FK
+        INT DNI FK
         VARCHAR(45) username
         VARCHAR(45) passwordHash
-    }
-
-    Rol {
-        INT idRol PK
-        VARCHAR(45) nombre
     }
 
     %% Relaciones
@@ -166,6 +162,5 @@ erDiagram
     Cliente ||--o{ Orden : ""
     Orden ||--o{ Entrada : ""
     Funcion ||--o{ Entrada : ""
-    Usuario ||--o{ Rol : ""
     Cliente ||--|| Usuario : ""
 ```

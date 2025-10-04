@@ -104,26 +104,13 @@ INSERT INTO Entrada VALUES
 
 -- Usuario
 INSERT INTO Usuario VALUES
-(1,1,'juanp','hash123'),
-(2,2,'mariag','hash234'),
-(3,3,'pedrol','hash345'),
-(4,4,'anam','hash456'),
-(5,5,'luisr','hash567'),
-(6,6,'carlaf','hash678'),
-(7,7,'diegos','hash789'),
-(8,8,'luciator','hash890'),
-(9,9,'martind','hash901'),
-(10,10,'sofiav','hash012');
-
--- Rol
-INSERT INTO Rol VALUES
-(1,'Administrador'),
-(2,'Organizador'),
-(3,'Cliente'),
-(4,'ControlAcceso'),
-(5,'Moderador'),
-(6,'UsuarioVIP'),
-(7,'Empleado'),
-(8,'Invitado'),
-(9,'GestorEventos'),
-(10,'Supervisor');
+(1,"Administrador",'juanp','hash123'),
+(2,"Cliente",'mariag','hash234'),
+(3,"Cliente",'pedrol','hash345'),
+(4,"Cliente",'anam','hash456'),
+(5,"Cliente",'luisr','hash567'),
+(6,"Cliente",'carlaf','hash678'),
+(7,"Cliente",'diegos','hash789'),
+(8,"Cliente",'luciator','hash890'),
+(9,"Cliente",'martind','hash901'),
+(10,"Cliente",'sofiav','hash012');
