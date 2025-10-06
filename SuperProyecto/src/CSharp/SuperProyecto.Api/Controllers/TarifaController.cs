@@ -44,10 +44,8 @@ namespace SuperProyecto.Api.Controllers
             var tarifaUpdate = new Tarifa
             {
                 idTarifa = id,
-                idFuncion = tarifaDto.idFuncion,
-                nombre = tarifaDto.nombre,
+                idSector = tarifaDto.idSector,
                 precio = tarifaDto.precio,
-                stock = tarifaDto.stock
             };
             _repoTarifa.UpdateTarifa(tarifaUpdate, id);
             return Ok(tarifaUpdate);
@@ -60,10 +58,8 @@ namespace SuperProyecto.Api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var tarifaAlta = new Tarifa
             {
-                idFuncion = tarifaDto.idFuncion,
-                nombre = tarifaDto.nombre,
+                idSector = tarifaDto.idSector,
                 precio = tarifaDto.precio,
-                stock = tarifaDto.stock
             };
             _repoTarifa.AltaTarifa(tarifaAlta);
             return Created();

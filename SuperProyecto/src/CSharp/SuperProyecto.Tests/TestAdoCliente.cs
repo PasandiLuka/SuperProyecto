@@ -15,34 +15,9 @@ namespace SuperProyecto.Tests;
 
 public class TestAdoCliente : TestAdo
 {
-    private IRepoCliente _repoCliente;
-
-    /* public TestAdoCliente()
-    {
-        _repoCliente = new RepoCliente(_conexion);
-    } */
-
     [Fact]
     public void CuandoHaceUnInsertEnCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
     {
-        /* var _cliente = new Cliente()
-        {
-            DNI = 200,
-            nombre = "vale_por_un_nombre",
-            apellido = "vale_por_un_apellido",
-            telefono = 12345678
-        };
-
-        _repoCliente.AltaCliente(_cliente);
-
-        var clienteDB = _repoCliente.DetalleCliente(_cliente.DNI);
-
-        Assert.NotNull(clienteDB);
-        Assert.Equal(_cliente.DNI, clienteDB.DNI);
-        Assert.Equal(_cliente.nombre, clienteDB.nombre);
-        Assert.Equal(_cliente.apellido, clienteDB.apellido);
-        Assert.Equal(_cliente.telefono, clienteDB.telefono); */
-
         var moq = new Mock<IRepoCliente>();
         List<Cliente> clientes = new List<Cliente>
         {

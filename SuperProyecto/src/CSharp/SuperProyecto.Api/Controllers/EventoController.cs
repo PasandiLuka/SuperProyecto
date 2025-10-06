@@ -14,7 +14,7 @@ namespace SuperProyecto.Api.Controllers
         {
             _repoEvento = repoEvento;
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult GetEventos()
@@ -56,6 +56,23 @@ namespace SuperProyecto.Api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             _repoEvento.AltaEvento(evento);
             return Created();
+        }
+
+        [Authorize(Roles = "Administrador, Organizador")]
+        [HttpDelete("{idEvento}")]
+        public IActionResult CancelarEvento(int idEvento)
+        {
+            if (_repoEvento.DetalleEvento(idEvento) is null) return NotFound();
+            _repoEvento.CancelarEvento(idEvento);
+            return Ok();
+        }
+        [Authorize(Roles = "Administrador, Organizador")]
+        [HttpPost("{idEvento}/publicar")]
+        public IActionResult PublicarEvento(int idEvento)
+        {
+            if (_repoEvento.DetalleEvento(idEvento) is null) return NotFound();
+            _repoEvento.PublicarEvento(idEvento);
+            return Ok();
         }
     }
 }

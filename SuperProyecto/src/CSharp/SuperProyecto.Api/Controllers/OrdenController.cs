@@ -15,10 +15,12 @@ namespace SuperProyecto.Api.Controllers;
 public class OrdenController : ControllerBase
 {
     readonly IRepoOrden _repoOrden;
+    readonly IRepoEntrada _repoEntrada;
 
-    public OrdenController(IRepoOrden repoOrden)
+    public OrdenController(IRepoOrden repoOrden, IRepoEntrada repoEntrada)
     {
         _repoOrden = repoOrden;
+        _repoEntrada = repoEntrada;
     }
 
     [Authorize]
@@ -38,23 +40,6 @@ public class OrdenController : ControllerBase
     }
 
     [Authorize(Roles = "Administrador, Organizador")]
-    [HttpPut("{id}")]
-    public IActionResult UpdateOrden([FromBody] OrdenDto ordenDto, int id)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        var orden = _repoOrden.DetalleOrden(id);
-        if (orden is null) return NotFound();
-        var ordenUpdate = new Orden
-        {
-            idOrden = id,
-            DNI = ordenDto.DNI,
-            fecha = DateTime.Now,
-            total = ordenDto.total
-        };
-        _repoOrden.UpdateOrden(ordenUpdate, id);
-        return Ok(ordenUpdate);
-    }
-    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPost]
     public IActionResult AltaOrden([FromBody] OrdenDto ordenDto)
     {
@@ -62,10 +47,46 @@ public class OrdenController : ControllerBase
         var ordenAlta = new Orden
         {
             DNI = ordenDto.DNI,
+            idFuncion = ordenDto.idFuncion,
             fecha = DateTime.Now,
-            total = ordenDto.total
         };
         _repoOrden.AltaOrden(ordenAlta);
         return Created();
+    }
+
+    /* [Authorize]
+    [HttpPost]
+    public IActionResult AltaEntrada([FromBody] EntradaDto entradaDto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        _repoEntrada.AltaEntrada(entradaAlta);
+
+        string qrUrl = Url.Action(
+        action: "ValidarQr",
+        controller: "Entrada",
+        values: new { idEntrada = entradaAlta.idEntrada },
+        protocol: Request.Scheme // Usa "http" o "https" según el request actual
+        );
+
+        _repoQr.AltaQr(entradaDto.idEntrada, qrUrl);
+        return Created();
+    } */
+
+
+    [Authorize(Roles = "Administrador, Organizador")]
+    [HttpPost("{id}/pagar")]
+    public IActionResult PagarOrden(int id)
+    {
+        var orden = _repoOrden.DetalleOrden(id);
+        if (orden is null) return NotFound();
+        _repoOrden.PagarOrden(id);
+        var entradaAlta = new Entrada
+        {           
+            idOrden = id,
+            usada = false
+        };
+        _repoEntrada.AltaEntrada(entradaAlta);
+        return Ok();
     }
 }

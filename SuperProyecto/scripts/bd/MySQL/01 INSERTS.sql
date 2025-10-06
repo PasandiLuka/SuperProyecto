@@ -1,50 +1,55 @@
--- LOCAL
-INSERT INTO Local (nombre, direccion) 
-    VALUES ('Teatro Colón', 'Cerrito 628'),
-           ('Luna Park', 'Bouchard 465'),
-           ('Gran Rex', 'Av. Corrientes 857');
+-- ==========================
+-- 1. LOCAL
+-- ==========================
+INSERT INTO Local (nombre, direccion) VALUES
+('Teatro Colón', 'Cerrito 628'),
+('Luna Park', 'Bouchard 465'),
+('Gran Rex', 'Av. Corrientes 857');
 
--- EVENTO
-INSERT INTO Evento (nombre, descripcion, fechaPublicacion, publicado) 
-    VALUES ('Concierto A', 'Música clásica', '2025-10-06 21:00:00', TRUE),
-           ('Stand Up B', 'Show de comedia', '2025-10-07 21:00:00', TRUE),
-           ('Obra C', 'Teatro contemporáneo', '2025-10-08 21:00:00', FALSE);
+-- ==========================
+-- 2. EVENTO
+-- ==========================
+INSERT INTO Evento (nombre, descripcion, fechaPublicacion, publicado) VALUES
+('Concierto Sinfónico', 'Presentación de la Orquesta Nacional', '2025-09-01 18:00:00', TRUE),
+('Obra de Teatro', 'Comedia musical en vivo', '2025-08-15 10:00:00', TRUE),
+('Festival de Jazz', 'Edición anual con artistas internacionales', '2025-07-20 09:00:00', FALSE);
 
+-- ==========================
+-- 3. USUARIO
+-- ==========================
+INSERT INTO Usuario (email, passwordHash, rol) VALUES
+('juanperez@gmail.com', sha2("1234", 256), 'Cliente'),
+('maria.gomez@gmail.com', sha2("1234", 256), 'Cliente'),
+('admin@gmail.com', sha2("1234", 256), 'Administrador');
 
+ -- ==========================
+-- 4. SECTOR
+-- ==========================
+INSERT INTO Sector (idLocal, nombre, capacidad) VALUES
+(1, 'Platea Baja', 300),
+(1, 'Platea Alta', 500),
+(2, 'VIP', 100);
 
--- USUARIO
-INSERT INTO Usuario (email, passwordHash, rol) 
-    VALUES ('admin@gmail.com', sha2("1234", 256), "Administrador"),
-           ('organizador@gmail.com', sha2("1234", 256), "Organizador"),
-           ('cliente@gmail.com', sha2("1234", 256), "Cliente"),
-           ('cliente2@gmail.com', sha2("1234", 256), "Cliente");
+-- ==========================
+-- 5. CLIENTE
+-- ==========================
+INSERT INTO Cliente (DNI, idUsuario, nombre, apellido, telefono) VALUES
+(12345678, 1, 'Juan', 'Pérez', 1123456789),
+(23456789, 2, 'María', 'Gómez', 1198765432),
+(34567890, 3, 'Carlos', 'López', 1134567890);
 
--- SECTOR
-INSERT INTO Sector (idLocal, nombre, capacidad) 
-    VALUES (1, 'Platea Baja', 500),
-           (2, 'Campo', 1000),
-           (3, 'Palco', 300);
+-- ==========================
+-- 7. TARIFA
+-- ==========================
+INSERT INTO Tarifa (idSector, precio) VALUES
+(1, 2500.00),
+(2, 1800.00),
+(3, 4000.00);
 
--- CLIENTE
-INSERT INTO Cliente (DNI, idUsuario, nombre, apellido, telefono) 
-    VALUES (12345678, 2, 'Juan', 'Pérez', 1123456789),
-           (23456789, 3, 'María', 'Gómez', 1198765432),
-           (34567890, 4, 'Carlos', 'López', 1111122233);
-
--- ORDEN
-INSERT INTO Orden (DNI, fecha, total) 
-    VALUES (12345678, '2025-10-06 21:00:00', 2500.50),
-           (23456789, '2025-10-07 21:00:00', 3100.00),
-           (34567890, '2025-10-08 21:00:00', 1800.75);
-
--- FUNCION
-INSERT INTO Funcion (idEvento, idSector, fechaHora, cancelada) 
-    VALUES (1, 1, '2025-10-06 21:00:00', FALSE),
-           (2, 2, '2025-10-07 21:00:00', FALSE),
-           (3, 3, '2025-10-08 21:00:00', TRUE);
-
--- TARIFA
-INSERT INTO Tarifa (idFuncion, nombre, precio, stock) 
-    VALUES (1, 'General', 1500.00, 100),
-           (2, 'VIP', 3000.00, 50),
-           (3, 'Promocional', 1000.00, 30);
+-- ==========================
+-- 8. FUNCION
+-- ==========================
+INSERT INTO Funcion (idTarifa, fechaHora, stock, cancelada) VALUES
+(1, '2025-10-10 20:00:00', 100, FALSE),
+(2, '2025-10-12 21:30:00', 0, FALSE),
+(3, '2025-10-15 19:00:00', 100, TRUE);

@@ -19,9 +19,5 @@ public class SectorValidator : AbstractValidator<SectorDto>
         RuleFor(s => s.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio.")
             .MinimumLength(3).WithMessage("El nombre debe contener al menos 3 caracteres.");
-
-        RuleFor(s => s.capacidad)
-            .NotEmpty().WithMessage("La capacidad es obligatoria.")
-            .GreaterThan(0).WithMessage("La capacidad debe ser mayor a 0");
     }
 }

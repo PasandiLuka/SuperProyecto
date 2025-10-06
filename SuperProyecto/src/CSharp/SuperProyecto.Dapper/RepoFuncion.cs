@@ -22,31 +22,32 @@ public class RepoFuncion : Repo, IRepoFuncion
     }
 
     private static readonly string _queryAltaFuncion
-        = @"INSERT INTO Funcion (idEvento, descripcion, fechaHora) VALUES (@idEvento, @descripcion, @fechaHora)";
+        = @"INSERT INTO Funcion (idTarifa, idEvento, fechaHora, stock) VALUES (@idTarifa, @idEvento, @fechaHora, @stock)";
     public void AltaFuncion(Funcion funcion)
     {
         _conexion.Execute(
             _queryAltaFuncion,
             new
             {
+                funcion.idTarifa,
                 funcion.idEvento,
-                funcion.idSector,
-                funcion.fechaHora
+                funcion.fechaHora,
+                funcion.stock
             });
     }
     
     private static readonly string _queryUpdateFuncion
-        = @"UPDATE Funcion SET idEvento = @idEvento, idSector = @idSector, fechaHora = @fechaHora WHERE idFuncion = @unIdFuncion";
+        = @"UPDATE Funcion SET idTarifa = @idTarifa, idEvento = @idEvento, fechaHora = @fechaHora, stock = @stock WHERE idFuncion = @unIdFuncion";
     public void UpdateFuncion(Funcion funcion, int id)
     {
         _conexion.Execute(
             _queryUpdateFuncion,
             new
             {
-                funcion.idFuncion,
+                funcion.idTarifa,
                 funcion.idEvento,
-                funcion.idSector,
                 funcion.fechaHora,
+                funcion.stock,
                 unIdFuncion = id
             });
     }

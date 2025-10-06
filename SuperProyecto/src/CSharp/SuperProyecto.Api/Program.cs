@@ -97,14 +97,14 @@ string schemaINSERTS = Path.Combine(AppContext.BaseDirectory, "../../../../../..
 
 string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaINSERTS);
 
-using (IDbConnection db = new MySqlConnection(conectionString))
+/* using (IDbConnection db = new MySqlConnection(conectionString))
 {
     db.Open();
 
     db.Execute("DROP DATABASE IF EXISTS bd_boleteria; CREATE DATABASE bd_boleteria CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
     db.Execute("USE bd_boleteria; " + schemaSql);
-}
+} */
 #endregion
 
 builder.Services.AddAuthorization();

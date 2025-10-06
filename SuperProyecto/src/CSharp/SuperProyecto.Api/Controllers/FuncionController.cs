@@ -45,10 +45,9 @@ public class FuncionController : ControllerBase
         var funcionUpdate = new Funcion
         {
             idFuncion = id,
-            idEvento = funcionDto.idEvento,
-            idSector = funcionDto.idSector,
+            idTarifa = funcionDto.idTarifa,
             fechaHora = funcionDto.fechaHora,
-            cancelada = funcionDto.cancelada
+            stock = funcionDto.stock
         };
         _repoFuncion.UpdateFuncion(funcionUpdate, (int)id);
         return Ok(funcionUpdate);
@@ -62,9 +61,9 @@ public class FuncionController : ControllerBase
         var funcionAlta = new Funcion
         {
             idEvento = funcionDto.idEvento,
-            idSector = funcionDto.idSector,
+            idTarifa = funcionDto.idTarifa,
             fechaHora = funcionDto.fechaHora,
-            cancelada = funcionDto.cancelada
+            stock = funcionDto.stock
         };
         _repoFuncion.AltaFuncion(funcionAlta);
         return Created();

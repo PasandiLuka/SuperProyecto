@@ -19,29 +19,14 @@ public class RepoEntrada : Repo, IRepoEntrada
     public Entrada? DetalleEntrada(int idEntrada) => _conexion.QueryFirstOrDefault<Entrada>(_queryDetalleEntrada, new { idEntrada });
 
     private static readonly string _queryAltaEntrada
-        = @"INSERT INTO Entrada (idOrden, idFuncion) VALUES (@idOrden, @idFuncion)";
+        = @"INSERT INTO Entrada (idOrden) VALUES (@idOrden)";
     public void AltaEntrada(Entrada entrada)
     {
         _conexion.Execute(
             _queryAltaEntrada,
             new
             {
-                entrada.idOrden,
-                entrada.idFuncion
-            });
-    }
-
-    private static readonly string _queryUpdateEntrada
-        = @"UPDATE Entrada SET idOrden = @unidOrden, idFuncion = @unIdFuncion WHERE idEntrada = @unIdEntrada";
-    public void UpdateEntrada(Entrada entrada, int id)
-    {
-        _conexion.Execute(
-            _queryUpdateEntrada,
-            new
-            {
-                unIdEntrada = id,
-                unIdOrden = entrada.idOrden,
-                unIdFuncion = entrada.idFuncion
+                entrada.idOrden
             });
     }
 

@@ -5,10 +5,27 @@
 
 ```mermaid
 classDiagram
+
     class Local {
         +int idLocal
         +string nombre
         +string direccion
+    }
+
+    class Evento {
+        +int idEvento
+        +string nombre
+        +string descripcion
+        +DateTime fechaPublicacion
+        +bool publicado
+        +bool cancelado
+    }
+
+    class Usuario {
+        +int idUsuario
+        +string email
+        +string passwordHash
+        +string rol
     }
 
     class Sector {
@@ -18,86 +35,95 @@ classDiagram
         +int capacidad
     }
 
-    class Evento {
-        +int idEvento
+    class Cliente {
+        +int DNI
+        +int idUsuario
         +string nombre
-        +string descripcion
-        +datetime fechaPublicacion
-        +bool publicado
+        +string apellido
+        +int telefono
     }
 
-    class Funcion {
-        +int idFuncion
-        +int idEvento
-        +int idSector
-        +datetime fechaHora
-        +bool cancelada
+    class RefreshTokens {
+        +int idRefreshToken
+        +int idUsuario
+        +string token
+        +DateTime expiracion
+        +bool revocado
     }
 
     class Tarifa {
         +int idTarifa
-        +int idFuncion
-        +string nombre
+        +int idSector
         +decimal precio
+    }
+
+    class Funcion {
+        +int idFuncion
+        +int idTarifa
+        +int idEvento
+        +DateTime fechaHora
         +int stock
-    }
-
-    class Cliente {
-        +int DNI
-        +string nombre
-        +string apellido
-        +string email
-        +int telefono
-    }
-
-    class Orden {
-        +int idOrden
-        +int DNI
-        +datetime fecha
-        +string estado
-        +decimal total
+        +bool cancelada
     }
 
     class Entrada {
         +int idEntrada
         +int idFuncion
         +int idOrden
-        +string codigoQr
         +bool usada
     }
 
-    class Usuario {
-        +int idUsuario
-        +int DNI
-        +string username
-        +string passwordHash
+    class Qr {
+        +int idQr
+        +int idEntrada
+        +string url
     }
 
-    class ERol {
-        Administrador,
-        Cliente
+    class Orden {
+        +int idOrden
+        +int DNI
+        +DateTime fecha
+        +bool pagada
     }
 
     %% Relaciones
-    Local "1" -- "*" Sector
-    Sector "1" -- "1" Funcion 
-    Evento "1" -- "*" Funcion 
-    Funcion "1" -- "*" Tarifa 
-    Cliente "1" -- "*" Orden 
-    Orden "1" -- "*" Entrada
-    Funcion "1" -- "*" Entrada 
-    Usuario "1" -- "1" ERol
-    Cliente <|-- Usuario
+    Local "1" --> "many" Sector : contiene
+    Sector "1" --> "many" Tarifa : define
+    Tarifa "1" --> "many" Funcion : aplica
+    Evento "1" --> "many" Funcion : organiza
+    Funcion "1" --> "many" Entrada : genera
+    Entrada "1" --> "1" Qr : tiene
+    Cliente "1" --> "many" Orden : realiza
+    Entrada "1" --> "1" Orden : incluye
+    Usuario "1" --> "1" Cliente : pertenece
+    Usuario "1" --> "many" RefreshTokens : genera
 ```
 
 ## **DER**
 
-```mermaid 
+```mermaid
 erDiagram
+
     Local {
         INT idLocal PK
         VARCHAR(45) nombre
         VARCHAR(45) direccion
+    }
+
+    Evento {
+        INT idEvento PK
+        VARCHAR(45) nombre
+        VARCHAR(45) descripcion
+        DATETIME fechaPublicacion
+        BOOLEAN publicado
+        BOOLEAN cancelado
+    }
+
+    Usuario {
+        INT idUsuario PK
+        VARCHAR(45) email
+        VARCHAR(255) passwordHash
+        VARCHAR(45) rol
     }
 
     Sector {
@@ -107,70 +133,70 @@ erDiagram
         INT capacidad
     }
 
-    Evento {
-        INT idEvento PK
+    Cliente {
+        INT DNI PK
+        INT idUsuario FK
         VARCHAR(45) nombre
-        VARCHAR(45) descripcion
-        DATETIME fechaPublicacion
-        BOOL publicado
+        VARCHAR(45) apellido
+        INT telefono
     }
 
-    Funcion {
-        INT idFuncion PK
-        INT idEvento FK
-        INT idSector FK
-        DATETIME fechaHora
-        bool cancelada
+    RefreshTokens {
+        INT idRefreshToken PK
+        INT idUsuario FK
+        VARCHAR(200) token
+        DATETIME expiracion
+        BIT revocado
     }
 
     Tarifa {
         INT idTarifa PK
-        INT idFuncion FK
-        VARCHAR(45) nombre
+        INT idSector FK
         DECIMAL(10-2) precio
-        INT stock
     }
 
-    Cliente {
-        INT DNI PK
-        VARCHAR(45) nombre
-        VARCHAR(45) apellido
-        VARCHAR(45) email
+    Funcion {
+        INT idFuncion PK
+        INT idTarifa FK
+        INT idEvento FK
+        DATETIME fechaHora
+        INT stock
+        BOOLEAN cancelada
+    }
+
+    Entrada {
+        INT idEntrada PK
+        INT idFuncion FK
+        INT idOrden FK
+        BOOLEAN usada
+    }
+
+    Qr {
+        INT idQr PK
+        INT idEntrada FK
+        VARCHAR(100) url
     }
 
     Orden {
         INT idOrden PK
         INT DNI FK
         DATETIME fecha
-        VARCHAR(45) estado
-        DECIMAL(10-2) total
-    }
-
-    Entrada {
-        INT idEntrada PK
-        INT idOrden FK
-        INT idFuncion FK
-        VARCHAR(45) codigoQr
-        BOOL usada
-    }
-
-    Usuario {
-        INT idUsuario PK
-        INT DNI FK
-        VARCHAR(45) username
-        VARCHAR(45) passwordHash
+        BOOLEAN pagada
     }
 
     %% Relaciones
-    Local ||--o{ Sector : ""
-    Sector ||--o| Funcion : ""
-    Evento ||--o{ Funcion : ""
-    Funcion ||--o{ Tarifa : ""
-    Cliente ||--o{ Orden : ""
-    Orden ||--o{ Entrada : ""
-    Funcion ||--o{ Entrada : ""
-    Cliente ||--|| Usuario : ""
+    Local ||--o{ Sector : "posee"
+    Sector ||--o{ Tarifa : "define"
+    Tarifa ||--o{ Funcion : "aplica a"
+    Evento ||--o{ Funcion : "contiene"
+    Funcion ||--o{ Entrada : "genera"
+    Entrada ||--|| Qr : "tiene"
+    Cliente ||--o{ Orden : "realiza"
+    Entrada ||--|| Orden : "incluye"
+    Usuario ||--o{ Cliente : "pertenece a"
+    Usuario ||--o{ RefreshTokens : "posee"
 ```
+
 
 ## **Tareas**
 

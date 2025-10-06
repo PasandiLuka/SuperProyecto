@@ -9,14 +9,14 @@ namespace SuperProyecto.Dapper;
 public class RepoEvento : Repo, IRepoEvento
 {
     public RepoEvento(IAdo _ado) : base(_ado) { }
-    
+
     private static readonly string _queryEventos
         = @"SELECT * FROM Evento";
     public IEnumerable<Evento> GetEventos() => _conexion.Query<Evento>(_queryEventos);
 
     private static readonly string _queryDetalleEvento
         = @"SELECT * FROM Evento WHERE idEvento = @unIdEvento";
-    public Evento? DetalleEvento(int idEvento) => _conexion.QueryFirstOrDefault<Evento>(_queryDetalleEvento, new {unIdEvento = idEvento});
+    public Evento? DetalleEvento(int idEvento) => _conexion.QueryFirstOrDefault<Evento>(_queryDetalleEvento, new { unIdEvento = idEvento });
 
     private static readonly string _queryAltaEvento
         = @"INSERT INTO Evento (nombre, descripcion, fechaPublicacion, publicado) VALUES (@nombre, @descripcion, @fechaPublicacion, @publicado)";
@@ -46,6 +46,30 @@ public class RepoEvento : Repo, IRepoEvento
                 evento.fechaPublicacion,
                 evento.publicado,
                 idEvento = id
+            });
+    }
+
+    private static readonly string _queryCancelarEvento
+        = @"UPDATE Evento SET cancelado = TRUE WHERE idEvento = @idEvento";
+    public void CancelarEvento(int idEvento)
+    {
+        _conexion.Execute(
+            _queryCancelarEvento,
+            new
+            {
+                idEvento
+            });
+    }
+
+    private static readonly string _queryPublicarEvento
+        = @"UPDATE Evento SET publicado = TRUE WHERE idEvento = @idEvento";
+    public void PublicarEvento(int idEvento)
+    {
+        _conexion.Execute(
+            _queryPublicarEvento,
+            new
+            {
+                idEvento
             });
     }
 }

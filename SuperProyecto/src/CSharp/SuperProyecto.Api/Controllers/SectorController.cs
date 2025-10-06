@@ -44,8 +44,7 @@ public class SectorController : ControllerBase
         var sectorUpdate = new Sector
         {
             idLocal = sectorDto.idLocal,
-            nombre = sectorDto.nombre,
-            capacidad = sectorDto.capacidad
+            nombre = sectorDto.nombre
         };
         _repoSector.UpdateSector(sectorUpdate, (int)id);
         return Ok(sectorUpdate);
@@ -59,8 +58,7 @@ public class SectorController : ControllerBase
         var sectorAlta = new Sector
         {
             idLocal = sectorDto.idLocal,
-            nombre = sectorDto.nombre,
-            capacidad = sectorDto.capacidad
+            nombre = sectorDto.nombre
         };
         _repoSector.AltaSector(sectorAlta);
         return Created();

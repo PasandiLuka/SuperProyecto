@@ -37,32 +37,6 @@ public class EntradaController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost]
-    public IActionResult AltaEntrada([FromBody] EntradaDto entradaDto)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        var entradaAlta = new Entrada
-        {
-            idEntrada = entradaDto.idEntrada,
-            idFuncion = entradaDto.idFuncion,
-            idOrden = entradaDto.idOrden,
-            idQr = entradaDto.idEntrada,
-            usada = false
-        };
-        _repoEntrada.AltaEntrada(entradaAlta);
-
-        string qrUrl = Url.Action(
-        action: "ValidarQr",
-        controller: "Entrada",
-        values: new { idEntrada = entradaAlta.idEntrada },
-        protocol: Request.Scheme // Usa "http" o "https" según el request actual
-        );
-
-        _repoQr.AltaQr(entradaDto.idEntrada, qrUrl);
-        return Created();
-    }
-
-    [Authorize]
     [HttpGet("{id}/qr")]
     public IActionResult GetQr(int id)
     {
@@ -81,7 +55,6 @@ public class EntradaController : ControllerBase
         if (entrada.usada)
             return BadRequest("La entrada ya fue usada.");
 
-        entrada.usada = true;
         _repoEntrada.EntradaUsada(entrada.idEntrada);
 
         return Ok("Entrada validada correctamente.");

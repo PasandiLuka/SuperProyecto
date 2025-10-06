@@ -22,7 +22,7 @@ public class RepoSector : Repo, IRepoSector
     }
 
     private static readonly string _queryAltaSector
-        = @"INSERT INTO Sector (idLocal, nombre, capacidad) VALUES (@idLocal, @nombre, @capacidad)";
+        = @"INSERT INTO Sector (idLocal, nombre) VALUES (@idLocal, @nombre)";
     public void AltaSector(Sector sector)
     {
         _conexion.Execute(
@@ -30,13 +30,12 @@ public class RepoSector : Repo, IRepoSector
             new
             {
                 sector.idLocal,
-                sector.nombre,
-                sector.capacidad
+                sector.nombre
             });
     }
 
     private static readonly string _queryUpdateSector
-        = @"UPDATE Sector SET idLocal = @idLocal, nombre = @nombre, capacidad = @capacidad WHERE idSector = @idSector";
+        = @"UPDATE Sector SET idLocal = @idLocal, nombre = @nombre WHERE idSector = @idSector";
     public void UpdateSector(Sector sector, int id)
     {
         _conexion.Execute(
@@ -45,7 +44,6 @@ public class RepoSector : Repo, IRepoSector
             {
                 sector.idLocal,
                 sector.nombre,
-                sector.capacidad,
                 idSector = id
             });
     }
