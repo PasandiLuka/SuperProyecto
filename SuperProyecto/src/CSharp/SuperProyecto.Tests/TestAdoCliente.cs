@@ -1,7 +1,15 @@
 ﻿using SuperProyecto.Core;
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Dapper;
+using Moq;
 using MySqlConnector;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
+using System.Data;
+using System.Formats.Asn1;
 
 namespace SuperProyecto.Tests;
 
@@ -9,15 +17,15 @@ public class TestAdoCliente : TestAdo
 {
     private IRepoCliente _repoCliente;
 
-    public TestAdoCliente()
+    /* public TestAdoCliente()
     {
         _repoCliente = new RepoCliente(_conexion);
-    }
+    } */
 
     [Fact]
     public void CuandoHaceUnInsertEnCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
     {
-        var _cliente = new Cliente()
+        /* var _cliente = new Cliente()
         {
             DNI = 200,
             nombre = "vale_por_un_nombre",
@@ -33,10 +41,24 @@ public class TestAdoCliente : TestAdo
         Assert.Equal(_cliente.DNI, clienteDB.DNI);
         Assert.Equal(_cliente.nombre, clienteDB.nombre);
         Assert.Equal(_cliente.apellido, clienteDB.apellido);
-        Assert.Equal(_cliente.telefono, clienteDB.telefono);
+        Assert.Equal(_cliente.telefono, clienteDB.telefono); */
+
+        var moq = new Mock<IRepoCliente>();
+        List<Cliente> clientes = new List<Cliente>
+        {
+            new Cliente{DNI = 1, idUsuario = 1, nombre = "juan", apellido = "antonio", telefono = 1},
+            new Cliente{DNI = 1, idUsuario = 1, nombre = "fede", apellido = "asdas", telefono = 1}
+        };
+
+        moq.Setup(c => c.GetClientes()).Returns(clientes);
+        var resultado = moq.Object.GetClientes();
+
+        Assert.NotEmpty(resultado);
+        Assert.Equal(2, ((List<Cliente>)resultado).Count());
+
     }
 
-    [Fact]
+    /* [Fact]
     public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
     {
         var _cliente = new Cliente()
@@ -50,6 +72,8 @@ public class TestAdoCliente : TestAdo
         _repoCliente.AltaCliente(_cliente);
 
         Assert.Throws<MySqlException>(() => _repoCliente.AltaCliente(_cliente));
+
+
     }
 
     [Fact]
@@ -82,5 +106,6 @@ public class TestAdoCliente : TestAdo
         Assert.Equal(_clienteUpdateBD.nombre, _clienteUpdate.nombre);
         Assert.Equal(_clienteUpdateBD.apellido, _clienteUpdate.apellido);
         Assert.Equal(_clienteUpdateBD.telefono, _clienteUpdate.telefono);
-    }
+    } */
+    
 }

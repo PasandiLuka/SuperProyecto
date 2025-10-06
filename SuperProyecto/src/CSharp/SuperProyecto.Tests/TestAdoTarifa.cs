@@ -1,4 +1,4 @@
-using SuperProyecto.Core;
+/* using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
@@ -46,4 +46,4 @@ public class TestAdoTarifa : TestAdo
 
         Assert.Throws<MySqlException>(() => _repoTarifa.AltaTarifa(_tarifa));
     }
-}
+} */

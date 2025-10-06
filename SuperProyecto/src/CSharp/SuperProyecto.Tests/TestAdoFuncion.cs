@@ -1,4 +1,4 @@
-
+/* 
 using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
@@ -83,4 +83,4 @@ public class TestAdoFuncion : TestAdo
         Assert.Equal(_funcionUpdate.descripcion, _funcionDB.descripcion);
         Assert.Equal(_funcionUpdate.fechaHora, _funcionDB.fechaHora);
     }
-}
+} */

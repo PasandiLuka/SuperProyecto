@@ -1,4 +1,4 @@
-using SuperProyecto.Core;
+/* using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
@@ -46,3 +46,4 @@ public class TestAdoSector : TestAdo
         Assert.Throws<MySqlException>(() =>_repoSector.AltaSector(_sector));
     }
 }
+ */

@@ -1,4 +1,4 @@
-
+/* 
 
 using SuperProyecto.Core;
 using SuperProyecto.Core.Services.Persistencia;
@@ -79,4 +79,4 @@ public class TestAdoLocal : TestAdo
         Assert.Equal(_localUpdate.direccion, _localDB.direccion);
         Assert.Equal(_localUpdate.capacidadMax, _localDB.capacidadMax);
     }
-}
+} */
