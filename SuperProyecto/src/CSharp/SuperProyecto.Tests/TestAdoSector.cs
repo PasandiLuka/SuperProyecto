@@ -1,49 +1,31 @@
-/* using SuperProyecto.Core;
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Dapper;
 using MySqlConnector;
+using Moq;
 
 namespace SuperProyecto.Tests;
 
-public class TestAdoSector : TestAdo
+public class TestAdoSector 
 {
     private IRepoSector _repoSector;
 
-    public TestAdoSector()
-    {
-        _repoSector = new RepoSector(_conexion);
-    }
-
+   
     [Fact]
-    public void CuandoHaceUnInsertEnSector_DebeAlmacenarDichaFilaEnLaTablaSector()
-    {
-        var _sector = new Sector()
+    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
         {
-            idSector = 200,
-            sector = "unoa"
-        };
+        var moq = new Mock<IRepoTarifa>();
 
-        _repoSector.AltaSector(_sector);
+        Tarifa tarifa = new Tarifa { idTarifa = 1, idFuncion = 1, nombre = "Robertito", precio = 200, stock = 300 };
 
-        var sectorBD = _repoSector.DetalleSector(200);
+        moq.Setup(t => t.AltaTarifa(tarifa));
+        moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
+        var resultado = moq.Object.DetalleTarifa(tarifa.idTarifa);
 
-        Assert.NotNull(sectorBD);
-        Assert.Equal(_sector.idSector, sectorBD.idSector);
-        Assert.Equal(_sector.sector, sectorBD.sector);
-    }
+        Assert.NotNull(resultado);
+        Assert.Equal(tarifa.idTarifa, resultado.idTarifa);
+        }
 
-    [Fact]
-    public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepci0n()
-    {
-        var _sector = new Sector()
-        {
-            idSector = 201,
-            sector = "unoa"
-        };
 
-        _repoSector.AltaSector(_sector);
-
-        Assert.Throws<MySqlException>(() =>_repoSector.AltaSector(_sector));
-    }
 }
- */
+ 

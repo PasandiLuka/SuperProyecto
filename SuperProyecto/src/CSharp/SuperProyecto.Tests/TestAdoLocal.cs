@@ -1,82 +1,103 @@
-/* 
 
-using SuperProyecto.Core;
-using SuperProyecto.Core.Services.Persistencia;
-using SuperProyecto.Dapper;
-using MySqlConnector;
+// using SuperProyecto.Core;
+// using SuperProyecto.Core.Services.Persistencia;
+// using SuperProyecto.Dapper;
+// using Moq;
+// using MySqlConnector;
 
-namespace SuperProyecto.Tests;
+// namespace SuperProyecto.Tests;
 
-public class TestAdoLocal : TestAdo
-{
-    private IRepoLocal _repoLocal;
+// public class TestAdoLocal : TestAdo
+// {
+//     private IRepoLocal _repoLocal;
 
-    public TestAdoLocal()
-    {
-        _repoLocal = new RepoLocal(_conexion);
-    }
+//     public TestAdoLocal()
+//     {
+//         _repoLocal = new RepoLocal(_conexion);
+//     }
 
-    [Fact]
-    public void CuandoHaceUnInsertEnLocal_DebeAlmacenarDichaFilaEnLaTablaLocal()
-    {
-        var _local = new Local()
-        {
-            idLocal = 300,
-            direccion = "vale_por_una_direccion",
-            capacidadMax = 600
-        };
+    // [Fact]
+    // public void CuandoHaceUnInsertEnLocal_DebeAlmacenarDichaFilaEnLaTablaLocal()
+    // {
+    //     var _local = new Local()
+    //     {
+    //         idLocal = 300,
+    //         direccion = "vale_por_una_direccion",
+    //         capacidadMax = 600
+    //     };
 
-        _repoLocal.AltaLocal(_local);
+    //     _repoLocal.AltaLocal(_local);
 
-        var _localDB = _repoLocal.DetalleLocal(300);
+    //     var _localDB = _repoLocal.DetalleLocal(300);
 
-        Assert.NotNull(_localDB);
-        Assert.Equal(_local.idLocal, _localDB.idLocal);
-        Assert.Equal(_local.direccion, _localDB.direccion);
-        Assert.Equal(_local.capacidadMax, _localDB.capacidadMax);
-    }
+    //     Assert.NotNull(_localDB);
+    //     Assert.Equal(_local.idLocal, _localDB.idLocal);
+    //     Assert.Equal(_local.direccion, _localDB.direccion);
+    //     Assert.Equal(_local.capacidadMax, _localDB.capacidadMax);
+    // }
 
-    [Fact]
-    public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
-    {
-        var _local = new Local()
-        {
-            idLocal = 301,
-            direccion = "vale_por_una_direccion",
-            capacidadMax = 700
-        };
+    // [Fact]
+    // public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
+    // {
+    //     var _local = new Local()
+    //     {
+    //         idLocal = 301,
+    //         direccion = "vale_por_una_direccion",
+    //         capacidadMax = 700
+    //     };
 
-        _repoLocal.AltaLocal(_local);
+    //     _repoLocal.AltaLocal(_local);
 
-        Assert.Throws<MySqlException>(() => _repoLocal.AltaLocal(_local));
-    }
+    //     Assert.Throws<MySqlException>(() => _repoLocal.AltaLocal(_local));
+    // }
 
-    [Fact]
-    public void CuandoHagoUnUpdateEnLaTablaLocal_DebeHacerLasRespectivasModificaciones()
-    {
-        var _local = new Local()
-        {
-            idLocal = 300,
-            direccion = "vale_por_una_direccion",
-            capacidadMax = 600
-        };
+    // [Fact]
+    // public void CuandoHagoUnUpdateEnLaTablaLocal_DebeHacerLasRespectivasModificaciones()
+    // {
+    //     var _local = new Local()
+    //     {
+    //         idLocal = 300,
+    //         direccion = "vale_por_una_direccion",
+    //         capacidadMax = 600
+    //     };
 
-        _repoLocal.AltaLocal(_local);
+    //     _repoLocal.AltaLocal(_local);
 
-        var _localUpdate = new Local()
-        {
-            idLocal = 1,
-            direccion = "vale_por_una_direccionUpdate",
-            capacidadMax = 200
-        };
+    //     var _localUpdate = new Local()
+    //     {
+    //         idLocal = 1,
+    //         direccion = "vale_por_una_direccionUpdate",
+    //         capacidadMax = 200
+    //     };
 
-        _repoLocal.UpdateLocal(_localUpdate, _local.idLocal);
+    //     _repoLocal.UpdateLocal(_localUpdate, _local.idLocal);
 
-        var _localDB = _repoLocal.DetalleLocal(_local.idLocal);
+    //     var _localDB = _repoLocal.DetalleLocal(_local.idLocal);
 
-        Assert.NotNull(_localDB);
-        Assert.Equal(_local.idLocal, _localDB.idLocal);
-        Assert.Equal(_localUpdate.direccion, _localDB.direccion);
-        Assert.Equal(_localUpdate.capacidadMax, _localDB.capacidadMax);
-    }
-} */
+    //     Assert.NotNull(_localDB);
+    //     Assert.Equal(_local.idLocal, _localDB.idLocal);
+    //     Assert.Equal(_localUpdate.direccion, _localDB.direccion);
+    //     Assert.Equal(_localUpdate.capacidadMax, _localDB.capacidadMax);
+    // }
+
+        // public void CuandoSolicitaSectoresPorLocal_DebeRetornarListaDeSectores()
+        // {
+        //     // Arrange
+        //     var moq = new Mock<IRepoSector>();
+        //     int localId = 1;
+        //     var sectores = new List<Sector>
+        //     {
+        //         new Sector { idSector = 1, nombre = "Sector A", idLocal = localId },
+        //         new Sector { idSector = 2, nombre = "Sector B", idLocal = localId }
+        //     };
+
+        //     moq.Setup(r => r.AltaTarifa(idTarifa)).Returns(sectores);
+
+        //     // Act
+        //     var resultado = moq.Object.GetSectoresPorLocal(localId);
+
+        //     // Assert
+        //     Assert.NotNull(resultado);
+        //     Assert.Equal(2, resultado.Count);
+        //     Assert.All(resultado, s => Assert.Equal(localId, s.idLocal));
+        // }
