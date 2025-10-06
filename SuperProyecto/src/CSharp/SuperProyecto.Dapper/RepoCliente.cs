@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core;
 using System.Linq.Expressions;
 
@@ -23,14 +23,23 @@ public class RepoCliente : Repo, IRepoCliente
     }
 
     private static readonly string _queryAltaCliente
-        = @"INSERT INTO Cliente (DNI, nombre, apellido, email, telefono) VALUES (@unDNI, @unNombre, @unApellido, @unEmail, @unTelefono)";
+        = @"INSERT INTO Cliente (DNI, idUsuario, nombre, apellido, telefono) VALUES (@unDNI, @unIdUsuario, @unNombre, @unApellido, @unTelefono)";
     public void AltaCliente(Cliente cliente)
     {
-        _conexion.Execute(_queryAltaCliente, new { unDNI = cliente.DNI, unNombre = cliente.nombre, unApellido = cliente.apellido, unEmail = cliente.email, unTelefono = cliente.telefono });
+        _conexion.Execute(
+            _queryAltaCliente,
+            new
+            {
+                unDNI = cliente.DNI,
+                unIdUsuario = cliente.idUsuario,
+                unNombre = cliente.nombre,
+                unApellido = cliente.apellido,
+                unTelefono = cliente.telefono
+            });
     }
 
     private static readonly string _queryUpdateCliente
-        = @"UPDATE Cliente SET nombre = @nombre, apellido = @apellido, email = @email, telefono = @telefono WHERE DNI = @DNI";
+        = @"UPDATE Cliente SET nombre = @nombre, apellido = @apellido, telefono = @telefono WHERE DNI = @DNI";
     public void UpdateCliente(Cliente cliente, int id)
     {
         _conexion.Execute(
@@ -38,8 +47,8 @@ public class RepoCliente : Repo, IRepoCliente
             new
             {
                 cliente.nombre,
+                cliente.idUsuario,
                 cliente.apellido,
-                cliente.email,
                 cliente.telefono,
                 DNI = id
             });

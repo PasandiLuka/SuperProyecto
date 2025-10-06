@@ -1,3 +1,8 @@
+# ***Documentacion Proyecto Plan de Estudio***
+
+## **Diagrama de Clases:**
+
+
 ```mermaid
 classDiagram
     class Local {
@@ -85,7 +90,9 @@ classDiagram
     Cliente <|-- Usuario
 ```
 
-```mermaid
+## **DER**
+
+```mermaid 
 erDiagram
     Local {
         INT idLocal PK
@@ -163,4 +170,47 @@ erDiagram
     Orden ||--o{ Entrada : ""
     Funcion ||--o{ Entrada : ""
     Cliente ||--|| Usuario : ""
+```
+
+## **Tareas**
+
+### **Lista de tareas**
+
+| **Orden** | **Tarea**                         | **Duracion (hs)** | **Dependencias** |
+|-------|---------------------------------------|:-------------:|:------------:|
+|a  |Configurar el entorno de desarrollo        | 1             | -            |
+|b	|Crear y preparar la base de datos	        | 2	            | a            |
+|c	|Integrar validadores en la API	            | 2	            | a            |
+|d	|Ejecutar las pruebas unitarias existentes	| 3	            | b, c         |
+|e	|Probar autenticación y autorización JWT	| 2	            | d            |
+|f	|Documentar la API y el proyecto	        | 2	            | d            |
+|g	|Preparar el despliegue en producción	    | 3	            | e, f         |
+|h	|Desplegar la aplicación	                | 2	            | g            |
+|i	|Realizar pruebas de aceptación	            | 2	            | h            |
+|j	|Cierre del proyecto	                    | 1	            | i            |
+
+### **Gantt**
+
+```mermaid
+gantt
+    title Proyecto: Boletería Digital
+    dateFormat  HH
+    axisFormat  %Hh
+    section Preparación
+    a : a, 00, 1h
+    b : b, after a, 2h
+    c : c, after a, 2h
+
+    section Desarrollo y Pruebas
+    d : d, after b c, 3h
+    e : e, after d, 2h
+    f : f, after d, 2h
+
+    section Despliegue
+    g : g, after e f, 3h
+    h : h, after g, 2h
+
+    section Finalización
+    i : i, after h, 2h
+    j : j, after i, 1h
 ```

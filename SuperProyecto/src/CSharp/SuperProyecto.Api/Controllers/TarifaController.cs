@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SuperProyecto.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SuperProyecto.Api.Controllers
 {
@@ -17,6 +18,7 @@ namespace SuperProyecto.Api.Controllers
             _repoTarifa = repoTarifa;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetTarifas()
         {
@@ -24,6 +26,7 @@ namespace SuperProyecto.Api.Controllers
             return tarifas.Any() ? Ok(tarifas) : NoContent();
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult DetalleTarifa(int id)
         {
@@ -31,6 +34,7 @@ namespace SuperProyecto.Api.Controllers
             return tarifa is not null ? Ok(tarifa) : NotFound();
         }
 
+        [Authorize(Roles = "Administrador, Organizador")]
         [HttpPut("{id}")]
         public IActionResult UpdateTarifa([FromBody] TarifaDto tarifaDto, int id)
         {
@@ -49,6 +53,7 @@ namespace SuperProyecto.Api.Controllers
             return Ok(tarifaUpdate);
         }
 
+        [Authorize(Roles = "Administrador, Organizador")]
         [HttpPost]
         public IActionResult AltaTarifa([FromBody] TarifaDto tarifaDto)
         {

@@ -1,11 +1,12 @@
-using SuperProyecto.Core.Services.Enums;
+using System.ComponentModel;
+using SuperProyecto.Core.Enums;
 
 namespace SuperProyecto.Core;
 
-public class Usuario : Cliente
+public class Usuario
 {
     public int idUsuario { get; set; }
-    public ERol rol { get; set; }
-    public string username { get; set; }
+    public string email { get; set; }
     public string passwordHash { get; set; }
+    public ERol rol { get; set; }
 }

@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SuperProyecto.Core.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SuperProyecto.Api.Controllers
 {
@@ -16,7 +14,8 @@ namespace SuperProyecto.Api.Controllers
         {
             _repoEvento = repoEvento;
         }
-
+        
+        [Authorize]
         [HttpGet]
         public IActionResult GetEventos()
         {
@@ -24,6 +23,7 @@ namespace SuperProyecto.Api.Controllers
             return eventos.Any() ? Ok(eventos) : NoContent();
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult DetalleEvento(int id)
         {
@@ -31,16 +31,25 @@ namespace SuperProyecto.Api.Controllers
             return evento is not null ? Ok(evento) : NotFound();
         }
 
+        [Authorize(Roles = "Administrador, Organizador")]
         [HttpPut("{id}")]
-        public IActionResult UpdateEvento([FromBody] Evento eventoUpdate, int id)
+        public IActionResult UpdateEvento([FromBody] EventoDto eventoDto, int id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var evento = _repoEvento.DetalleEvento(id);
             if (evento is null) return NotFound();
+            var eventoUpdate = new Evento
+            {
+                nombre = eventoDto.nombre,
+                descripcion = eventoDto.descripcion,
+                fechaPublicacion = DateTime.Now,
+                publicado = eventoDto.publicado
+            };
             _repoEvento.UpdateEvento(eventoUpdate, id);
             return Ok(eventoUpdate);
         }
 
+        [Authorize(Roles = "Administrador, Organizador")]
         [HttpPost]
         public IActionResult AltaEvento([FromBody] Evento evento)
         {

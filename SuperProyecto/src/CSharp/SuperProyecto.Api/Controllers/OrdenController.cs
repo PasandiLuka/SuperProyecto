@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SuperProyecto.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SuperProyecto.Api.Controllers;
 
@@ -20,6 +21,7 @@ public class OrdenController : ControllerBase
         _repoOrden = repoOrden;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetOrdenes()
     {
@@ -27,6 +29,7 @@ public class OrdenController : ControllerBase
         return ordenes.Any() ? Ok(ordenes) : NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult DetalleOrden(int id)
     {
@@ -34,6 +37,7 @@ public class OrdenController : ControllerBase
         return orden is not null ? Ok(orden) : NotFound();
     }
 
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPut("{id}")]
     public IActionResult UpdateOrden([FromBody] OrdenDto ordenDto, int id)
     {
@@ -50,7 +54,7 @@ public class OrdenController : ControllerBase
         _repoOrden.UpdateOrden(ordenUpdate, id);
         return Ok(ordenUpdate);
     }
-
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPost]
     public IActionResult AltaOrden([FromBody] OrdenDto ordenDto)
     {

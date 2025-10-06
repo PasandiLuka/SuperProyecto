@@ -1,6 +1,6 @@
 using System.Data;
 using MySqlConnector;
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 
 namespace SuperProyecto.Dapper;
 

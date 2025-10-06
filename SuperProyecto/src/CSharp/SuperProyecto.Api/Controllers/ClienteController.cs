@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SuperProyecto.Core;
 using SuperProyecto.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SuperProyecto.Api.Controllers;
 
@@ -15,6 +16,7 @@ public class ClienteController : ControllerBase
         _repoCliente = repoCliente;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetClientes()
     {
@@ -22,6 +24,7 @@ public class ClienteController : ControllerBase
         return clientes.Any() ? Ok(clientes) : NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult DetalleCliente(int id)
     {
@@ -29,25 +32,26 @@ public class ClienteController : ControllerBase
         return cliente is not null ? Ok(cliente) : NotFound();
     }
 
+    [Authorize(Roles = "Administrador, Cliente")]
     [HttpPut("{id}")]
-    public IActionResult UpdateCliente(int id, [FromBody] ClienteDTO clienteDto)
+    public IActionResult UpdateCliente(int id, [FromBody] ClienteDto clienteDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var cliente = _repoCliente.DetalleCliente((int)id);
-        if (cliente is null)
-            return NotFound();
+        if (cliente is null) return NotFound();
         var clienteUpdate = new Cliente
         {
             DNI = id,
+            idUsuario = cliente.idUsuario,
             nombre = clienteDto.nombre,
             apellido = clienteDto.apellido,
-            email = clienteDto.email,
             telefono = clienteDto.telefono
         };
         _repoCliente.UpdateCliente(clienteUpdate, (int)id);
         return Ok(clienteUpdate);
     }
 
+    [Authorize(Roles = "Administrador, Cliente")]
     [HttpPost]
     public IActionResult AltaCliente([FromBody] Cliente clienteAlta)
     {
@@ -55,47 +59,4 @@ public class ClienteController : ControllerBase
         _repoCliente.AltaCliente(clienteAlta);
         return Created();
     }
-
-    /* #region EndPointsCliente
-
-app.MapGet("api/cliente", () =>
-{
-    var clientes = _repoCliente.GetClientes();
-    return clientes.Any() ? Results.Ok(clientes) : Results.NoContent();
-}
-);
-
-app.MapGet("api/cliente/{id:int}", (int? id) =>
-{
-    var cliente = _repoCliente.DetalleCliente((int)id);
-    return cliente is not null ? Results.Ok(cliente) : Results.NotFound();
-});
-
-app.MapPut("api/cliente/{id:int}", (int? id, Cliente clienteUpdate) =>
-{
-    var validator = new ClienteValidator();
-    var result = validator.Validate(clienteUpdate);
-    if(!result.IsValid)
-    {
-        var listaErrores = result.Errors
-            .GroupBy(a => a.PropertyName)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(e => e.ErrorMessage).ToArray()
-            );
-        
-        return Results.ValidationProblem(listaErrores);
-    }
-
-    var cliente = _repoCliente.DetalleCliente((int)id);
-    if(cliente is null)
-        return Results.NotFound();
-    
-    _repoCliente.UpdateCliente(clienteUpdate, (int)id);
-    return Results.Ok(clienteUpdate);
-});
-
-#endregion
- */
-
 }

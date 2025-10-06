@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;
@@ -21,7 +21,7 @@ public class RepoLocal : Repo, IRepoLocal
     public IEnumerable<Local> GetLocales() => _conexion.Query<Local>(_queryLocal);
 
     private static readonly string _queryAltaLocal
-        = @"INSERT INTO Local (nombre, capacidadMax) VALUES (@nombre, @direccion)";
+        = @"INSERT INTO Local (nombre, direccion) VALUES (@nombre, @direccion)";
     public void AltaLocal(Local local)
     {
         _conexion.Execute(

@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core;
 
 namespace SuperProyecto.Dapper;

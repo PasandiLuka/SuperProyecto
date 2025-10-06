@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SuperProyecto.Core.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SuperProyecto.Api.Controllers;
 
@@ -17,6 +18,7 @@ public class SectorController : ControllerBase
         _repoSector = RepoSector;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetSectores()
     {
@@ -24,6 +26,7 @@ public class SectorController : ControllerBase
         return sector.Any() ? Ok(sector) : NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult DetalleSector(int id)
     {
@@ -31,16 +34,24 @@ public class SectorController : ControllerBase
         return sector is not null ? Ok(sector) : NotFound();
     }
 
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPut("{id}")]
-    public IActionResult UpdateSector(int id, [FromBody] Sector sectorUpdate)
+    public IActionResult UpdateSector(int id, [FromBody] SectorDto sectorDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var sector = _repoSector.DetalleSector((int)id);
         if (sector is null) return NotFound();
+        var sectorUpdate = new Sector
+        {
+            idLocal = sectorDto.idLocal,
+            nombre = sectorDto.nombre,
+            capacidad = sectorDto.capacidad
+        };
         _repoSector.UpdateSector(sectorUpdate, (int)id);
         return Ok(sectorUpdate);
     }
 
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPost]
     public IActionResult AltaSector([FromBody] SectorDto sectorDto)
     {
@@ -55,13 +66,13 @@ public class SectorController : ControllerBase
         return Created();
     }
 
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpDelete("{id}")]
     public IActionResult DeleteSector(int id)
     {
         var sector = _repoSector.DetalleSector(id);
         if (sector is null)
             return NotFound();
-
         try
         {
             _repoSector.DeleteSector(id);

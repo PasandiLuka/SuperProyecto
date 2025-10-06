@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Api.Controllers;
 
@@ -16,6 +18,7 @@ public class LocalController : ControllerBase
         _repoLocal = repoLocal;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetLocales()
     {
@@ -23,6 +26,7 @@ public class LocalController : ControllerBase
         return locales.Any() ? Ok(locales) : NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult DetalleLocal(int id)
     {
@@ -30,15 +34,37 @@ public class LocalController : ControllerBase
         return local is not null ? Ok(local) : NotFound();
     }
 
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpPut("{id}")]
-    public IActionResult UpdateLocal(int id, [FromBody] Local localUpdate)
+    public IActionResult UpdateLocal(int id, [FromBody] LocalDto localDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var cliente = _repoLocal.DetalleLocal((int)id);
-        if(cliente is null) return NotFound();
+        var local = _repoLocal.DetalleLocal((int)id);
+        if(local is null) return NotFound();
+        var localUpdate = new Local
+        {
+            nombre = localDto.nombre,
+            direccion = localDto.direccion
+        };
         _repoLocal.UpdateLocal(localUpdate, (int)id);
         return Ok(localUpdate);
     }
+
+    [Authorize(Roles = "Administrador, Organizador")]
+    [HttpPost]
+    public IActionResult AltaLocal([FromBody] LocalDto localDto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var localAlta = new Local
+        {
+            nombre = localDto.nombre,
+            direccion = localDto.direccion
+        };
+        _repoLocal.AltaLocal(localAlta);
+        return Created();
+    }
+
+    [Authorize(Roles = "Administrador, Organizador")]
     [HttpDelete("{id}")]
     public IActionResult DeleteLocal(int id)
     {

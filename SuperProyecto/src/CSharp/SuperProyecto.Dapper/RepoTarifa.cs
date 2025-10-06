@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 
-using SuperProyecto.Core.Services.Persistencia;
+using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core;
 using System.Formats.Tar;
 
@@ -19,7 +19,12 @@ public class RepoTarifa : Repo, IRepoTarifa
         = @"SELECT * FROM Tarifa WHERE idTarifa= @idTarifa";
     public Tarifa? DetalleTarifa(int IdTarifa)
     {
-        return _conexion.QueryFirstOrDefault<Tarifa>(_queryDetalleTarifa, new { idTarifa = IdTarifa });
+        return _conexion.QueryFirstOrDefault<Tarifa>(
+            _queryDetalleTarifa,
+            new
+            {
+                idTarifa = IdTarifa
+            });
     }
 
     private static readonly string _queryAltaTarifa
