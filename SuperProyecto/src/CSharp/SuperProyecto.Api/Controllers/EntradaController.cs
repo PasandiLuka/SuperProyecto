@@ -6,7 +6,7 @@ using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Api.Controllers;
 
-[Authorize]
+
 [Route("[controller]")]
 public class EntradaController : ControllerBase
 {
@@ -20,6 +20,7 @@ public class EntradaController : ControllerBase
         _repoQr = repoQr;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetEntradas()
     {
@@ -27,6 +28,7 @@ public class EntradaController : ControllerBase
         return entradas.Any() ? Ok(entradas) : NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult DetalleEntrada(int id)
     {
@@ -34,6 +36,7 @@ public class EntradaController : ControllerBase
         return entrada is not null ? Ok(entrada) : NotFound();
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult AltaEntrada([FromBody] EntradaDto entradaDto)
     {
@@ -59,6 +62,7 @@ public class EntradaController : ControllerBase
         return Created();
     }
 
+    [Authorize]
     [HttpGet("{id}/qr")]
     public IActionResult GetQr(int id)
     {
