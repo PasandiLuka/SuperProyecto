@@ -14,7 +14,7 @@ public class TestAdoTarifa
         {
             var moq = new Mock<IRepoTarifa>();
 
-        Tarifa tarifa = new Tarifa { idTarifa = 1, idFuncion = 1, nombre = "Robertito", precio = 200, stock = 300 };
+        Tarifa tarifa = new Tarifa { idTarifa = 1, idSector = 1, precio = 200};
 
             moq.Setup(t => t.AltaTarifa(tarifa));
             moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
@@ -31,11 +31,11 @@ public class TestAdoTarifa
     {
         // Arrange
         var moq = new Mock<IRepoTarifa>();
-        int idFuncion = 1;
+        int idSector = 1;
         var tarifas = new List<Tarifa>
         {
-            new Tarifa { idTarifa = 1, idFuncion = idFuncion, nombre = "General", precio = 500, stock = 100 },
-            new Tarifa { idTarifa = 2, idFuncion = idFuncion, nombre = "VIP", precio = 1000, stock = 50 }
+            new Tarifa { idTarifa = 1, idSector = idSector, precio = 500},
+            new Tarifa { idTarifa = 2, idSector = idSector, precio = 1000 }
         };
 
         moq.Setup(r => r.GetTarifa()).Returns(tarifas);
@@ -43,7 +43,7 @@ public class TestAdoTarifa
         var resultado = moq.Object.GetTarifa();
 
         Assert.NotNull(resultado);
-        Assert.Equal(2,((List<Tarifa>)resultado).Count);
-        Assert.All(resultado, t => Assert.Equal(idFuncion, t.idFuncion));
+        Assert.Equal(2,((List<Sector>)resultado).Count);
+        Assert.All(resultado, t => Assert.Equal(idSector, t.idSector));
     }
 }

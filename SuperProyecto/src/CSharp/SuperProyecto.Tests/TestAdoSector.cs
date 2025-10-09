@@ -14,16 +14,16 @@ public class TestAdoSector
     [Fact]
     public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
         {
-        var moq = new Mock<IRepoTarifa>();
+        var moq = new Mock<IRepoSector>();
 
-        Tarifa tarifa = new Tarifa { idTarifa = 1, idFuncion = 1, nombre = "Robertito", precio = 200, stock = 300 };
+        Sector sector  = new Sector {  idSector = 1,idLocal =1, nombre="Casimiro" };
 
-        moq.Setup(t => t.AltaTarifa(tarifa));
-        moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
-        var resultado = moq.Object.DetalleTarifa(tarifa.idTarifa);
+        moq.Setup(t => t.AltaSector(sector));
+        moq.Setup(t => t.DetalleSector(sector.idSector)).Returns(sector);
+        var resultado = moq.Object.DetalleSector(sector.idSector);
 
         Assert.NotNull(resultado);
-        Assert.Equal(tarifa.idTarifa, resultado.idTarifa);
+        Assert.Equal(sector.idSector, resultado.idSector);
         }
 
 

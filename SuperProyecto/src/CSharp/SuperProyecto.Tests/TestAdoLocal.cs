@@ -1,41 +1,29 @@
 
-// using SuperProyecto.Core;
-// using SuperProyecto.Core.Services.Persistencia;
-// using SuperProyecto.Dapper;
-// using Moq;
-// using MySqlConnector;
+using SuperProyecto.Core;
+using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Dapper;
+using Moq;
+using MySqlConnector;
 
-// namespace SuperProyecto.Tests;
+namespace SuperProyecto.Tests;
 
-// public class TestAdoLocal : TestAdo
-// {
-//     private IRepoLocal _repoLocal;
+public class TestAdoLocal
+{
+    [Fact]
+    public void CuandoHaceUnInsertEnLocal_DebeAlmacenarDichaFilaEnLaTablaLocal()
+    {
+        var moq = new Mock<IRepoLocal>();
 
-//     public TestAdoLocal()
-//     {
-//         _repoLocal = new RepoLocal(_conexion);
-//     }
+        Local local = new Local { idLocal = 1, nombre = "Casimiro", direccion = "pipipi" };
 
-    // [Fact]
-    // public void CuandoHaceUnInsertEnLocal_DebeAlmacenarDichaFilaEnLaTablaLocal()
-    // {
-    //     var _local = new Local()
-    //     {
-    //         idLocal = 300,
-    //         direccion = "vale_por_una_direccion",
-    //         capacidadMax = 600
-    //     };
+        moq.Setup(t => t.AltaLocal(local));
+        moq.Setup(t => t.DetalleLocal(local.idLocal)).Returns(local);
+        var resultado = moq.Object.DetalleLocal(local.idLocal);
 
-    //     _repoLocal.AltaLocal(_local);
-
-    //     var _localDB = _repoLocal.DetalleLocal(300);
-
-    //     Assert.NotNull(_localDB);
-    //     Assert.Equal(_local.idLocal, _localDB.idLocal);
-    //     Assert.Equal(_local.direccion, _localDB.direccion);
-    //     Assert.Equal(_local.capacidadMax, _localDB.capacidadMax);
-    // }
-
+        Assert.NotNull(resultado);
+        Assert.Equal(local.idLocal, resultado.idLocal);
+    }
+}
     // [Fact]
     // public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
     // {
