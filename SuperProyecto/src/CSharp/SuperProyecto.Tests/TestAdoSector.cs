@@ -26,6 +26,25 @@ public class TestAdoSector
         Assert.Equal(sector.idSector, resultado.idSector);
         }
 
+    [Fact]
+    public void Cuando_se_agrega_una_nueva_Sector_se_crea_nuevos_valores_de_las_variables()
+    {
+        // Arrange
+        var moq = new Mock<IRepoSector>();
+        int idSector = 2;
+        int idLocal =2;
+        string nombre = "Sector Vip";
+        var sector = new Sector { idSector = idSector, idLocal = idLocal, nombre = nombre };
 
+        // Act
+        moq.Object.AltaSector(sector);
+
+        // Assert
+        moq.Verify(r => r.AltaSector(It.Is<Sector>(t =>
+            t.idSector == idSector &&
+            t.idLocal == idLocal &&
+            t.nombre == nombre
+        )), Times.Once);
+    }
 }
  

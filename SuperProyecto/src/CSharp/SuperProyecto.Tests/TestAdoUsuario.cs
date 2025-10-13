@@ -24,5 +24,26 @@ public class TestAdoUsuario
             Assert.NotNull(resultado);
             Assert.Equal(usuario.idUsuario, resultado.idUsuario);
         }
-            
+
+        
+    [Fact]
+    public void Cuando_se_agrega_una_nueva_usuario_se_crea_nuevos_valores_de_las_variables()
+    {
+        // Arrange
+        var moq = new Mock<IRepoUsuario>();
+        int idUsuario = 10;
+        string email = "Si@gmail.com";
+        string passwordHash = "contraseña";
+        var usuario = new Usuario { idUsuario = idUsuario, email = email, passwordHash = passwordHash };
+
+        // Act
+        moq.Object.AltaUsuario(usuario);
+
+        // Assert
+        moq.Verify(r => r.AltaUsuario(It.Is<Usuario>(t =>
+            t.idUsuario == idUsuario &&
+            t.email == email &&
+            t.passwordHash == passwordHash
+        )), Times.Once);
+    }
 }
