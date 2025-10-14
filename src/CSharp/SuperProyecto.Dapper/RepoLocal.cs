@@ -2,6 +2,7 @@ using Dapper;
 
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core.IServices;
 
 namespace SuperProyecto.Dapper;
 

@@ -11,7 +11,7 @@ public class RepoTarifa : Repo, IRepoTarifa
 
     private static readonly string _queryTarifa
         = "SELECT * FROM Tarifa";
-    public IEnumerable<Tarifa> GetTarifa() => _conexion.Query<Tarifa>(_queryTarifa);
+    public IEnumerable<Tarifa> GetTarifas() => _conexion.Query<Tarifa>(_queryTarifa);
     
     private static readonly string _queryDetalleTarifa
         = @"SELECT * FROM Tarifa WHERE idTarifa= @idTarifa";

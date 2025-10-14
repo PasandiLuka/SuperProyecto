@@ -4,7 +4,7 @@ namespace SuperProyecto.Core.Persistencia;
 
 public interface IRepoTarifa
 {
-    IEnumerable<Tarifa> GetTarifa();
+    IEnumerable<Tarifa> GetTarifas();
     Tarifa? DetalleTarifa(int idTarifa);
     void AltaTarifa(Tarifa tarifa);
     void UpdateTarifa(Tarifa tarifa, int id);

@@ -19,7 +19,7 @@ public class EntradaController : ControllerBase
         _qrService = qrService;
         _repoQr = repoQr;
     }
-
+    
     [Authorize]
     [HttpGet]
     public IActionResult GetEntradas()

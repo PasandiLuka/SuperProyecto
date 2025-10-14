@@ -1,16 +1,22 @@
-using System;
-using System.Reflection.Metadata;
+using SuperProyecto.Core.IServices;
+
 using QRCoder;
 using SkiaSharp;
 
 namespace SuperProyecto.Services.Service;
 
-public class QrService
+public class QrService : IQrService
 {
-    QRCodeGenerator qRCodeGenerator;
-    public QrService()
+    readonly IUrlConstructor _urlConstructor;
+
+    public QrService(IUrlConstructor urlConstructor)
     {
-        qRCodeGenerator = new QRCodeGenerator();
+        _urlConstructor = urlConstructor;
+    }
+    
+    public string GenerarQrUrl(int idEntrada)
+    {
+        return _urlConstructor.GenerarQrUrl(idEntrada);
     }
 
     public byte[] CrearQR(string url)
