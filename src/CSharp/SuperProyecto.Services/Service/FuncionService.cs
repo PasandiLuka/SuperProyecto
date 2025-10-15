@@ -1,6 +1,7 @@
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.IServices;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Services.Service;
 
@@ -17,7 +18,27 @@ public class FuncionService : IFuncionService
 
     public Funcion? DetalleFuncion(int id) => _repoFuncion.DetalleFuncion(id);
 
-    public void UpdateFuncion(Funcion funcion, int id) => _repoFuncion.UpdateFuncion(funcion, id);
+    public void UpdateFuncion(FuncionDto funcionDto, int id)
+    {
+        Funcion funcion = ConvertirDtoClase(funcionDto);
+        _repoFuncion.UpdateFuncion(funcion, id);  
+    } 
 
-    public void AltaFuncion(Funcion funcion) => _repoFuncion.AltaFuncion(funcion);
+    public void AltaFuncion(FuncionDto funcionDto)
+    {
+        Funcion funcion = ConvertirDtoClase(funcionDto);
+        _repoFuncion.AltaFuncion(funcion);
+    }
+
+    static Funcion ConvertirDtoClase(FuncionDto funcionDto)
+    {
+        return new Funcion
+        {
+            idEvento = funcionDto.idEvento,
+            idTarifa = funcionDto.idTarifa,
+            fechaHora = funcionDto.fechaHora,
+            stock = funcionDto.stock,
+            cancelada = false
+        };
+    }
 }

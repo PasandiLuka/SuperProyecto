@@ -1,6 +1,6 @@
 using SuperProyecto.Core.Enums;
 
-namespace SuperProyecto.Services.DTO;
+namespace SuperProyecto.Core.DTO;
 
 public class UsuarioDto
 {

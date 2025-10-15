@@ -1,6 +1,7 @@
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.IServices;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Services.Service;
 
@@ -16,9 +17,26 @@ public class SectorService : ISectorService
 
     public Sector? DetalleSector(int id) => _repoSector.DetalleSector(id);
 
-    public void AltaSector(Sector sector) => _repoSector.AltaSector(sector);
+    public void AltaSector(SectorDto sectorDto)
+    {
+        var sector = ConvertirDtoClase(sectorDto);
+        _repoSector.AltaSector(sector);
+    } 
 
-    public void UpdateSector(Sector sector, int id) => _repoSector.UpdateSector(sector, id);
-    
+    public void UpdateSector(SectorDto sectorDto, int id)
+    {
+        var sector = ConvertirDtoClase(sectorDto);
+        _repoSector.UpdateSector(sector, id);
+    }
+
     public void DeleteSector(int id) => _repoSector.DeleteSector(id);
+    
+    static Sector ConvertirDtoClase(SectorDto sectorDto)
+    {
+        return new Sector
+        {
+            idLocal = sectorDto.idLocal,
+            nombre = sectorDto.nombre
+        };
+    }
 }

@@ -1,11 +1,11 @@
 using FluentValidation;
 
-using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Services.Validators;
 
-public class ClienteValidator : AbstractValidator<Cliente>
+public class ClienteValidator : AbstractValidator<ClienteDto>
 {
     IRepoUsuario _repoUsuario;
     IRepoCliente _repoCliente;

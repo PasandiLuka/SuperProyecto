@@ -1,6 +1,5 @@
 using SuperProyecto.Core.Entidades;
-using SuperProyecto.Services.DTO;
-using SuperProyecto.Core.IServices;
+using SuperProyecto.Core.DTO;
 
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +9,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace SuperProyecto.Services.Service;
+
 public class TokenService
 {
     private readonly IConfiguration _config;
@@ -45,10 +45,8 @@ public class TokenService
     }
 
     // Genera un refresh token seguro
-    public string GenerarRefreshToken()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-    }
+    public string GenerarRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+    
 
     // Genera ambos tokens y devuelve DTO
     public TokenResponse GenerarTokens(Usuario usuario)

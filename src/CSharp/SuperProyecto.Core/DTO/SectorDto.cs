@@ -1,4 +1,4 @@
-namespace SuperProyecto.Services.DTO;
+namespace SuperProyecto.Core.DTO;
 
 public class SectorDto
 {
