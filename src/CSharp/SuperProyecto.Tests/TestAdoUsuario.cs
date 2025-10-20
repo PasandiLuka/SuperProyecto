@@ -1,9 +1,10 @@
 using Moq;
-using SuperProyecto.Core;
-using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Dapper;
+using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core.IServices;
+using SuperProyecto.Services.Service;
 using MySqlConnector;
 using SuperProyecto.Core;
+
 
 namespace SuperProyecto.Tests;
 

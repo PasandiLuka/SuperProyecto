@@ -17,7 +17,7 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
 
 //Servicios para implementar la autenticacion y autorizacion
 #region Auth
@@ -138,12 +138,13 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    /* app.MapOpenApi(); */
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -236,16 +237,19 @@ app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
         var funciones = service.GetFunciones();
         return Results.Ok(funciones);
     }).WithTags("Funcion").RequireAuthorization("Cliente", "Administrador");
+    
     app.MapGet("/api/Funcion/{id}", (int id, IFuncionService service) =>
     {
         var funcion = service.DetalleFuncion(id);
         return funcion is not null ? Results.Ok(funcion) : Results.NotFound();
     }).WithTags("Funcion").RequireAuthorization("Cliente", "Administrador");
+
     app.MapPut("/api/Funcion/{id}", (int id, FuncionDto funcionDto, IFuncionService service) =>
     {
         service.UpdateFuncion(funcionDto, id);
         return Results.Ok();
     }).WithTags("Funcion").RequireAuthorization("Organizador", "Administrador");
+        
     app.MapPost("/api/Funcion", (FuncionDto funcionDto, IFuncionService service) =>
     {
         service.AltaFuncion(funcionDto);
@@ -259,26 +263,30 @@ app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
         var locales = service.GetLocales();
         return Results.Ok(locales);
     }).WithTags("Local").RequireAuthorization("Cliente", "Administrador");
+
     app.MapGet("/api/Local/{id}", (int id, ILocalService service) =>
     {
         var local = service.DetalleLocal(id);
         return local is not null ? Results.Ok(local) : Results.NotFound();
     }).WithTags("Local").RequireAuthorization("Cliente", "Administrador");
-    app.MapPut("/api/Local/{id}", (int id, LocalDto localDto, ILocalService service) =>
-    {
-        service.UpdateLocal(localDto, id);
-        return Results.Ok();
-    }).WithTags("Local").RequireAuthorization("Organizador", "Administrador");
+        
+        app.MapPut("/api/Local/{id}", (int id, LocalDto localDto, ILocalService service) =>
+        {
+            service.UpdateLocal(localDto, id);
+            return Results.Ok();
+        }).WithTags("Local").RequireAuthorization("Organizador", "Administrador");
+
     app.MapPost("/api/Local", (LocalDto localDto, ILocalService service) =>
     {
         service.AltaLocal(localDto);
         return Results.Created();
     }).WithTags("Local").RequireAuthorization("Organizador", "Administrador");
-    app.MapDelete("/api/Local/{id}", (int id, ILocalService service) =>
-    {
-        service.DeleteLocal(id);
-        return Results.Ok();
-    }).WithTags("Local").RequireAuthorization("Administrador");
+        
+        app.MapDelete("/api/Local/{id}", (int id, ILocalService service) =>
+        {
+            service.DeleteLocal(id);
+            return Results.Ok();
+        }).WithTags("Local").RequireAuthorization("Administrador");
 #endregion
 
 #region Orden
@@ -287,20 +295,23 @@ app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
         var ordenes = service.GetOrdenes();
         return Results.Ok(ordenes);
     }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
-    app.MapGet("/api/Orden/{id}", (int id, IOrdenService service) =>
-    {
-        var orden = service.DetalleOrden(id);
-        return orden is not null ? Results.Ok(orden) : Results.NotFound();
-    }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
+        
+        app.MapGet("/api/Orden/{id}", (int id, IOrdenService service) =>
+        {
+            var orden = service.DetalleOrden(id);
+            return orden is not null ? Results.Ok(orden) : Results.NotFound();
+        }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
+
     app.MapPost("/api/Orden", (OrdenDto ordenDto, IOrdenService service) =>
     {
         service.AltaOrden(ordenDto);
         return Results.Created();
     }).WithTags("Orden").RequireAuthorization("Organizador", "Administrador");
-    app.MapPut("/api/Orden/{id}/pagar", (int id, IOrdenService service) =>
-    {
-        service.PagarOrden(id);
-        return Results.Ok();
+        
+        app.MapPut("/api/Orden/{id}/pagar", (int id, IOrdenService service) =>
+        {
+            service.PagarOrden(id);
+            return Results.Ok();
     }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
 #endregion
 
@@ -310,21 +321,25 @@ app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
         var sectores = service.GetSectores();
         return Results.Ok(sectores);
     }).WithTags("Sector").RequireAuthorization("Cliente", "Administrador");
+        
     app.MapGet("/api/Sector/{id}", (int id, ISectorService service) =>
     {
         var sector = service.DetalleSector(id);
         return sector is not null ? Results.Ok(sector) : Results.NotFound();
     }).WithTags("Sector").RequireAuthorization("Cliente", "Administrador");
+
     app.MapPut("/api/Sector/{id}", (int id, SectorDto sectorDto, ISectorService service) =>
     {
         service.UpdateSector(sectorDto, id);
         return Results.Ok();
     }).WithTags("Sector").RequireAuthorization("Organizador", "Administrador");
+        
     app.MapPost("/api/Sector", (SectorDto sectorDto, ISectorService service) =>
     {
         service.AltaSector(sectorDto);
         return Results.Created();
     }).WithTags("Sector").RequireAuthorization("Organizador", "Administrador");
+    
     app.MapDelete("/api/Sector/{id}", (int id, ISectorService service) =>
     {
         service.DeleteSector(id);
@@ -333,26 +348,29 @@ app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
 #endregion
 
 #region Tarifa
-        app.MapGet("/api/Tarifa", (ITarifaService service) =>
-        {
-            var tarifas = service.GetTarifas();
-            return Results.Ok(tarifas);
-        }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
-        app.MapGet("/api/Tarifa/{id}", (int id, ITarifaService service) =>
-        {
-            var tarifa = service.DetalleTarifa(id);
-            return tarifa is not null ? Results.Ok(tarifa) : Results.NotFound();
-        }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
-        app.MapPut("/api/Tarifa/{id}", (int id, TarifaDto tarifaDto, ITarifaService service) =>
-        {
-            service.UpdateTarifa(tarifaDto, id);
-            return Results.Ok();
-        }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
-        app.MapPost("/api/Tarifa", (TarifaDto tarifaDto, ITarifaService service) =>
-        {
-            service.AltaTarifa(tarifaDto);
-            return Results.Created();
-        }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
+    app.MapGet("/api/Tarifa", (ITarifaService service) =>
+    {
+        var tarifas = service.GetTarifas();
+        return Results.Ok(tarifas);
+    }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapGet("/api/Tarifa/{id}", (int id, ITarifaService service) =>
+    {
+        var tarifa = service.DetalleTarifa(id);
+        return tarifa is not null ? Results.Ok(tarifa) : Results.NotFound();
+    }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapPut("/api/Tarifa/{id}", (int id, TarifaDto tarifaDto, ITarifaService service) =>
+    {
+        service.UpdateTarifa(tarifaDto, id);
+        return Results.Ok();
+    }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
+            
+            app.MapPost("/api/Tarifa", (TarifaDto tarifaDto, ITarifaService service) =>
+            {
+                service.AltaTarifa(tarifaDto);
+                return Results.Created();
+            }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
 #endregion
 
 #endregion

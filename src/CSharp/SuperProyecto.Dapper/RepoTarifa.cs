@@ -13,6 +13,7 @@ public class RepoTarifa : Repo, IRepoTarifa
         = "SELECT * FROM Tarifa";
     public IEnumerable<Tarifa> GetTarifas() => _conexion.Query<Tarifa>(_queryTarifa);
     
+    
     private static readonly string _queryDetalleTarifa
         = @"SELECT * FROM Tarifa WHERE idTarifa= @idTarifa";
     public Tarifa? DetalleTarifa(int IdTarifa)

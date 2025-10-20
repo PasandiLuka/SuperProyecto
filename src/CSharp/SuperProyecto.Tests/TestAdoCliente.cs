@@ -1,31 +1,36 @@
-﻿using SuperProyecto.Core;
-using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Dapper;
+﻿using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core;
+using SuperProyecto.Core.IServices;
+using SuperProyecto.Services.Service;
 using Moq;
 using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-using System.Data;
-using System.Formats.Asn1;
+
+
 
 namespace SuperProyecto.Tests;
 
 public class TestAdoCliente : TestAdo
 {
+
     [Fact]
-    public void CuandoHaceUnInsertEnCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
+    public void Cuando_se_agrega_un_nuevo_Cliente_se_Debe_Insertar_En_la_BD()
     {
-        var moq = new Mock<IRepoCliente>();
-        List<Cliente> clientes = new List<Cliente>
+        var moq = new Mock<IClienteService>();
+
+
+
+    }
+    [Fact]
+    public void Lista_De_Clientes()
+    {
+        var moq = new Mock<IClienteService>();
+        List<Cliente> cliente = new List<Cliente>
         {
             new Cliente{DNI = 1, idUsuario = 1, nombre = "juan", apellido = "antonio", telefono = 1},
-            new Cliente{DNI = 1, idUsuario = 1, nombre = "fede", apellido = "asdas", telefono = 1}
+            new Cliente{DNI = 1, idUsuario = 1, nombre = "fede", apellido = "mesa", telefono = 1}
         };
 
-        moq.Setup(c => c.GetClientes()).Returns(clientes);
+        moq.Setup(c => c.GetClientes()).Returns(cliente);
         var resultado = moq.Object.GetClientes();
 
         Assert.NotEmpty(resultado);
@@ -33,54 +38,57 @@ public class TestAdoCliente : TestAdo
 
     }
 
-    /* [Fact]
-    public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
-    {
-        var _cliente = new Cliente()
-        {
-            DNI = 201,
-            nombre = "vale_por_un_nombre",
-            apellido = "vale_por_un_apellido",
-            telefono = 12345678
-        };
-
-        _repoCliente.AltaCliente(_cliente);
-
-        Assert.Throws<MySqlException>(() => _repoCliente.AltaCliente(_cliente));
-
-
-    }
 
     [Fact]
-    public void CuandoHagoUnUpdateEnLaTablaCliente_DebeHacerLasRespectivasModificaciones()
+    public void Mostrar_Detalle_Del_Cliente_Por_Id()
     {
-        var _cliente = new Cliente()
+        var moq = new Mock<IClienteService>();
+        var id = 1;
+        var cliente = new List<Cliente>
         {
-            DNI = 202,
-            nombre = "vale_por_un_nombre",
-            apellido = "vale_por_un_apellido",
-            telefono = 12345678
+            new Cliente {id = 1,DNI = 1, idUsuario = 1, nombre = "Juan", apellido = "Luna", telefono = 11342},
+            new Cliente {id = 2, DNI = 2, idUsuario = 1, nombre = "Maria", apellido = "Escobar", telefono = 112832}
         };
 
-        _repoCliente.AltaCliente(_cliente);
+        moq.Setup(r => r.DetalleCliente(id)).Returns(cliente);
 
-        var _clienteUpdate = new Cliente()
-        {
-            DNI = 1,
-            nombre = "vale_por_un_nombreUpdate",
-            apellido = "vale_por_un_apellidoUpdate",
-            telefono = 123456789
-        };
+        var resultado = moq.Object.DetalleCliente(DNI);
 
-        _repoCliente.UpdateCliente(_clienteUpdate, _cliente.DNI);
+        Assert.NotNull(resultado); 
+        Assert.Equal(2, ((List<Cliente>)resultado).Count);
+    }
 
-        var _clienteUpdateBD = _repoCliente.DetalleCliente(_cliente.DNI);
 
-        Assert.NotNull(_clienteUpdateBD);
-        Assert.Equal(_cliente.DNI, _clienteUpdateBD.DNI);
-        Assert.Equal(_clienteUpdateBD.nombre, _clienteUpdate.nombre);
-        Assert.Equal(_clienteUpdateBD.apellido, _clienteUpdate.apellido);
-        Assert.Equal(_clienteUpdateBD.telefono, _clienteUpdate.telefono);
-    } */
+    [Fact]
+    public void Cuando_se_agrega_un_nuevo_cliente_se_crea_nuevos_valores()
+    {
+        var moq = new Mock<IRepoCliente>();
+        int DNI = 2;
+        int idUsuario = 2;
+        string nombre = "Carlos";
+        string apellido = "Perez";
+        int telefono = 123456;
+        var cliente = new Cliente { DNI = DNI, idUsuario = idUsuario, nombre = nombre, apellido = apellido, telefono = telefono };
+
+        moq.Object.AltaCliente(cliente);
+
+        moq.Verify(r => r.AltaCliente(It.Is<Cliente>(t =>
+            t.DNI == DNI &&
+            t.idUsuario == idUsuario &&
+            t.nombre == nombre &&
+            t.apellido == apellido &&
+            t.telefono == telefono
+        )), Times.Once);
+    }
+}   
+
+
     
-}
+
+
+
+    
+
+    
+
+  

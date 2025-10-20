@@ -1,18 +1,19 @@
-using SuperProyecto.Core;
-using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Dapper;
-using MySqlConnector;
 using Moq;
+using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core.IServices;
+using SuperProyecto.Services.Service;
+using MySqlConnector;
+using SuperProyecto.Core;
+
 
 namespace SuperProyecto.Tests;
 
 public class TestAdoSector 
 {
-    private IRepoSector _repoSector;
 
    
     [Fact]
-    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
+    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()//Crear sector
         {
         var moq = new Mock<IRepoSector>();
 

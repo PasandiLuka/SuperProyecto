@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SuperProyecto.Core\SuperProyecto.Core.csproj" />
-    <ProjectReference Include="..\SuperProyecto.Dapper\SuperProyecto.Dapper.csproj" />
+    <ProjectReference Include="..\SuperProyecto.Services\SuperProyecto.Services.csproj" />
   </ItemGroup>
 
 </Project>
