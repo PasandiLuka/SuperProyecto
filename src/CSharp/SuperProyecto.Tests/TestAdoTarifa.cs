@@ -18,7 +18,7 @@ public class TestAdoTarifa
 
 
         moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
-        moq.Setup (tarifa => t.GetTarifas(tarifa).Returns(tarifa));
+        moq.Setup (t => t.GetTarifas());
 
         var resultado = moq.Object.DetalleTarifa(tarifa.idTarifa);
 
@@ -42,12 +42,12 @@ public class TestAdoTarifa
             new Tarifa { idTarifa = 2, idSector = 2, precio = 1000 }
         };
 
-        moq.Setup(r => r.DetalleTarifa(idTarifa)).Returns(tarifas);
+        moq.Setup(r => r.DetalleTarifa(1));
 
-        var resultado = moq.Object.DetalleTarifa();
+        var resultado = moq.Object.DetalleTarifa(1);
 
         Assert.NotNull(resultado);
-        Assert.Equal(2,((List<Tarifa>)resultado).Count);
+        Assert.Equal(2,tarifas.Count);
     }
 
     [Fact]
@@ -58,13 +58,13 @@ public class TestAdoTarifa
         int idtarifa = 10;
         int idsector = 2;
         int precioo = 1500;
-        var tarifa = new Tarifa { idTarifa = idtarifa, idSector = idsector, precio = precioo };
+        var tarifa = new Core.DTO.TarifaDto { idTarifa = idtarifa, idSector = idsector, precio = precioo };
 
         // Act
         moq.Object.AltaTarifa(tarifa);
 
         // Assert
-        moq.Verify(r => r.AltaTarifa(It.Is<Tarifa>(t =>
+        moq.Verify(r => r.AltaTarifa(It.Is<Core.DTO.TarifaDto>(t =>
             t.idTarifa == idtarifa &&
             t.idSector == idsector &&
             t.precio == precioo

@@ -11,18 +11,18 @@ namespace SuperProyecto.Tests;
 public class TestAdoEvento
 {
     [Fact]
-    public void CuandoHaceUnInsertEnEvento_DebeAlmacenarDichaFilaEnLaTablaEvento()//Crear evento
+    public void d()//Crear evento
         {
             var moq = new Mock<IEventoService>();
             Evento evento = new Evento { idEvento = 1, nombre = "Sofi", descripcion = "chiquita",fechaPublicacion= DateTime.Now,publicado=true,cancelado=false };
 
-            moq.Setup(t => t.AltaEvento(tarifa));
-            moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
-            var resultado = moq.Object.DetalleTarifa(tarifa.idTarifa);
+            moq.Setup(t => t.DetalleEvento(evento.idEvento)).Returns(evento);
+            // GetEventos debe devolver una colección
+            moq.Setup(t => t.GetEventos()).Returns(new List<Evento> { evento });
+            var resultado = moq.Object.DetalleEvento(evento.idEvento);
 
             Assert.NotNull(resultado);
-            Assert.Equal(tarifa.idTarifa, resultado.idTarifa);
-            
+            Assert.Equal(evento.idEvento, resultado.idEvento);
         }
 
 

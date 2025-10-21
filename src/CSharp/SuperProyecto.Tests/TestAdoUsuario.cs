@@ -14,7 +14,7 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
         {
-            var moq = new Mock<IRepoUsuario>();
+            var moq = new Mock<IUsuario>();
 
         Usuario usuario = new Usuario { idUsuario = 100, email="si@gmail.com", passwordHash="siotravez" };
 

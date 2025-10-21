@@ -15,7 +15,7 @@ public class TestAdoSector
     [Fact]
     public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()//Crear sector
         {
-        var moq = new Mock<IRepoSector>();
+        var moq = new Mock<ISectorservice>();
 
         Sector sector  = new Sector {  idSector = 1,idLocal =1, nombre="Casimiro" };
 
