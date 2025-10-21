@@ -1,92 +1,52 @@
-using Moq;
 using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core;
 using SuperProyecto.Core.IServices;
 using SuperProyecto.Services.Service;
+using Moq;
 using MySqlConnector;
-using SuperProyecto.Core;
-
-
-namespace SuperProyecto.Tests;
 
 public class TestAdoLocal
 {
+
+
+    //Crea un local
+
+    //Lista de locales
     [Fact]
-    public void CuandoHaceUnInsertEnLocal_DebeAlmacenarDichaFilaEnLaTablaLocal()
+    public void Retornar_Lista_De_Local()
     {
-        var moq = new Mock<IRepoLocal>();
+        var moq = new Mock<ILocalService>();
+        List<Local> local = new List<Local>
+        {
+            new Local{idLocal = 1, nombre = "Teatro Colón", direccion ="Cerrito 628"},
+            new Local{idLocal = 2, nombre = "Luna Parck", direccion = "Bouchard 465"}
+        };
 
-        Local local = new Local { idLocal = 1, nombre = "Casimiro", direccion = "pipipi" };
+        moq.Setup(c => c.GetLocales()).Returns(local);
+        var resultado = moq.Object.GetLocales();
 
-        moq.Setup(t => t.AltaLocal(local));
-        moq.Setup(t => t.DetalleLocal(local.idLocal)).Returns(local);
-        var resultado = moq.Object.DetalleLocal(local.idLocal);
+        Assert.NotEmpty(resultado);
+        Assert.Equal(2, ((List<Local>)resultado).Count());
+    }
+
+    //Detalle de local
+    [Fact]
+    public void Retornar_Detalle_Del_Local_Por_Id()
+    {
+        var moq = new Mock<ILocalService>();
+        var id = 1;
+        var local = new Local { idLocal = 1, nombre = "Teatro Colón", direccion ="Cerrito 628"};
+
+        moq.Setup(c => c.DetalleLocal(id)).Returns(local);
+        var resultado = moq.Object.DetalleLocal(id);
 
         Assert.NotNull(resultado);
         Assert.Equal(local.idLocal, resultado.idLocal);
+        Assert.Equal(local.nombre, resultado.nombre);
+        Assert.Equal(local.direccion, resultado.direccion);
     }
-}
-    // [Fact]
-    // public void CuandoHagoUnInsertConUnaPKDuplicada_DebeTirarUnaExcepcion()
-    // {
-    //     var _local = new Local()
-    //     {
-    //         idLocal = 301,
-    //         direccion = "vale_por_una_direccion",
-    //         capacidadMax = 700
-    //     };
 
-    //     _repoLocal.AltaLocal(_local);
+    //Actualiza datos del local 
 
-    //     Assert.Throws<MySqlException>(() => _repoLocal.AltaLocal(_local));
-    // }
-
-    // [Fact]
-    // public void CuandoHagoUnUpdateEnLaTablaLocal_DebeHacerLasRespectivasModificaciones()
-    // {
-    //     var _local = new Local()
-    //     {
-    //         idLocal = 300,
-    //         direccion = "vale_por_una_direccion",
-    //         capacidadMax = 600
-    //     };
-
-    //     _repoLocal.AltaLocal(_local);
-
-    //     var _localUpdate = new Local()
-    //     {
-    //         idLocal = 1,
-    //         direccion = "vale_por_una_direccionUpdate",
-    //         capacidadMax = 200
-    //     };
-
-    //     _repoLocal.UpdateLocal(_localUpdate, _local.idLocal);
-
-    //     var _localDB = _repoLocal.DetalleLocal(_local.idLocal);
-
-    //     Assert.NotNull(_localDB);
-    //     Assert.Equal(_local.idLocal, _localDB.idLocal);
-    //     Assert.Equal(_localUpdate.direccion, _localDB.direccion);
-    //     Assert.Equal(_localUpdate.capacidadMax, _localDB.capacidadMax);
-    // }
-
-        // public void CuandoSolicitaSectoresPorLocal_DebeRetornarListaDeSectores()
-        // {
-        //     // Arrange
-        //     var moq = new Mock<IRepoSector>();
-        //     int localId = 1;
-        //     var sectores = new List<Sector>
-        //     {
-        //         new Sector { idSector = 1, nombre = "Sector A", idLocal = localId },
-        //         new Sector { idSector = 2, nombre = "Sector B", idLocal = localId }
-        //     };
-
-        //     moq.Setup(r => r.AltaTarifa(idTarifa)).Returns(sectores);
-
-        //     // Act
-        //     var resultado = moq.Object.GetSectoresPorLocal(localId);
-
-        //     // Assert
-        //     Assert.NotNull(resultado);
-        //     Assert.Equal(2, resultado.Count);
-        //     Assert.All(resultado, s => Assert.Equal(localId, s.idLocal));
-        // }
+    //Elimina un local (si no tiene funciones vigentes)
+}   

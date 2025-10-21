@@ -70,6 +70,5 @@ public class TestAdoTarifa
             t.precio == precioo
         )), Times.Once);
     }
-
 }
 

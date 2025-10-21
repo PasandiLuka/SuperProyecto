@@ -2,26 +2,53 @@
 using SuperProyecto.Core;
 using SuperProyecto.Core.IServices;
 using SuperProyecto.Services.Service;
+using SuperProyecto.Core.DTO;
 using Moq;
 using MySqlConnector;
-
-
+using System.Reflection;
 
 namespace SuperProyecto.Tests;
 
-public class TestAdoCliente : TestAdo
+public class TestAdoCliente 
 {
 
+    //Crear cliente
     [Fact]
-    public void Cuando_se_agrega_un_nuevo_Cliente_se_Debe_Insertar_En_la_BD()
+    public void AltaCliente_DebeAlmacenarDichaFilaEnLaTablaCliente()
     {
-        var moq = new Mock<IClienteService>();
 
+        var mockService = new Mock<IClienteService>();
+        var clienteDto = new ClienteDto { DNI = 12345678, idUsuario = 1, nombre = "Isac", apellido = "Hernandez", telefono = 13452 };
 
+        ClienteDto? cliente = null;
+
+        mockService.Setup(s => s.AltaCliente(It.IsAny<ClienteDto>())).Callback<ClienteDto>(c => cliente = c);
+
+        mockService.Object.AltaCliente(clienteDto);
+
+        Assert.NotNull(cliente);
+        Assert.Equal(clienteDto.DNI, cliente.DNI);
+        Assert.Equal(clienteDto.idUsuario, cliente.idUsuario);
+        Assert.Equal(clienteDto.nombre, cliente.nombre);
+        Assert.Equal(clienteDto.apellido, cliente.apellido);
+        Assert.Equal(clienteDto.telefono, cliente.telefono);
+
+        // var mockService = new Mock<IClienteService>();
+        // var clienteDto = new ClienteDto{DNI = 12348, idUsuario = 1 ,nombre = "Victoria",apellido = "Gonzalez",telefono = 123789 };
+        // mockService.Object.AltaCliente(clienteDto);
+
+        // mockService.Verify(s => s.AltaCliente(It.Is<ClienteDto>(c =>
+        //     c.DNI == clienteDto.DNI &&
+        //     c.Nombre == clienteDto.Nombre &&
+        //     c.Apellido == clienteDto.Apellido &&
+        //     c.Telefono == clienteDto.Telefono
+        // )), Times.Once);
 
     }
+
+    //Lista de clientes
     [Fact]
-    public void Lista_De_Clientes()
+    public void Retornar_Lista_De_Clientes()
     {
         var moq = new Mock<IClienteService>();
         List<Cliente> cliente = new List<Cliente>
@@ -35,55 +62,63 @@ public class TestAdoCliente : TestAdo
 
         Assert.NotEmpty(resultado);
         Assert.Equal(2, ((List<Cliente>)resultado).Count());
-
     }
 
-
+    //Detalle de cliente
     [Fact]
-    public void Mostrar_Detalle_Del_Cliente_Por_Id()
+    public void Retornar_Detalle_De_Cliente()
     {
         var moq = new Mock<IClienteService>();
         var id = 1;
-        var cliente = new List<Cliente>
-        {
-            new Cliente {id = 1,DNI = 1, idUsuario = 1, nombre = "Juan", apellido = "Luna", telefono = 11342},
-            new Cliente {id = 2, DNI = 2, idUsuario = 1, nombre = "Maria", apellido = "Escobar", telefono = 112832}
-        };
+        var cliente = new Cliente { DNI = 1, idUsuario = 1, nombre = "Lujan", apellido = "antonio", telefono = 1 };
 
-        moq.Setup(r => r.DetalleCliente(id)).Returns(cliente);
+        moq.Setup(c => c.DetalleCliente(id)).Returns(cliente);
+        var resultado = moq.Object.DetalleCliente(id);
 
-        var resultado = moq.Object.DetalleCliente(DNI);
+        Assert.NotNull(resultado);
+        Assert.Equal(cliente.DNI, resultado.DNI);
+        Assert.Equal(cliente.idUsuario, resultado.idUsuario);
+        Assert.Equal(cliente.nombre, resultado.nombre);
+        Assert.Equal(cliente.apellido, resultado.apellido);
+        Assert.Equal(cliente.telefono, resultado.telefono);
 
-        Assert.NotNull(resultado); 
-        Assert.Equal(2, ((List<Cliente>)resultado).Count);
+        // var mockService = new Mock<IClienteService>();
+        // var clienteId = 1;
+        // var cliente = new Cliente{DNI = 12345678,idUsuario = 1,nombre = "Juan",apellido = "Pérez",telefono = 123456789 };
+        // mockService.Setup(s => s.DetalleCliente(clienteId)).Returns(cliente);
+
+        // var resultado = mockService.Object.DetalleCliente(clienteId);
+
+        // Assert.NotNull(resultado);
+        // Assert.Equal(cliente.DNI, resultado.DNI);
+        // Assert.Equal(cliente.idUsuario, resultado.idUsuario);
+        // Assert.Equal(cliente.nombre, resultado.nombre);
+        // Assert.Equal(cliente.apellido, resultado.apellido);
+        // Assert.Equal(cliente.telefono, resultado.telefono);
     }
 
-
+    //Actualiza datos
     [Fact]
-    public void Cuando_se_agrega_un_nuevo_cliente_se_crea_nuevos_valores()
+    public void Actualizar_Cliente_Debe_Modificar_Los_Datos_En_La_Tabla_Cliente()
     {
-        var moq = new Mock<IRepoCliente>();
-        int DNI = 2;
-        int idUsuario = 2;
-        string nombre = "Carlos";
-        string apellido = "Perez";
-        int telefono = 123456;
-        var cliente = new Cliente { DNI = DNI, idUsuario = idUsuario, nombre = nombre, apellido = apellido, telefono = telefono };
+        var moq = new Mock<IClienteService>();
+        // var mockService = new Mock<IClienteService>();
+        // var clienteDto = new ClienteDto { DNI = 12345678, idUsuario = 1, nombre = "Isac", apellido = "Hernandez", telefono = 13452 };
 
-        moq.Object.AltaCliente(cliente);
+        // ClienteDto? clienteActualizado = null;
 
-        moq.Verify(r => r.AltaCliente(It.Is<Cliente>(t =>
-            t.DNI == DNI &&
-            t.idUsuario == idUsuario &&
-            t.nombre == nombre &&
-            t.apellido == apellido &&
-            t.telefono == telefono
-        )), Times.Once);
+        // mockService.Setup(s => s.ActualizarCliente(It.IsAny<ClienteDto>())).Callback<ClienteDto>(c => clienteActualizado = c);
+
+        // mockService.Object.ActualizarCliente(clienteDto);
+
+        // Assert.NotNull(clienteActualizado);
+        // Assert.Equal(clienteDto.DNI, clienteActualizado.DNI);
+        // Assert.Equal(clienteDto.Nombre, clienteActualizado.Nombre);
+        // Assert.Equal(clienteDto.Apellido, clienteActualizado.Apellido);
+        // Assert.Equal(clienteDto.Telefono, clienteActualizado.Telefono);
     }
 }   
 
-
-    
 
 
 

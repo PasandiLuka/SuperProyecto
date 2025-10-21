@@ -1,47 +1,51 @@
 // using SuperProyecto.Core.Entidades;
-// using SuperProyecto.Core.Persistencia;
-// using SuperProyecto.Dapper;
-// using MySqlConnector;
+// using SuperProyecto.Core;
+// using SuperProyecto.Core.IServices;
+// using SuperProyecto.Services.Service;
 // using Moq;
+// using MySqlConnector;
 
 // namespace SuperProyecto.Tests;
 
 // public class TestAdoEntrada
-// { 
+// {
+
+//     //Lista entradas
 //     [Fact]
-//     public void CuandoHaceUnInsertenEntrada_DebeAlmacenarDichaFilaEnLaTablaEntrada()
-//         {
-//             var moq = new Mock<IRepoEntrada>();
-
-//         Entrada entrada = new Entrada { idEntrada = 100 , idFuncion = 100, idOrden = 100 , idQr  = 100, usada = true};
-
-//             moq.Setup(t => t.AltaEntrada(entrada));
-//             moq.Setup(t => t.DetalleEntrada(entrada.idEntrada)).Returns(entrada);
-//             var resultado = moq.Object.DetalleEntrada(entrada.idEntrada);
-
-//             Assert.NotNull(resultado);
-//             Assert.Equal(entrada.idEntrada, resultado.idEntrada);
-//         }
-
-
-            
-//     [Fact]
-//     public void CuandoSolicitaTarifasPorFuncion_DebeRetornarListaDeTarifas()
+//     public void Retornar_Lista_De_Entradas()
 //     {
-//         var moq = new Mock<IRepoEntrada>();
-//         int idEntrada = 100;
-//         var entradas = new List<Entrada>
+//         var moq = new Mock<IEntradaService>();
+//         List<Entrada> entrada = new List<Entrada>
 //         {
-//             new Entrada { idEntrada = 100 , idFuncion = 100, idOrden = 100 , idQr  = 100, usada = true},
-//             new Entrada {idEntrada = 100 , idFuncion = 100, idOrden = 100 , idQr  = 100, usada = true }
+//             new Entrada{idEntrada = 1, idOrden = 1, idQR = 12345,usada = true},
+//             new Entrada{idEntrada = 2, idOrden = 2, idQR = 67890,usada = true}
 //         };
 
-//         moq.Setup(r => r.GetEntradas()).Returns(entradas);
-
+//         moq.Setup(c => c.GetEntradas()).Returns(entrada);
 //         var resultado = moq.Object.GetEntradas();
 
-//         Assert.NotNull(resultado);
-//         Assert.Equal(2,((List<Entrada>)resultado).Count);
-//         Assert.All(resultado, e => Assert.Equal(idEntrada, e.idEntrada));
+//         Assert.NotEmpty(resultado);
+//         Assert.Equal(2, ((List<Entrada>)resultado).Count());
 //     }
+
+//     //Detalle de una entrada
+//     [Fact]
+//     public void Retornar_Detalle_Del_Local_Por_Id()
+//     {
+//         var moq = new Mock<IEntradaService>();
+//         var id = 1;
+//         var entrada = new Entrada { idEntrada = 1, idOrden = 1, idQR = 12345,usada = true};
+
+//         moq.Setup(c => c.DetalleEntrada(id)).Returns(entrada);
+//         var resultado = moq.Object.DetalleEntrada(id);
+
+//         Assert.NotNull(resultado);
+//         Assert.Equal(entrada.idEntrada, resultado.idLocal);
+//         Assert.Equal(entrada.idOrden, resultado.idOrden);
+//         Assert.Equal(entrada.idQR, resultado.idQR);
+//         Assert.Equal(entrada.usada, resultado.usada);
+//     }
+    
+//     //Anula la entrada
+    
 // }
