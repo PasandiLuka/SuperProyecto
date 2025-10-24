@@ -16,10 +16,11 @@ public class TestAdoSector
         {
         var moq = new Mock<ISectorService>();
 
-        Sector sector  = new Sector {  idSector = 1,idLocal =1, nombre="Casimiro" };
+        var sector  = new Sector {  idSector = 1,idLocal =1, nombre="Casimiro" };
 
-        moq.Setup(t => t.AltaSector(SectorDto));
         moq.Setup(t => t.DetalleSector(sector.idSector)).Returns(sector);
+        moq.Setup (t => t.GetSectores());
+
         var resultado = moq.Object.DetalleSector(sector.idSector);
 
         Assert.NotNull(resultado);
@@ -27,24 +28,23 @@ public class TestAdoSector
         }
 
     [Fact]
-    public void Cuando_se_agrega_una_nueva_Sector_se_crea_nuevos_valores_de_las_variables()
+    public void Cuando_se_agrega_una_nueva_Sector_se_crea_nuevos_valores_de_las_variables()//muestra la lista de sectores
     {
         
-        var moq = new Mock<IsectorService>();
-        int idSector = 2;
-        int idLocal =2;
-        string nombre = "Sector Vip";
-        var sector = new Sector { idSector = idSector, idLocal = idLocal, nombre = nombre };
 
-       
-        moq.Object.AltaSector(sector);
+        var moq = new Mock<ITarifaService>();
+        var tarifas = new List<Tarifa>
+        {
+            new Tarifa { idTarifa = 1, idSector = 1, precio = 500},
+            new Tarifa { idTarifa = 2, idSector = 2, precio = 1000 }
+        };
 
-       
-        moq.Verify(r => r.AltaSector(It.Is<Core.DTO.SectorDto>(t =>
-            t.idSector == idSector &&
-            t.idLocal == idLocal &&
-            t.nombre == nombre
-        )), Times.Once);
+        moq.Setup(r => r.DetalleTarifa(1));
+
+        var resultado = moq.Object.DetalleTarifa(1);
+
+        Assert.NotNull(resultado);
+        Assert.Equal(2,tarifas.Count);
     }
 }
  

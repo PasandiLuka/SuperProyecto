@@ -4,6 +4,7 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Services.Service;
 using MySqlConnector;
 using SuperProyecto.Core;
+using SuperProyecto.Core.Persistencia;
 
 
 namespace SuperProyecto.Tests;
@@ -14,7 +15,7 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
         {
-            var moq = new Mock<IUsuario>();
+            var moq = new Mock<IUsuarioService>();
 
         Usuario usuario = new Usuario { idUsuario = 100, email="si@gmail.com", passwordHash="siotravez" };
 
@@ -31,7 +32,7 @@ public class TestAdoUsuario
     public void Cuando_se_agrega_una_nueva_usuario_se_crea_nuevos_valores_de_las_variables()
     {
         // Arrange
-        var moq = new Mock<IRepoUsuario>();
+        var moq = new Mock<IUsuarioService>();
         int idUsuario = 10;
         string email = "Si@gmail.com";
         string passwordHash = "contraseña";

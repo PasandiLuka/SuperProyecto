@@ -10,8 +10,9 @@ namespace SuperProyecto.Tests;
 public class TestAdoTarifa
 {
 
+    //Crea tarifa
     [Fact]
-    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()//Crea tarifa
+    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
     {
         var moq = new Mock<ITarifaService>();
         var tarifa = new Tarifa { idTarifa = 1, idSector = 1, precio = 200 };
@@ -29,12 +30,11 @@ public class TestAdoTarifa
     }
 
 
-
-
+//Lista de tarifas
     [Fact]
     public void CuandoSolicitaTarifasPorFuncion_DebeRetornarListaDeTarifas()//Listar tarifas
     {
-        // Arrange
+
         var moq = new Mock<ITarifaService>();
         var tarifas = new List<Tarifa>
         {

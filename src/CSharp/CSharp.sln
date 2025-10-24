@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperProyecto.Dapper", "Sup
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperProyecto.Services", "SuperProyecto.Services\SuperProyecto.Services.csproj", "{EA946828-D419-44C0-89FB-F8B3014A3BE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperProyecto.Tests", "SuperProyecto.Tests\SuperProyecto.Tests.csproj", "{24E34EFB-1751-4791-BC9D-A5DDE2B7F961}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{EA946828-D419-44C0-89FB-F8B3014A3BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA946828-D419-44C0-89FB-F8B3014A3BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA946828-D419-44C0-89FB-F8B3014A3BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24E34EFB-1751-4791-BC9D-A5DDE2B7F961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24E34EFB-1751-4791-BC9D-A5DDE2B7F961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24E34EFB-1751-4791-BC9D-A5DDE2B7F961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24E34EFB-1751-4791-BC9D-A5DDE2B7F961}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
