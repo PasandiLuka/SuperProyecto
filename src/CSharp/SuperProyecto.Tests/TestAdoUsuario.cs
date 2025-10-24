@@ -5,6 +5,7 @@ using SuperProyecto.Services.Service;
 using MySqlConnector;
 using SuperProyecto.Core;
 using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.DTO;
 
 
 namespace SuperProyecto.Tests;
@@ -42,10 +43,9 @@ public class TestAdoUsuario
         moq.Object.AltaUsuario(usuario);
 
         // Assert
-        moq.Verify(r => r.AltaUsuario(It.Is<Usuario>(t =>
-            t.idUsuario == idUsuario &&
+        moq.Verify(r => r.AltaUsuario(It.Is<UsuarioDto>(t =>
             t.email == email &&
-            t.passwordHash == passwordHash
+            t.password == passwordHash
         )), Times.Once);
     }
 }
