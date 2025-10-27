@@ -5,8 +5,8 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IOrdenService
 {
-    IEnumerable<Orden> GetOrdenes();
-    Orden? DetalleOrden(int id);
-    void AltaOrden(OrdenDto orden);
-    void PagarOrden(int id);   
+    Result<IEnumerable<Orden>> GetOrdenes();
+    Result<Orden?> DetalleOrden(int id);
+    Result<OrdenDto> AltaOrden(OrdenDto orden);
+    Result<Orden> PagarOrden(int id);   
 }

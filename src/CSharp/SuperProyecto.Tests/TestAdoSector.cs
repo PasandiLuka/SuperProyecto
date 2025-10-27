@@ -1,48 +1,136 @@
-using SuperProyecto.Core.Entidades;
-using SuperProyecto.Core;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Services.Service;
-using SuperProyecto.Core.DTO;
-using Moq;
-using MySqlConnector;
-using System.Reflection;
+using SuperProyecto.Core.Enums;
+using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Services.Validators;
 
 namespace SuperProyecto.Tests;
 
-public class TestAdoSector 
-{   
+public class TestAdoSector
+{
     [Fact]
-    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()//Crear sector
-        {
-        var moq = new Mock<ISectorService>();
-
-        var sector  = new Sector {  idSector = 1,idLocal =1, nombre="Casimiro" };
-
-        moq.Setup(t => t.DetalleSector(sector.idSector)).Returns(sector);
-        moq.Setup (t => t.GetSectores());
-
-        var resultado = moq.Object.DetalleSector(sector.idSector);
-
-        Assert.NotNull(resultado);
-        Assert.Equal(sector.idSector, resultado.idSector);
-        }
-
-    [Fact]
-    public void Cuando_se_agrega_una_nueva_Sector_se_crea_nuevos_valores_de_las_variables()//muestra la lista de sectores
+    public void CuandoObtengoLosSectores_DebeRetornarUnaListaDeSectores_ConResultadoOk()
     {
-        var moq = new Mock<ITarifaService>();
-        var tarifas = new List<Tarifa>
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        var sectores = new List<Sector>
         {
-            new Tarifa { idTarifa = 1, idSector = 1, precio = 500},
-            new Tarifa { idTarifa = 2, idSector = 2, precio = 1000 }
+            new Sector { idSector = 1, idLocal = 1, nombre = "Sector A" },
+            new Sector { idSector = 2, idLocal = 2, nombre = "Sector B" }
         };
 
-        moq.Setup(r => r.DetalleTarifa(1));
+        mockService.Setup(s => s.GetSectores())
+            .Returns(Result<IEnumerable<Sector>>.Ok(sectores));
 
-        var resultado = moq.Object.DetalleTarifa(1);
+        // Act
+        var resultado = mockService.Object.GetSectores();
 
-        Assert.NotNull(resultado);
-        Assert.Equal(2,tarifas.Count);
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(sectores.Count, resultado.Data.Count());
+    }
+
+    [Fact]
+    public void CuandoBuscoDetalleDeUnSectorValido_DebeRetornarSector_ConResultadoOk()
+    {
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        var sector = new Sector { idSector = 1, idLocal = 1, nombre = "Sector A" };
+
+        mockService.Setup(s => s.DetalleSector(sector.idSector))
+            .Returns(Result<Sector>.Ok(sector));
+
+        // Act
+        var resultado = mockService.Object.DetalleSector(sector.idSector);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(sector.idSector, resultado.Data.idSector);
+        Assert.Equal(sector.nombre, resultado.Data.nombre);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeSectorValido_DebeRetornarCreated()
+    {
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        var sectorDto = new SectorDto { idLocal = 1, nombre = "Sector C" };
+
+        mockService.Setup(s => s.AltaSector(sectorDto))
+            .Returns(Result<SectorDto>.Created(new SectorDto
+            {
+                idLocal = sectorDto.idLocal,
+                nombre = sectorDto.nombre
+            }));
+
+        // Act
+        var resultado = mockService.Object.AltaSector(sectorDto);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(sectorDto.idLocal, resultado.Data.idLocal);
+        Assert.Equal(sectorDto.nombre, resultado.Data.nombre);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnSectorValido_DebeRetornarOk()
+    {
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        var sectorDto = new SectorDto { idLocal = 2, nombre = "Sector D" };
+        int idSector = 1;
+
+        mockService.Setup(s => s.UpdateSector(sectorDto, idSector))
+            .Returns(Result<SectorDto>.Ok(new SectorDto
+            {
+                idLocal = sectorDto.idLocal,
+                nombre = sectorDto.nombre
+            }));
+
+        // Act
+        var resultado = mockService.Object.UpdateSector(sectorDto, idSector);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(sectorDto.nombre, resultado.Data.nombre);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeSectorInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoLocal = new Mock<IRepoLocal>();
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns((Local?)null);
+
+        var sectorDto = new SectorDto { idLocal = 0, nombre = "AB" };
+        var validator = new SectorValidator(mockRepoLocal.Object);
+
+        // Act
+        var validationResult = validator.Validate(sectorDto);
+
+        Result<Sector> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+
+            resultado = Result<Sector>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Sector>.Created(new Sector
+            {
+                idLocal = sectorDto.idLocal,
+                nombre = sectorDto.nombre
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("idLocal"));
+        Assert.True(resultado.Errors.ContainsKey("nombre"));
     }
 }
- 

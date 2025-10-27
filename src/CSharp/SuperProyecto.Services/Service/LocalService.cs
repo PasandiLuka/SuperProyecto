@@ -13,23 +13,30 @@ public class LocalService : ILocalService
         _repoLocal = repoLocal;
     }
 
-    public IEnumerable<Local> GetLocales() => _repoLocal.GetLocales();
+    public Result<IEnumerable<Local>> GetLocales() => Result<IEnumerable<Local>>.Ok(_repoLocal.GetLocales());
 
-    public Local? DetalleLocal(int id) => _repoLocal.DetalleLocal(id);
+    public Result<Local?> DetalleLocal(int id) => Result<Local?>.Ok(_repoLocal.DetalleLocal(id));
 
-    public void AltaLocal(LocalDto localDto)
+    public Result<LocalDto> AltaLocal(LocalDto localDto)
     {
         Local local = ConvertirDtoClase(localDto);
-        _repoLocal.AltaLocal(local);    
+        _repoLocal.AltaLocal(local);
+        return Result<LocalDto>.Ok(localDto);
     }
 
-    public void UpdateLocal(LocalDto localDto, int id)
+    public Result<LocalDto> UpdateLocal(LocalDto localDto, int id)
     {
+        if(_repoLocal.DetalleLocal(id) is null) return Result<LocalDto>.NotFound("El local a modificar no fue encontrado.");
         Local local = ConvertirDtoClase(localDto);
         _repoLocal.UpdateLocal(local, id);
+        return Result<LocalDto>.Ok(localDto);
     }
 
-    public void DeleteLocal(int id) => _repoLocal.DeleteLocal(id);
+    public Result<Local> DeleteLocal(int id)
+    {
+        _repoLocal.DeleteLocal(id);
+        return Result<Local>.Ok();
+    }
 
     static Local ConvertirDtoClase(LocalDto funcionDto)
     {

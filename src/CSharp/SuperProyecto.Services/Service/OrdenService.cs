@@ -14,17 +14,28 @@ public class OrdenService : IOrdenService
         _repoOrden = repoOrden;
     }
 
-    public IEnumerable<Orden> GetOrdenes() => _repoOrden.GetOrdenes();
+    public Result<IEnumerable<Orden>> GetOrdenes() => Result<IEnumerable<Orden>>.Ok(_repoOrden.GetOrdenes());
 
-    public Orden? DetalleOrden(int id) => _repoOrden.DetalleOrden(id);
+    public Result<Orden?> DetalleOrden(int id)
+    {
+        if (_repoOrden.DetalleOrden(id) is null) return Result<Orden?>.NotFound("La orden solicitada no fue encontrada.");
+        return Result<Orden?>.Ok(_repoOrden.DetalleOrden(id));
+    }
+     
 
-    public void AltaOrden(OrdenDto ordenDto)
+    public Result<OrdenDto> AltaOrden(OrdenDto ordenDto)
     {
         Orden orden = ConvertirDtoClase(ordenDto);
         _repoOrden.AltaOrden(orden);
+        return Result<OrdenDto>.Ok(ordenDto);
     }
 
-    public void PagarOrden(int id) => _repoOrden.PagarOrden(id);
+    public Result<Orden> PagarOrden(int id)
+    {
+        if(_repoOrden.DetalleOrden(id) is null) return Result<Orden>.NotFound("La orden a pagar no fue encontrada.");
+        _repoOrden.PagarOrden(id);
+        return Result<Orden>.Ok();
+    }
 
 
     static Orden ConvertirDtoClase(OrdenDto ordenDto)

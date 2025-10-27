@@ -13,23 +13,33 @@ public class SectorService : ISectorService
         _repoSector = repoSector;
     }
 
-    public IEnumerable<Sector> GetSectores() => _repoSector.GetSectores();
+    public Result<IEnumerable<Sector>> GetSectores() => Result<IEnumerable<Sector>>.Ok(_repoSector.GetSectores());
 
-    public Sector? DetalleSector(int id) => _repoSector.DetalleSector(id);
+    public Result<Sector?> DetalleSector(int id)
+    {
+        if(_repoSector.DetalleSector(id) is null) return Result<Sector?>.NotFound("El sector solicitado no fue encontrado.");
+        return Result<Sector?>.Ok(_repoSector.DetalleSector(id));
+    }
 
-    public void AltaSector(SectorDto sectorDto)
+    public Result<SectorDto> AltaSector(SectorDto sectorDto)
     {
         var sector = ConvertirDtoClase(sectorDto);
         _repoSector.AltaSector(sector);
-    } 
+        return Result<SectorDto>.Ok(sectorDto);
+    }
 
-    public void UpdateSector(SectorDto sectorDto, int id)
+    public Result<SectorDto> UpdateSector(SectorDto sectorDto, int id)
     {
         var sector = ConvertirDtoClase(sectorDto);
         _repoSector.UpdateSector(sector, id);
+        return Result<SectorDto>.Ok(sectorDto);
     }
 
-    public void DeleteSector(int id) => _repoSector.DeleteSector(id);
+    public Result<SectorDto> DeleteSector(int id)
+    {
+        _repoSector.DeleteSector(id);
+        return Result<SectorDto>.Ok();
+    }
     
     static Sector ConvertirDtoClase(SectorDto sectorDto)
     {

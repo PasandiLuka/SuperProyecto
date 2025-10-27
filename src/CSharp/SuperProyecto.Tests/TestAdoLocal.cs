@@ -1,52 +1,183 @@
-using SuperProyecto.Core.Entidades;
-using SuperProyecto.Core;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Services.Service;
-using Moq;
-using MySqlConnector;
+using SuperProyecto.Core.Enums;
+using SuperProyecto.Services.Validators;
+
+namespace SuperProyecto.Tests;
 
 public class TestAdoLocal
 {
-
-
-    //Crea un local
-
-    //Lista de locales
     [Fact]
-    public void Retornar_Lista_De_Local()
+    public void CuandoObtengoLosLocales_DebeRetornarUnaListaDeLocales_ConResultadoOk()
     {
-        var moq = new Mock<ILocalService>();
-        List<Local> local = new List<Local>
+        // Arrange
+        var mockService = new Mock<ILocalService>();
+        var locales = new List<Local>
         {
-            new Local{idLocal = 1, nombre = "Teatro Colón", direccion ="Cerrito 628"},
-            new Local{idLocal = 2, nombre = "Luna Parck", direccion = "Bouchard 465"}
+            new Local { idLocal = 1, nombre = "Teatro Principal", direccion = "Calle Falsa 123" },
+            new Local { idLocal = 2, nombre = "Sala Alternativa", direccion = "Avenida Siempre Viva 456" }
         };
 
-        moq.Setup(c => c.GetLocales()).Returns(local);
-        var resultado = moq.Object.GetLocales();
+        mockService.Setup(s => s.GetLocales()).Returns(Result<IEnumerable<Local>>.Ok(locales));
 
-        Assert.NotEmpty(resultado);
-        Assert.Equal(2, ((List<Local>)resultado).Count());
+        // Act
+        var resultado = mockService.Object.GetLocales();
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(locales.Count, resultado.Data.Count());
     }
 
-    //Detalle de local
     [Fact]
-    public void Retornar_Detalle_Del_Local_Por_Id()
+    public void CuandoBuscoDetalleDeUnLocalValido_DebeRetornarLocal_ConResultadoOk()
     {
-        var moq = new Mock<ILocalService>();
-        var id = 1;
-        var local = new Local { idLocal = 1, nombre = "Teatro Colón", direccion ="Cerrito 628"};
+        // Arrange
+        var mockService = new Mock<ILocalService>();
+        var local = new Local { idLocal = 1, nombre = "Teatro Principal", direccion = "Calle Falsa 123" };
 
-        moq.Setup(c => c.DetalleLocal(id)).Returns(local);
-        var resultado = moq.Object.DetalleLocal(id);
+        mockService.Setup(s => s.DetalleLocal(local.idLocal)).Returns(Result<Local>.Ok(local));
 
-        Assert.NotNull(resultado);
-        Assert.Equal(local.idLocal, resultado.idLocal);
-        Assert.Equal(local.nombre, resultado.nombre);
-        Assert.Equal(local.direccion, resultado.direccion);
+        // Act
+        var resultado = mockService.Object.DetalleLocal(local.idLocal);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(local.idLocal, resultado.Data.idLocal);
+        Assert.Equal(local.nombre, resultado.Data.nombre);
     }
 
-    //Actualiza datos del local 
+    [Fact]
+    public void CuandoRealizoUnAltaDeLocalValido_DebeRetornarCreated()
+    {
+        // Arrange
+        var validator = new LocalValidator();
+        var local = new LocalDto { nombre = "Sala Nueva", direccion = "Calle 9 de Julio 100" };
 
-    //Elimina un local (si no tiene funciones vigentes)
-}   
+        // Act
+        var validationResult = validator.Validate(local);
+        Result<Local> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Local>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Local>.Created(new Local
+            {
+                idLocal = 3,
+                nombre = local.nombre,
+                direccion = local.direccion
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(local.nombre, resultado.Data.nombre);
+        Assert.Equal(local.direccion, resultado.Data.direccion);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeLocalInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var validator = new LocalValidator();
+        var local = new LocalDto { nombre = "Sa", direccion = "" };
+
+        // Act
+        var validationResult = validator.Validate(local);
+        Result<Local> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Local>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Local>.Created(new Local
+            {
+                idLocal = 1,
+                nombre = local.nombre,
+                direccion = local.direccion
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("nombre"));
+        Assert.True(resultado.Errors.ContainsKey("direccion"));
+    }
+
+    [Fact]
+    public void CuandoActualizoUnLocalValido_DebeRetornarOk()
+    {
+        // Arrange
+        var validator = new LocalValidator();
+        var local = new LocalDto { nombre = "Sala Modificada", direccion = "Nueva Dirección 200" };
+
+        // Act
+        var validationResult = validator.Validate(local);
+        Result<Local> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Local>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Local>.Ok(new Local
+            {
+                idLocal = 1,
+                nombre = local.nombre,
+                direccion = local.direccion
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(local.nombre, resultado.Data.nombre);
+        Assert.Equal(local.direccion, resultado.Data.direccion);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnLocalInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var validator = new LocalValidator();
+        var local = new LocalDto { nombre = "", direccion = "Di" };
+
+        // Act
+        var validationResult = validator.Validate(local);
+        Result<Local> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Local>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Local>.Ok(new Local
+            {
+                idLocal = 1,
+                nombre = local.nombre,
+                direccion = local.direccion
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("nombre"));
+        Assert.True(resultado.Errors.ContainsKey("direccion"));
+    }
+}

@@ -5,8 +5,8 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IClienteService
 {
-    IEnumerable<Cliente> GetClientes();
-    Cliente? DetalleCliente(int id);
-    void AltaCliente(ClienteDto cliente);
-    void UpdateCliente(ClienteDto cliente, int id);
+    Result<IEnumerable<Cliente>> GetClientes();
+    Result<Cliente> DetalleCliente(int id);
+    Result<Cliente> AltaCliente(ClienteDto cliente);
+    Result<Cliente> UpdateCliente(ClienteDto cliente, int id);
 }

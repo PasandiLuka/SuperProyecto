@@ -1,71 +1,198 @@
-using Moq;
-using SuperProyecto.Core.Entidades;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Services.Service;
-using MySqlConnector;
-using SuperProyecto.Core;
-
+using SuperProyecto.Core.Enums;
+using SuperProyecto.Services.Validators;
 
 namespace SuperProyecto.Tests;
 
 public class TestAdoEvento
 {
     [Fact]
-    public void d()//Crear evento
+    public void CuandoObtengoLosEventos_DebeRetornarUnaListaDeEventos_ConResultadoOk()
     {
-        var moq = new Mock<IEventoService>();
-        Evento evento = new Evento { idEvento = 1, nombre = "Sofi", descripcion = "chiquita", fechaPublicacion = DateTime.Now, publicado = true, cancelado = false };
-
-        moq.Setup(t => t.DetalleEvento(evento.idEvento)).Returns(evento);
-        // GetEventos debe devolver una colección
-        moq.Setup(t => t.GetEventos()).Returns(new List<Evento> { evento });
-        var resultado = moq.Object.DetalleEvento(evento.idEvento);
-
-        Assert.NotNull(resultado);
-        Assert.Equal(evento.idEvento, resultado.idEvento);
-    }
-
-
-
-    [Fact]
-    public void CuandoSolicitaEventosPorFuncion_DebeRetornarListaDeEvento()//muestra lista de eventos
-    {
-
-        var moq = new Mock<IEventoService>();
-        int idEvento = 1;
+        // Arrange
+        var mockService = new Mock<IEventoService>();
         var eventos = new List<Evento>
         {
-            new Evento { idEvento = 1, nombre = "Sofi", descripcion = "chiquita",fechaPublicacion= DateTime.Now,publicado=true,cancelado=false},
-            new Evento { idEvento = 2, nombre = "Luka", descripcion = "1000" ,fechaPublicacion=DateTime.Now,publicado=true,cancelado=false}
+            new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", fechaPublicacion = DateTime.Today, publicado = true, cancelado = false },
+            new Evento { idEvento = 2, nombre = "Teatro", descripcion = "Obra de teatro", fechaPublicacion = DateTime.Today, publicado = false, cancelado = false }
         };
 
-        moq.Setup(r => r.GetEventos()).Returns(eventos);
+        mockService.Setup(s => s.GetEventos()).Returns(Result<IEnumerable<Evento>>.Ok(eventos));
 
-        var resultado = moq.Object.GetEventos();
+        // Act
+        var resultado = mockService.Object.GetEventos();
 
-        Assert.NotNull(resultado);
-        Assert.Equal(2, ((List<Evento>)resultado).Count);
-        Assert.Contains(resultado, e => e.idEvento == idEvento);
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(eventos.Count, resultado.Data.Count());
     }
 
     [Fact]
-    public void Retornar_Detalle_De_Cliente()
+    public void CuandoBuscoDetalleDeUnEventoValido_DebeRetornarEvento_ConResultadoOk()
     {
-        var moq = new Mock<IEventoService>();
-        var id = 1;
-        var evento = new Evento {  nombre = "Lujan", descripcion = "antonio", publicado = true };
+        // Arrange
+        var mockService = new Mock<IEventoService>();
+        var evento = new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", fechaPublicacion = DateTime.Today, publicado = true, cancelado = false };
 
-        moq.Setup(c => c.DetalleEvento(id)).Returns(evento);
-        var resultado = moq.Object.DetalleEvento(id);
+        mockService.Setup(s => s.DetalleEvento(evento.idEvento)).Returns(Result<Evento>.Ok(evento));
 
-        Assert.NotNull(resultado);
-        Assert.Equal(evento.nombre, resultado.nombre);
-        Assert.Equal(evento.descripcion, resultado.descripcion);
-        Assert.Equal(evento.publicado, resultado.publicado);
+        // Act
+        var resultado = mockService.Object.DetalleEvento(evento.idEvento);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(evento.idEvento, resultado.Data.idEvento);
+        Assert.Equal(evento.nombre, resultado.Data.nombre);
     }
 
+    [Fact]
+    public void CuandoRealizoUnAltaDeEventoValido_DebeRetornarCreated()
+    {
+        // Arrange
+        var mockService = new Mock<IEventoService>();
+        var evento = new EventoDto { nombre = "Concierto", descripcion = "Música en vivo", publicado = false };
+        var validator = new EventoValidator();
 
+        // Act
+        var validationResult = validator.Validate(evento);
+        Result<Evento> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Evento>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Evento>.Created(new Evento
+            {
+                idEvento = 1,
+                nombre = evento.nombre,
+                descripcion = evento.descripcion,
+                publicado = evento.publicado,
+                cancelado = false,
+                fechaPublicacion = DateTime.Today
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(evento.nombre, resultado.Data.nombre);
+        Assert.Equal(evento.descripcion, resultado.Data.descripcion);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeEventoInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockService = new Mock<IEventoService>();
+        var evento = new EventoDto { nombre = "A", descripcion = "", publicado = false };
+        var validator = new EventoValidator();
+
+        // Act
+        var validationResult = validator.Validate(evento);
+        Result<Evento> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Evento>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Evento>.Created(new Evento
+            {
+                idEvento = 1,
+                nombre = evento.nombre,
+                descripcion = evento.descripcion,
+                publicado = evento.publicado,
+                cancelado = false,
+                fechaPublicacion = DateTime.Today
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("nombre"));
+        Assert.True(resultado.Errors.ContainsKey("descripcion"));
+    }
+
+    [Fact]
+    public void CuandoActualizoUnEventoValido_DebeRetornarOk()
+    {
+        // Arrange
+        var mockService = new Mock<IEventoService>();
+        var evento = new EventoDto { nombre = "Concierto", descripcion = "Música actualizada", publicado = true };
+        var validator = new EventoValidator();
+
+        // Act
+        var validationResult = validator.Validate(evento);
+        Result<Evento> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Evento>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Evento>.Ok(new Evento
+            {
+                idEvento = 1,
+                nombre = evento.nombre,
+                descripcion = evento.descripcion,
+                publicado = evento.publicado,
+                cancelado = false,
+                fechaPublicacion = DateTime.Today
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(evento.nombre, resultado.Data.nombre);
+        Assert.Equal(evento.descripcion, resultado.Data.descripcion);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnEventoInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockService = new Mock<IEventoService>();
+        var evento = new EventoDto { nombre = "", descripcion = "abc", publicado = true };
+        var validator = new EventoValidator();
+
+        // Act
+        var validationResult = validator.Validate(evento);
+        Result<Evento> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Evento>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Evento>.Ok(new Evento
+            {
+                idEvento = 1,
+                nombre = evento.nombre,
+                descripcion = evento.descripcion,
+                publicado = evento.publicado,
+                cancelado = false,
+                fechaPublicacion = DateTime.Today
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("nombre"));
+    }
 }
-
-
-

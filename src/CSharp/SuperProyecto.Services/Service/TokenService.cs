@@ -49,13 +49,13 @@ public class TokenService
     
 
     // Genera ambos tokens y devuelve DTO
-    public TokenResponse GenerarTokens(Usuario usuario)
+    public TokenResponseDto GenerarTokens(Usuario usuario)
     {
         var accessToken = GenerarToken(usuario);
         var refreshToken = GenerarRefreshToken();
         var expiracion = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_config["Jwt:ExpireMinutes"]));
 
-        return new TokenResponse
+        return new TokenResponseDto
         {
             accessToken = accessToken,
             refreshToken = refreshToken,

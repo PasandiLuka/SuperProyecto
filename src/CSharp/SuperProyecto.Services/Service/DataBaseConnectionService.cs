@@ -9,8 +9,6 @@ public class DataBaseConnectionService : IDataBaseConnectionService
 {
     public string GetConnectionString()
     {
-        
-
         // 1) Leer Json
         var configuration = LeerJson();
 

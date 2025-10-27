@@ -18,7 +18,7 @@ public class FuncionValidator : AbstractValidator<FuncionDto>
             .NotEmpty().WithMessage("El idEvento es obligatorio.")
             .GreaterThan(0).WithMessage("El idEvento debe ser mayor a 0.")
             .Must(idEvento => _repoEvento.DetalleEvento(idEvento) is not null).WithMessage("El evento referenciado no existe.")
-            .Must(idEvento => !(_repoEvento.DetalleEvento(idEvento).cancelado)).WithMessage("No se pueden agregar funciones a un evento cancelado.");
+            .Must(idEvento => _repoEvento.DetalleEvento(idEvento)?.cancelado != true).WithMessage("No se pueden agregar funciones a un evento cancelado.");
 
         RuleFor(f => f.idTarifa)
             .NotEmpty().WithMessage("El idTarifa es obligatorio.")

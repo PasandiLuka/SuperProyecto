@@ -3,7 +3,6 @@ using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Services.Validators;
-using FluentValidation;
 
 namespace SuperProyecto.Services.Service;
 
@@ -17,20 +16,38 @@ public class ClienteService : IClienteService
         _repoCliente = repoCliente;
     }
 
-    public IEnumerable<Cliente> GetClientes() => _repoCliente.GetClientes();
+    public Result<IEnumerable<Cliente>> GetClientes() => Result<IEnumerable<Cliente>>.Ok(_repoCliente.GetClientes());
 
-    public Cliente? DetalleCliente(int id) => _repoCliente.DetalleCliente(id);
-
-    public void AltaCliente(ClienteDto clienteDto)
+    public Result<Cliente?> DetalleCliente(int id)
     {
+        var cliente = _repoCliente.DetalleCliente(id);
+        if (cliente is null) return Result<Cliente?>.NotFound("El cliente solicitado no fue encontrado.");
+        return Result<Cliente>.Ok(cliente);
+    } 
+
+    public Result<Cliente> AltaCliente(ClienteDto clienteDto)
+    {
+        var resultado = _clienteValidator.Validate(clienteDto);
+        if (!resultado.IsValid)
+        {
+            var listaErrores = resultado.Errors
+                .GroupBy(a => a.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+            return Result<Cliente>.BadRequest(listaErrores);
+        }
         Cliente cliente = ConvertirDtoClase(clienteDto);
-        _repoCliente.AltaCliente(cliente);
+        return Result<Cliente>.Created(cliente);
     }
 
-    public void UpdateCliente(ClienteDto clienteDto, int id)
+    public Result<Cliente> UpdateCliente(ClienteDto clienteDto, int id)
     {
+        if(_repoCliente.DetalleCliente(id) is null) return Result<Cliente>.NotFound("El cliente a modificar no fue encontrado.");
         Cliente cliente = ConvertirDtoClase(clienteDto);
-        _repoCliente.UpdateCliente(cliente, id);  
+        _repoCliente.UpdateCliente(cliente, id);
+        return Result<Cliente>.Ok(cliente);
     }
 
     Cliente ConvertirDtoClase(ClienteDto clienteDto)

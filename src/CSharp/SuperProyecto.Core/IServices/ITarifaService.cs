@@ -5,8 +5,8 @@ namespace SuperProyecto.Core.IServices;
 
 public interface ITarifaService
 {
-    IEnumerable<Tarifa> GetTarifas();
-    Tarifa? DetalleTarifa(int id);
-    void UpdateTarifa(TarifaDto tarifa, int id);
-    void AltaTarifa(TarifaDto tarifa);
+    Result<IEnumerable<Tarifa>> GetTarifas();
+    Result<Tarifa?> DetalleTarifa(int id);
+    Result<TarifaDto> UpdateTarifa(TarifaDto tarifa, int id);
+    Result<TarifaDto> AltaTarifa(TarifaDto tarifa);
 }

@@ -1,52 +1,248 @@
-using SuperProyecto.Core.Entidades;
-using SuperProyecto.Core;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Services.Service;
-using Moq;
-using MySqlConnector;
+using SuperProyecto.Core.Enums;
+using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Services.Validators;
 
 namespace SuperProyecto.Tests;
 
 public class TestAdoFuncion
 {
-    //Crea una Función
-    //Lista funciones
     [Fact]
-    public void Retornar_Lista_De_Funciones()
+    public void CuandoObtengoLasFunciones_DebeRetornarUnaListaDeFunciones_ConResultadoOk()
     {
-        var moq = new Mock<IFuncionService>();
-        List<Funcion> funciones = new List<Funcion>
+        // Arrange
+        var mockService = new Mock<IFuncionService>();
+        var funciones = new List<Funcion>
         {
-            new Funcion{idFuncion = 1, idEvento = 1, idTarifa = 1, fechaHora = DateTime.Now, stock = 150, cancelada = false },
-            new Funcion{idFuncion = 2, idEvento = 2, idTarifa = 2, fechaHora = DateTime.Now, stock = 100, cancelada = false }
+            new Funcion { idFuncion = 1, idEvento = 1, idTarifa = 1, fechaHora = DateTime.Today.AddDays(1), stock = 100, cancelada = false },
+            new Funcion { idFuncion = 2, idEvento = 1, idTarifa = 2, fechaHora = DateTime.Today.AddDays(2), stock = 50, cancelada = false }
         };
 
-        moq.Setup(c => c.GetFunciones()).Returns(funciones);
-        var resultado = moq.Object.GetFunciones();
+        mockService.Setup(s => s.GetFunciones()).Returns(Result<IEnumerable<Funcion>>.Ok(funciones));
 
-        Assert.NotEmpty(resultado);
-        Assert.Equal(2, ((List<Funcion>)resultado).Count());
+        // Act
+        var resultado = mockService.Object.GetFunciones();
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(funciones.Count, resultado.Data.Count());
     }
 
-    //Detalle de función
     [Fact]
-    public void Retornar_Detalle_De_Funcion()
+    public void CuandoBuscoDetalleDeUnaFuncionValida_DebeRetornarFuncion_ConResultadoOk()
     {
-        var moq = new Mock<IFuncionService>();
-        var id = 1;
-        var funcion = new Funcion { idFuncion = 1, idEvento = 1, idTarifa = 1, fechaHora = DateTime.Now, stock = 100, cancelada = false };
+        // Arrange
+        var mockService = new Mock<IFuncionService>();
+        var funcion = new Funcion { idFuncion = 1, idEvento = 1, idTarifa = 1, fechaHora = DateTime.Today.AddDays(1), stock = 100, cancelada = false };
 
-        moq.Setup(c => c.DetalleFuncion(id)).Returns(funcion);
-        var resultado = moq.Object.DetalleFuncion(id);
+        mockService.Setup(s => s.DetalleFuncion(funcion.idFuncion)).Returns(Result<Funcion>.Ok(funcion));
 
-        Assert.NotNull(resultado);
-        Assert.Equal(funcion.idFuncion, resultado.idFuncion);
-        Assert.Equal(funcion.idEvento, resultado.idEvento);
-        Assert.Equal(funcion.idTarifa, resultado.idTarifa);
-        Assert.Equal(funcion.fechaHora, resultado.fechaHora);
-        Assert.Equal(funcion.stock, resultado.stock);
-        Assert.Equal(funcion.cancelada, resultado.cancelada);
+        // Act
+        var resultado = mockService.Object.DetalleFuncion(funcion.idFuncion);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(funcion.idFuncion, resultado.Data.idFuncion);
+        Assert.Equal(funcion.idEvento, resultado.Data.idEvento);
     }
-    //Actualiza función
-    //Cancela la función
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeFuncionValida_DebeRetornarCreated()
+    {
+        // Arrange
+        var mockRepoEvento = new Mock<IRepoEvento>();
+        var mockRepoTarifa = new Mock<IRepoTarifa>();
+        var validator = new FuncionValidator(mockRepoTarifa.Object, mockRepoEvento.Object);
+
+        mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns(new Evento { cancelado = false });
+        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns(new Tarifa());
+
+        var funcion = new FuncionDto
+        {
+            idEvento = 1,
+            idTarifa = 1,
+            fechaHora = DateTime.Today.AddDays(1),
+            stock = 50
+        };
+
+        // Act
+        var validationResult = validator.Validate(funcion);
+        Result<Funcion> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Funcion>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Funcion>.Created(new Funcion
+            {
+                idFuncion = 1,
+                idEvento = funcion.idEvento,
+                idTarifa = funcion.idTarifa,
+                fechaHora = funcion.fechaHora,
+                stock = funcion.stock,
+                cancelada = false
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(funcion.idEvento, resultado.Data.idEvento);
+        Assert.Equal(funcion.idTarifa, resultado.Data.idTarifa);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeFuncionInvalida_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoEvento = new Mock<IRepoEvento>();
+        var mockRepoTarifa = new Mock<IRepoTarifa>();
+        var validator = new FuncionValidator(mockRepoTarifa.Object, mockRepoEvento.Object);
+
+        mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns((Evento)null);
+        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns((Tarifa)null);
+
+        var funcion = new FuncionDto
+        {
+            idEvento = 0,
+            idTarifa = 0,
+            fechaHora = DateTime.Today.AddDays(-1),
+            stock = -5
+        };
+
+        // Act
+        var validationResult = validator.Validate(funcion);
+        Result<Funcion> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Funcion>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Funcion>.Created(new Funcion
+            {
+                idFuncion = 1,
+                idEvento = funcion.idEvento,
+                idTarifa = funcion.idTarifa,
+                fechaHora = funcion.fechaHora,
+                stock = funcion.stock,
+                cancelada = false
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("idEvento"));
+        Assert.True(resultado.Errors.ContainsKey("idTarifa"));
+        Assert.True(resultado.Errors.ContainsKey("fechaHora"));
+        Assert.True(resultado.Errors.ContainsKey("stock"));
+    }
+
+    [Fact]
+    public void CuandoActualizoUnaFuncionValida_DebeRetornarOk()
+    {
+        // Arrange
+        var mockRepoEvento = new Mock<IRepoEvento>();
+        var mockRepoTarifa = new Mock<IRepoTarifa>();
+        var validator = new FuncionValidator(mockRepoTarifa.Object, mockRepoEvento.Object);
+
+        mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns(new Evento { cancelado = false });
+        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns(new Tarifa());
+
+        var funcion = new FuncionDto
+        {
+            idEvento = 1,
+            idTarifa = 1,
+            fechaHora = DateTime.Today.AddDays(2),
+            stock = 20
+        };
+
+        // Act
+        var validationResult = validator.Validate(funcion);
+        Result<Funcion> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Funcion>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Funcion>.Ok(new Funcion
+            {
+                idFuncion = 1,
+                idEvento = funcion.idEvento,
+                idTarifa = funcion.idTarifa,
+                fechaHora = funcion.fechaHora,
+                stock = funcion.stock,
+                cancelada = false
+            });
+        }
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(funcion.idEvento, resultado.Data.idEvento);
+        Assert.Equal(funcion.idTarifa, resultado.Data.idTarifa);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnaFuncionInvalida_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoEvento = new Mock<IRepoEvento>();
+        var mockRepoTarifa = new Mock<IRepoTarifa>();
+        var validator = new FuncionValidator(mockRepoTarifa.Object, mockRepoEvento.Object);
+
+        mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns((Evento)null);
+        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns((Tarifa)null);
+
+        var funcion = new FuncionDto
+        {
+            idEvento = 0,
+            idTarifa = 0,
+            fechaHora = DateTime.Today.AddDays(-1),
+            stock = -1
+        };
+
+        // Act
+        var validationResult = validator.Validate(funcion);
+        Result<Funcion> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+            resultado = Result<Funcion>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Funcion>.Ok(new Funcion
+            {
+                idFuncion = 1,
+                idEvento = funcion.idEvento,
+                idTarifa = funcion.idTarifa,
+                fechaHora = funcion.fechaHora,
+                stock = funcion.stock,
+                cancelada = false
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("idEvento"));
+        Assert.True(resultado.Errors.ContainsKey("idTarifa"));
+        Assert.True(resultado.Errors.ContainsKey("fechaHora"));
+        Assert.True(resultado.Errors.ContainsKey("stock"));
+    }
 }

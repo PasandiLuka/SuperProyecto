@@ -13,20 +13,26 @@ public class TarifaService : ITarifaService
         _repoTarifa = repoTarifa;
     }
 
-    public IEnumerable<Tarifa> GetTarifas() => _repoTarifa.GetTarifas();
+    public Result<IEnumerable<Tarifa>> GetTarifas() => Result<IEnumerable<Tarifa>>.Ok(_repoTarifa.GetTarifas());
 
-    public Tarifa? DetalleTarifa(int id) => _repoTarifa.DetalleTarifa(id);
+    public Result<Tarifa?> DetalleTarifa(int id)
+    {
+        if (_repoTarifa.DetalleTarifa(id) is null) return Result<Tarifa?>.NotFound("La tarifa solicitada no fue encontrada.");
+        return Result<Tarifa?>.Ok(_repoTarifa.DetalleTarifa(id));
+    }
 
-    public void AltaTarifa(TarifaDto tarifaDto)
+    public Result<TarifaDto> AltaTarifa(TarifaDto tarifaDto)
     {
         var tarifa = ConvertirDtoClase(tarifaDto);
         _repoTarifa.AltaTarifa(tarifa);
+        return Result<TarifaDto>.Ok(tarifaDto);
     }
 
-    public void UpdateTarifa(TarifaDto tarifaDto, int id)
+    public Result<TarifaDto> UpdateTarifa(TarifaDto tarifaDto, int id)
     {
         var tarifa = ConvertirDtoClase(tarifaDto);
         _repoTarifa.UpdateTarifa(tarifa, id);
+        return Result<TarifaDto>.Ok(tarifaDto);
     }
 
 

@@ -5,9 +5,9 @@ namespace SuperProyecto.Core.IServices;
 
 public interface ISectorService
 {
-    IEnumerable<Sector> GetSectores();
-    Sector? DetalleSector(int id);
-    void UpdateSector(SectorDto sector, int id);
-    void AltaSector(SectorDto sector);
-    void DeleteSector(int id);
+    Result<IEnumerable<Sector>> GetSectores();
+    Result<Sector?> DetalleSector(int id);
+    Result<SectorDto> UpdateSector(SectorDto sector, int id);
+    Result<SectorDto> AltaSector(SectorDto sector);
+    Result<SectorDto> DeleteSector(int id);
 }

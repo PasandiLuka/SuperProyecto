@@ -1,74 +1,138 @@
-using Moq;
-using SuperProyecto.Core.Entidades;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Services.Service;
-using MySqlConnector;
-using SuperProyecto.Core;
+using SuperProyecto.Core.Enums;
+using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Services.Validators;
 
 namespace SuperProyecto.Tests;
 
 public class TestAdoTarifa
 {
-
-    //Crea tarifa
     [Fact]
-    public void CuandoHaceUnInsertEnTarifa_DebeAlmacenarDichaFilaEnLaTablaTarifa1()
-    {
-        var moq = new Mock<ITarifaService>();
-        var tarifa = new Tarifa { idTarifa = 1, idSector = 1, precio = 200 };
-
-
-        moq.Setup(t => t.DetalleTarifa(tarifa.idTarifa)).Returns(tarifa);
-        moq.Setup (t => t.GetTarifas());
-
-        var resultado = moq.Object.DetalleTarifa(tarifa.idTarifa);
-
-        Assert.NotNull(resultado);
-        Assert.Equal(tarifa.idTarifa, resultado.idTarifa);
-        Assert.Equal(tarifa.idSector, resultado.idSector);
-        Assert.Equal(tarifa.precio, resultado.precio);
-    }
-
-
-//Lista de tarifas
-    [Fact]
-    public void CuandoSolicitaTarifasPorFuncion_DebeRetornarListaDeTarifas()//Listar tarifas
-    {
-
-        var moq = new Mock<ITarifaService>();
-        var tarifas = new List<Tarifa>
-        {
-            new Tarifa { idTarifa = 1, idSector = 1, precio = 500},
-            new Tarifa { idTarifa = 2, idSector = 2, precio = 1000 }
-        };
-
-        moq.Setup(r => r.DetalleTarifa(1));
-
-        var resultado = moq.Object.DetalleTarifa(1);
-
-        Assert.NotNull(resultado);
-        Assert.Equal(2,tarifas.Count);
-    }
-
-    [Fact]
-    public void Cuando_se_agrega_una_nueva_tarifa_se_crea_nuevos_valores_de_las_variables()//Update tarifa
+    public void CuandoObtengoLasTarifas_DebeRetornarUnaListaDeTarifas_ConResultadoOk()
     {
         // Arrange
-        var moq = new Mock<ITarifaService>();
-        int idtarifa = 10;
-        int idsector = 2;
-        int precioo = 1500;
-        var tarifa = new Core.DTO.TarifaDto { idTarifa = idtarifa, idSector = idsector, precio = precioo };
+        var mockService = new Mock<ITarifaService>();
+        var tarifas = new List<Tarifa>
+        {
+            new Tarifa { idTarifa = 1, idSector = 2, precio = 1500 },
+            new Tarifa { idTarifa = 2, idSector = 3, precio = 2000 }
+        };
+
+        mockService.Setup(s => s.GetTarifas())
+            .Returns(Result<IEnumerable<Tarifa>>.Ok(tarifas));
 
         // Act
-        moq.Object.AltaTarifa(tarifa);
+        var resultado = mockService.Object.GetTarifas();
 
         // Assert
-        moq.Verify(r => r.AltaTarifa(It.Is<Core.DTO.TarifaDto>(t =>
-            t.idTarifa == idtarifa &&
-            t.idSector == idsector &&
-            t.precio == precioo
-        )), Times.Once);
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(tarifas.Count, resultado.Data.Count());
+    }
+
+    [Fact]
+    public void CuandoBuscoDetalleDeUnaTarifaValida_DebeRetornarTarifa_ConResultadoOk()
+    {
+        // Arrange
+        var mockService = new Mock<ITarifaService>();
+        var tarifa = new Tarifa { idTarifa = 1, idSector = 2, precio = 1800 };
+
+        mockService.Setup(s => s.DetalleTarifa(tarifa.idTarifa))
+            .Returns(Result<Tarifa>.Ok(tarifa));
+
+        // Act
+        var resultado = mockService.Object.DetalleTarifa(tarifa.idTarifa);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(tarifa.idTarifa, resultado.Data.idTarifa);
+        Assert.Equal(tarifa.precio, resultado.Data.precio);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeTarifaValida_DebeRetornarCreated()
+    {
+        // Arrange
+        var mockService = new Mock<ITarifaService>();
+        var tarifaDto = new TarifaDto { idTarifa = 3, idSector = 4, precio = 2500 };
+
+        mockService.Setup(s => s.AltaTarifa(tarifaDto))
+            .Returns(Result<TarifaDto>.Created(new TarifaDto
+            {
+                idTarifa = tarifaDto.idTarifa,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio
+            }));
+
+        // Act
+        var resultado = mockService.Object.AltaTarifa(tarifaDto);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(tarifaDto.idTarifa, resultado.Data.idTarifa);
+        Assert.Equal(tarifaDto.precio, resultado.Data.precio);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnaTarifaValida_DebeRetornarOk()
+    {
+        // Arrange
+        var mockService = new Mock<ITarifaService>();
+        var tarifaDto = new TarifaDto { idTarifa = 1, idSector = 2, precio = 2200 };
+
+        mockService.Setup(s => s.UpdateTarifa(tarifaDto, tarifaDto.idTarifa))
+            .Returns(Result<TarifaDto>.Ok(new TarifaDto
+            {
+                idTarifa = tarifaDto.idTarifa,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio
+            }));
+
+        // Act
+        var resultado = mockService.Object.UpdateTarifa(tarifaDto, tarifaDto.idTarifa);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(tarifaDto.precio, resultado.Data.precio);
+    }
+
+    [Fact]
+    public void CuandoRealizoUnAltaDeTarifaInvalida_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoSector = new Mock<IRepoSector>();
+        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns((Sector?)null);
+
+        var tarifaDto = new TarifaDto { idTarifa = 0, idSector = 0, precio = -10 };
+        var validator = new TarifaValidator(mockRepoSector.Object);
+
+        // Act
+        var validationResult = validator.Validate(tarifaDto);
+
+        Result<Tarifa> resultado;
+        if (!validationResult.IsValid)
+        {
+            var errores = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+
+            resultado = Result<Tarifa>.BadRequest(errores);
+        }
+        else
+        {
+            resultado = Result<Tarifa>.Created(new Tarifa
+            {
+                idTarifa = tarifaDto.idTarifa,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio
+            });
+        }
+
+        // Assert
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("idSector"));
+        Assert.True(resultado.Errors.ContainsKey("precio"));
     }
 }
-

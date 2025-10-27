@@ -5,9 +5,9 @@ namespace SuperProyecto.Core.IServices;
 
 public interface ILocalService
 {
-    IEnumerable<Local> GetLocales();
-    Local? DetalleLocal(int id);
-    void UpdateLocal(LocalDto local, int id);
-    void AltaLocal(LocalDto local);
-    void DeleteLocal(int id);
+    Result<IEnumerable<Local>> GetLocales();
+    Result<Local?> DetalleLocal(int id);
+    Result<LocalDto> UpdateLocal(LocalDto local, int id);
+    Result<LocalDto> AltaLocal(LocalDto local);
+    Result<Local> DeleteLocal(int id);
 }

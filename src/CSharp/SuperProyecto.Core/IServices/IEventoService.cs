@@ -5,15 +5,15 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IEventoService
 {
-    public IEnumerable<Evento> GetEventos();
+    Result<IEnumerable<Evento>> GetEventos();
 
-    public Evento? DetalleEvento(int id);
+    Result<Evento?> DetalleEvento(int id);
 
-    public void UpdateEvento(EventoDto evento, int id);
+    Result<EventoDto> UpdateEvento(EventoDto evento, int id);
 
-    public void AltaEvento(EventoDto evento);
+    Result<EventoDto> AltaEvento(EventoDto evento);
 
-    public void CancelarEvento(int id);
+    Result<Evento> CancelarEvento(int id);
 
-    public void PublicarEvento(int id);
+    Result<Evento> PublicarEvento(int id);
 }

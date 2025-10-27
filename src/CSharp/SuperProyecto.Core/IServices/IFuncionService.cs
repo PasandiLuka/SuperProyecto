@@ -5,8 +5,8 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IFuncionService
 {
-    IEnumerable<Funcion> GetFunciones();
-    Funcion? DetalleFuncion(int id);
-    void UpdateFuncion(FuncionDto funcion, int id);
-    void AltaFuncion(FuncionDto funcion);
+    Result<IEnumerable<Funcion>> GetFunciones();
+    Result<Funcion?> DetalleFuncion(int id);
+    Result<FuncionDto> UpdateFuncion(FuncionDto funcion, int id);
+    Result<FuncionDto> AltaFuncion(FuncionDto funcion);
 }

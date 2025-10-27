@@ -14,20 +14,28 @@ public class FuncionService : IFuncionService
         _repoFuncion = repoFuncion;
     }
 
-    public IEnumerable<Funcion> GetFunciones() => _repoFuncion.GetFunciones();
+    public Result<IEnumerable<Funcion>> GetFunciones() => Result<IEnumerable<Funcion>>.Ok(_repoFuncion.GetFunciones());
 
-    public Funcion? DetalleFuncion(int id) => _repoFuncion.DetalleFuncion(id);
-
-    public void UpdateFuncion(FuncionDto funcionDto, int id)
+    public Result<Funcion?> DetalleFuncion(int id)
     {
+        var funcion = _repoFuncion.DetalleFuncion(id);
+        if (funcion is null) return Result<Funcion?>.NotFound("La función solicitada no fue encontrada.");
+        return Result<Funcion>.Ok(funcion);
+    }
+
+    public Result<FuncionDto> UpdateFuncion(FuncionDto funcionDto, int id)
+    {
+        if(_repoFuncion.DetalleFuncion(id) is null) return Result<FuncionDto>.NotFound("La función solicitada no fue encontrada.");
         Funcion funcion = ConvertirDtoClase(funcionDto);
-        _repoFuncion.UpdateFuncion(funcion, id);  
+        _repoFuncion.UpdateFuncion(funcion, id);
+        return Result<FuncionDto>.Ok(funcionDto);
     } 
 
-    public void AltaFuncion(FuncionDto funcionDto)
+    public Result<FuncionDto> AltaFuncion(FuncionDto funcionDto)
     {
         Funcion funcion = ConvertirDtoClase(funcionDto);
         _repoFuncion.AltaFuncion(funcion);
+        return Result<FuncionDto>.Ok(funcionDto);
     }
 
     static Funcion ConvertirDtoClase(FuncionDto funcionDto)
