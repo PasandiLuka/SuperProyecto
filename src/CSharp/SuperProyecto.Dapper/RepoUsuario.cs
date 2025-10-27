@@ -63,4 +63,18 @@ public class RepoUsuario : Repo, IRepoUsuario
         );
         return result != null;
     }
+
+    private static readonly string _queryDetalleUsuarioXEmail
+        = @"SELECT * FROM Usuario WHERE email = @Email";
+
+    public Usuario? DetalleUsuarioXEmail(string email)
+    {
+        return _conexion.QueryFirstOrDefault<Usuario>(
+            _queryDetalleUsuarioXEmail,
+            new
+            {
+                Email = email
+            }
+        );
+    }
 }

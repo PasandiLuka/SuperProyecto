@@ -9,4 +9,6 @@ public interface IUsuarioService
     Result<string[]> ObtenerRoles();
     Result<Usuario> AltaUsuario(UsuarioDto usuarioDto);
     Result<Usuario> ActualizarRol(int id, ERol rol);
+    Result<Usuario?> DetalleUsuario(int id);
+    Result<Usuario?> DetalleUsuarioXEmail(string email);
 }

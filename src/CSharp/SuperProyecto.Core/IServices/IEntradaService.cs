@@ -8,4 +8,5 @@ public interface IEntradaService
     Entrada? DetalleEntrada(int id);
     byte[]? GetQr(int id);
     string? ValidarQr(int id);
+
 }

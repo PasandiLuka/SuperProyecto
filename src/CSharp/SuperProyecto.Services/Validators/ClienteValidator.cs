@@ -7,6 +7,9 @@ namespace SuperProyecto.Services.Validators;
 
 public class ClienteValidator : AbstractValidator<ClienteDto>
 {
+    private static readonly int _cantMaximaLetrasNombre = 45;
+    private static readonly int _cantMaximaLetrasApellido = 45;
+
     IRepoUsuario _repoUsuario;
     IRepoCliente _repoCliente;
     public ClienteValidator(IRepoUsuario repoUsuario, IRepoCliente repoCliente)
@@ -26,11 +29,17 @@ public class ClienteValidator : AbstractValidator<ClienteDto>
 
         RuleFor(c => c.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio")
-            .MinimumLength(3).WithMessage("El nombre debe tener al menos 3 caracteres.");
+            .MinimumLength(3).
+                WithMessage("El nombre debe tener al menos 3 caracteres.")
+            .MaximumLength(_cantMaximaLetrasNombre).
+                WithMessage($"El nombre debe tener menos de {_cantMaximaLetrasNombre + 1} caracteres.");
 
         RuleFor(c => c.apellido)
             .NotEmpty().WithMessage("El apellido es obligatorio")
-            .MinimumLength(3).WithMessage("El apellido debe tener al menos 3 caracteres.");
+            .MinimumLength(3)
+                .WithMessage("El apellido debe tener al menos 3 caracteres.")
+            .MaximumLength(_cantMaximaLetrasApellido).
+                WithMessage($"El apellido debe tener menos de {_cantMaximaLetrasApellido + 1} caracteres.");
 
         RuleFor(c => c.telefono)
             .NotEmpty().WithMessage("El telefono es obligatorio");

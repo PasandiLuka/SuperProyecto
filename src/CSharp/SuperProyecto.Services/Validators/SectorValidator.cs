@@ -7,6 +7,7 @@ namespace SuperProyecto.Services.Validators;
 
 public class SectorValidator : AbstractValidator<SectorDto>
 {
+    private static readonly int _cantMaximaLetrasNombre = 45;
     IRepoLocal _repoLocal;
     public SectorValidator(IRepoLocal repoLocal)
     {
@@ -19,6 +20,8 @@ public class SectorValidator : AbstractValidator<SectorDto>
 
         RuleFor(s => s.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio.")
-            .MinimumLength(3).WithMessage("El nombre debe contener al menos 3 caracteres.");
+            .MinimumLength(3).WithMessage("El nombre debe contener al menos 3 caracteres.")
+            .MaximumLength(_cantMaximaLetrasNombre).
+                WithMessage($"El nombre debe tener menos de {_cantMaximaLetrasNombre + 1} caracteres.");
     }
 }

@@ -9,4 +9,6 @@ public interface IRepoUsuario
     void AltaUsuario(Usuario usuario);
     void ActualizarRol(int id, ERol rol);
     bool UniqueEmail(string email);
+    Usuario? DetalleUsuarioXEmail(string email);
+    
 }

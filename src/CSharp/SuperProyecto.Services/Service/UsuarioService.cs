@@ -32,6 +32,19 @@ public class UsuarioService : IUsuarioService
         return Result<Usuario>.Created(usuario);
     }
 
+    public Result<Usuario?> DetalleUsuario(int id)
+    {
+        var usuario = _repoUsuario.DetalleUsuario(id);
+        if (usuario is null) return Result<Usuario?>.NotFound("El usuario solicitado no fue encontrado.");
+        return Result<Usuario?>.Ok(usuario);
+    }
+    public Result<Usuario?> DetalleUsuarioXEmail(string email)
+    {
+        var usuario = _repoUsuario.DetalleUsuarioXEmail(email);
+        if (usuario is null) return Result<Usuario?>.NotFound("El usuario solicitado no fue encontrado.");
+        return Result<Usuario?>.Ok(usuario);
+    }
+
     static Usuario ConvertirDtoClase(UsuarioDto usuarioDto)
     {
         return new Usuario
