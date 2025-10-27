@@ -30,8 +30,6 @@ public class TestAdoSector
     [Fact]
     public void Cuando_se_agrega_una_nueva_Sector_se_crea_nuevos_valores_de_las_variables()//muestra la lista de sectores
     {
-        
-
         var moq = new Mock<ITarifaService>();
         var tarifas = new List<Tarifa>
         {

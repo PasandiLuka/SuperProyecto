@@ -12,18 +12,18 @@ public class TestAdoEvento
 {
     [Fact]
     public void d()//Crear evento
-        {
-            var moq = new Mock<IEventoService>();
-            Evento evento = new Evento { idEvento = 1, nombre = "Sofi", descripcion = "chiquita",fechaPublicacion= DateTime.Now,publicado=true,cancelado=false };
+    {
+        var moq = new Mock<IEventoService>();
+        Evento evento = new Evento { idEvento = 1, nombre = "Sofi", descripcion = "chiquita", fechaPublicacion = DateTime.Now, publicado = true, cancelado = false };
 
-            moq.Setup(t => t.DetalleEvento(evento.idEvento)).Returns(evento);
-            // GetEventos debe devolver una colección
-            moq.Setup(t => t.GetEventos()).Returns(new List<Evento> { evento });
-            var resultado = moq.Object.DetalleEvento(evento.idEvento);
+        moq.Setup(t => t.DetalleEvento(evento.idEvento)).Returns(evento);
+        // GetEventos debe devolver una colección
+        moq.Setup(t => t.GetEventos()).Returns(new List<Evento> { evento });
+        var resultado = moq.Object.DetalleEvento(evento.idEvento);
 
-            Assert.NotNull(resultado);
-            Assert.Equal(evento.idEvento, resultado.idEvento);
-        }
+        Assert.NotNull(resultado);
+        Assert.Equal(evento.idEvento, resultado.idEvento);
+    }
 
 
 
@@ -47,6 +47,24 @@ public class TestAdoEvento
         Assert.Equal(2, ((List<Evento>)resultado).Count);
         Assert.Contains(resultado, e => e.idEvento == idEvento);
     }
+
+    [Fact]
+    public void Retornar_Detalle_De_Cliente()
+    {
+        var moq = new Mock<IEventoService>();
+        var id = 1;
+        var evento = new Evento {  nombre = "Lujan", descripcion = "antonio", publicado = true };
+
+        moq.Setup(c => c.DetalleEvento(id)).Returns(evento);
+        var resultado = moq.Object.DetalleEvento(id);
+
+        Assert.NotNull(resultado);
+        Assert.Equal(evento.nombre, resultado.nombre);
+        Assert.Equal(evento.descripcion, resultado.descripcion);
+        Assert.Equal(evento.publicado, resultado.publicado);
+    }
+
+
 }
 
 

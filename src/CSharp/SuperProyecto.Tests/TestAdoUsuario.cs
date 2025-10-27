@@ -18,31 +18,29 @@ public class TestAdoUsuario
         {
             var moq = new Mock<IUsuarioService>();
 
-        Usuario usuario = new Usuario { idUsuario = 100, email="si@gmail.com", passwordHash="siotravez" };
+        UsuarioDto usuario = new UsuarioDto {  email="si@gmail.com", password="siotravez" };
 
             moq.Setup(t => t.AltaUsuario(usuario));
-            moq.Setup(t => t.DetalleUsuario(usuario.idUsuario)).Returns(usuario);
-            var resultado = moq.Object.DetalleUsuario(usuario.idUsuario);
+            var resultado = moq.Object.DetalleUsuario(usuario.id);
 
             Assert.NotNull(resultado);
-            Assert.Equal(usuario.idUsuario, resultado.idUsuario);
+            Assert.Equal(id, resultado.idUsuario);
         }
 
         
     [Fact]
     public void Cuando_se_agrega_una_nueva_usuario_se_crea_nuevos_valores_de_las_variables()
     {
-        // Arrange
+        
         var moq = new Mock<IUsuarioService>();
-        int idUsuario = 10;
         string email = "Si@gmail.com";
         string passwordHash = "contraseña";
-        var usuario = new Usuario { idUsuario = idUsuario, email = email, passwordHash = passwordHash };
+        var usuario = new UsuarioDto { email = email, password = passwordHash };
 
-        // Act
+        
         moq.Object.AltaUsuario(usuario);
 
-        // Assert
+        
         moq.Verify(r => r.AltaUsuario(It.Is<UsuarioDto>(t =>
             t.email == email &&
             t.password == passwordHash
