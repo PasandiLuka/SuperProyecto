@@ -6,7 +6,6 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Core.Enums;
-using SuperProyecto.Api.Enpoints;
 
 //Paquetes api
 using Microsoft.OpenApi.Models;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SuperProyecto.Api.Helper;
-using SuperProyecto.Core.Entidades;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +44,17 @@ builder.Services.AddAuthentication(options =>
     };
 }); // Ejemplo con JWT
 builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Administrador", policy =>
+        policy.RequireRole("Administrador"));
+
+    options.AddPolicy("Cliente", policy =>
+        policy.RequireRole("Cliente", "Administrador"));
+
+    options.AddPolicy("Organizador", policy =>
+        policy.RequireRole("Organizador", "Administrador"));
+});
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AuthService>();
 #endregion
@@ -58,10 +67,11 @@ builder.Services.AddSingleton<IDataBaseConnectionService, DataBaseConnectionServ
 builder.Services.AddSingleton<IAdo, Ado>();
 #endregion
 
+//Permite acceder al servico que nos deja ver la informacion del usuario que se encuentra actualmente logueado
+builder.Services.AddHttpContextAccessor();
 
 //Instanciamos todos los repositorios
 #region Repositorios
-
 builder.Services.AddScoped<IRepoQr, RepoQr>();
 builder.Services.AddScoped<IRepoToken, RepoToken>();
 builder.Services.AddScoped<IRepoUsuario, RepoUsuario>();
@@ -94,7 +104,7 @@ builder.Services.AddScoped<UsuarioValidator>();
 #region Servicios
 builder.Services.AddScoped<IQrService, QrService>();
 builder.Services.AddScoped<IUrlConstructor, UrlConstructor>();
-//Necesario para poder inyectar el HttpContext y obtener el usuario logueado
+//Necesario para poder inyectar el HttpContext en el AuthService y obtener el usuario logueado
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
@@ -157,49 +167,70 @@ app.UseHttpsRedirection();
 app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
 
 #region EndPoints
-app.MapGet("/api/Usuario/roles", (IUsuarioService service) =>
-{
-    var result = service.ObtenerRoles();
-    return result.ToMinimalResult();
-}).WithTags("Usuario/Auth");
-app.MapPost("/api/auth/register", (UsuarioDto usuarioDto, IUsuarioService service) =>
-{
-    var result = service.AltaUsuario(usuarioDto);
-    return result.ToMinimalResult();
-}).WithTags("Usuario");
-app.MapPut("/api/Usuario/{id}/rol", (int id, ERol nuevoRol, IUsuarioService service) =>
-{
-    var result = service.ActualizarRol(id, nuevoRol);
-    return result.ToMinimalResult();
-}).WithTags("Usuario");
-#region Usuario
 
+
+#region Usuario
+    app.MapGet("/api/Usuario/roles", (IUsuarioService service) =>   
+    {
+        var result = service.ObtenerRoles();
+        return result.ToMinimalResult();
+    }).WithTags("01 - Usuario");
+    app.MapPost("/api/auth/register", (UsuarioDto usuarioDto, IUsuarioService service) =>
+    {
+        var result = service.AltaUsuario(usuarioDto);
+        return result.ToMinimalResult();
+    }).WithTags("01 - Usuario");
+    app.MapPut("/api/Usuario/{id}/rol", (int id, ERol nuevoRol, IUsuarioService service) =>
+    {
+        var result = service.ActualizarRol(id, nuevoRol);
+        return result.ToMinimalResult();
+    }).WithTags("01 - Usuario");
+#endregion
+
+#region Auth
+    app.MapPost("/api/auth/login", (LoginRequest loginRequest, AuthService authService) =>
+    {
+        var result = authService.Login(loginRequest);
+        return result.ToMinimalResult();
+    }).WithTags("02 - Auth");
+
+    app.MapGet("/api/auth/me", (AuthService authService) =>
+    {
+        var result = authService.Me();
+        return result.ToMinimalResult();
+    }).WithTags("02 - Auth").RequireAuthorization();
+
+    app.MapPost("/api/auth/refresh", (RefreshTokenRequest refreshTokenRequest, AuthService authService) =>
+    {
+        var result = authService.RefreshToken(refreshTokenRequest);
+        return result.ToMinimalResult();
+    }).WithTags("02 - Auth");
 #endregion
 
 #region Cliente
-    app.MapGet("/api/Cliente", (IClienteService service) =>
+app.MapGet("/api/Cliente", (IClienteService service) =>
     {
         var result = service.GetClientes();
         return result.ToMinimalResult();
-    }).WithTags("Cliente");/* .RequireAuthorization("Cliente", "Administrador"); */
+    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
 
     app.MapGet("/api/Cliente/{id}", (int id, IClienteService service) =>
     {
         var result = service.DetalleCliente(id);
         return result.ToMinimalResult();
-    }).WithTags("Cliente");/* .RequireAuthorization("Cliente", "Administrador"); */
+    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
 
     app.MapPut("/api/Cliente/{id}", (int id, ClienteDto clienteDto, IClienteService service) =>
     {
         var result = service.UpdateCliente(clienteDto, id);
         return result.ToMinimalResult();
-    }).WithTags("Cliente");/* .RequireAuthorization("Cliente", "Administrador"); */
+    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
 
     app.MapPost("/api/Cliente", (ClienteDto clienteDto, IClienteService service) =>
     {
         var result = service.AltaCliente(clienteDto);
         return result.ToMinimalResult();
-    }).WithTags("Cliente");/* .RequireAuthorization("Cliente", "Administrador"); */
+    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
 #endregion
 
 #region Entrada

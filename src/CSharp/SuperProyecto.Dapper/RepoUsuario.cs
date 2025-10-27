@@ -23,6 +23,19 @@ public class RepoUsuario : Repo, IRepoUsuario
         );
     }
 
+    private static readonly string _queryDetalleUsuarioXEmail
+        = @"SELECT * FROM Usuario WHERE email = @email";
+    public Usuario? DetalleUsuarioXEmail(string email)
+    {
+        return _conexion.QueryFirstOrDefault<Usuario>(
+            _queryDetalleUsuarioXEmail,
+            new
+            {
+                email = email
+            }
+        );
+    }
+
     private static readonly string _queryAltaUsuario
         = @"INSERT INTO Usuario (email, passwordHash, rol) VALUES (@email, @passwordHash, @rol)";
     public void AltaUsuario(Usuario usuario)

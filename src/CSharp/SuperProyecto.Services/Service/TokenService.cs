@@ -25,6 +25,7 @@ public class TokenService
 
         var claims = new List<Claim>
         {
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // ID único del token
             new Claim(ClaimTypes.NameIdentifier, usuario.idUsuario.ToString()),
             new Claim(ClaimTypes.Email, usuario.email),
             new Claim(ClaimTypes.Role, usuario.rol.ToString())
@@ -46,7 +47,7 @@ public class TokenService
 
     // Genera un refresh token seguro
     public string GenerarRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-    
+   
 
     // Genera ambos tokens y devuelve DTO
     public TokenResponseDto GenerarTokens(Usuario usuario)
