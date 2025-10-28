@@ -30,9 +30,9 @@ public class Result<T>
     public static Result<T> NotFound(string message)
         => new(false, EResultType.NotFound, default, message);
 
-    public static Result<T> Unauthorized(string message)
-        => new(false, EResultType.Unauthorized, default, message);
+    public static Result<T> Unauthorized()
+        => new(false, EResultType.Unauthorized, default, default);
 
-    public static Result<T> BadRequest(IDictionary<string, string[]> errors, string message = "Error de validación")
+    public static Result<T> BadRequest(IDictionary<string, string[]> errors = default, string? message = default)
         => new(false, EResultType.BadRequest, default, message, errors);
 }

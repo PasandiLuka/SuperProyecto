@@ -9,10 +9,10 @@ namespace SuperProyecto.Services.Service;
 public class ClienteService : IClienteService
 {
     readonly IRepoCliente _repoCliente;
-    readonly ClienteValidator _clienteValidator;
+    readonly ClienteValidator _validador;
     public ClienteService(ClienteValidator clienteValidator, IRepoCliente repoCliente)
     {
-        _clienteValidator = clienteValidator;
+        _validador = clienteValidator;
         _repoCliente = repoCliente;
     }
 
@@ -27,7 +27,7 @@ public class ClienteService : IClienteService
 
     public Result<Cliente> AltaCliente(ClienteDto clienteDto)
     {
-        var resultado = _clienteValidator.Validate(clienteDto);
+        var resultado = _validador.Validate(clienteDto);
         if (!resultado.IsValid)
         {
             var listaErrores = resultado.Errors
@@ -44,6 +44,17 @@ public class ClienteService : IClienteService
 
     public Result<Cliente> UpdateCliente(ClienteDto clienteDto, int id)
     {
+        var resultado = _validador.Validate(clienteDto);
+        if (!resultado.IsValid)
+        {
+            var listaErrores = resultado.Errors
+                .GroupBy(a => a.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+            return Result<Cliente>.BadRequest(listaErrores);
+        }
         if(_repoCliente.DetalleCliente(id) is null) return Result<Cliente>.NotFound("El cliente a modificar no fue encontrado.");
         Cliente cliente = ConvertirDtoClase(clienteDto);
         _repoCliente.UpdateCliente(cliente, id);

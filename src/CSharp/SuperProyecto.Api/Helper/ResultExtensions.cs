@@ -30,9 +30,7 @@ public static class ResultExtensions
             EResultType.Created => Results.Created(string.Empty, result.Data),
             EResultType.NotFound => Results.NotFound(new { message = result.Message }),
             EResultType.Unauthorized => Results.Unauthorized(),
-            EResultType.BadRequest => Results.BadRequest(new { message = result.Message }),
-            EResultType.ValidationProblem => Results.ValidationProblem(result.Errors!),
-            _ => Results.StatusCode(500)
+            EResultType.BadRequest => Results.BadRequest(new { errors = result.Errors, message = result.Message })
         };
     }
 }

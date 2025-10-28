@@ -4,6 +4,5 @@ public enum ERol
 {
     Administrador = 1,
     Organizador = 2,
-    Cliente = 3,
-    ControlAcceso = 4
+    Cliente = 3
 }

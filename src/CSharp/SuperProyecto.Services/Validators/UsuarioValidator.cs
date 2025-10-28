@@ -15,7 +15,7 @@ public class UsuarioValidator : AbstractValidator<UsuarioDto>
         RuleFor(u => u.email)
             .NotEmpty().WithMessage("El email es obligatorio.")
             .EmailAddress().WithMessage("El email no se encuentra en un formato valido.")
-            .Must(email => _repoUsuario.UniqueEmail(email)).WithMessage("Ya existe un usuario con ese mail registrado.");
+            .Must(email => !_repoUsuario.UniqueEmail(email)).WithMessage("Ya existe un usuario con ese mail registrado.");
 
         RuleFor(u => u.password)
             .NotEmpty().WithMessage("La contrasena es obligatoria.")

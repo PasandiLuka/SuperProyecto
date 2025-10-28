@@ -7,6 +7,6 @@ namespace SuperProyecto.Core.Persistencia;
 public interface IUsuarioService
 {
     Result<string[]> ObtenerRoles();
-    Result<Usuario> AltaUsuario(UsuarioDto usuarioDto);
+    Result<UsuarioDto> AltaUsuario(UsuarioDto usuarioDto);
     Result<Usuario> ActualizarRol(int id, ERol rol);
 }

@@ -18,9 +18,9 @@ INSERT INTO Evento (nombre, descripcion, fechaPublicacion, publicado) VALUES
 -- 3. USUARIO
 -- ==========================
 INSERT INTO Usuario (email, passwordHash, rol) VALUES
-('juanperez@gmail.com', sha2("1234", 256), 'Cliente'),
-('maria.gomez@gmail.com', sha2("1234", 256), 'Cliente'),
-('admin@gmail.com', sha2("1234", 256), 'Administrador');
+('juanperez@gmail.com', sha2("123456", 256), 'Cliente'),
+('maria.gomez@gmail.com', sha2("123456", 256), 'Cliente'),
+('admin@gmail.com', sha2("123456", 256), 'Administrador');
 
  -- ==========================
 -- 4. SECTOR
