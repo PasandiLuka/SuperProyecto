@@ -17,12 +17,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SuperProyecto.Api.Helper;
 
-using MySqlConnector; 
-
-
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSingleton<DataBaseCreationService>();
+
+
+
 
 //Servicios para implementar la autenticacion y autorizacion
 #region Auth
@@ -68,6 +69,10 @@ builder.Services.AddScoped<AuthService>();
 //Los creo como singleton ya que no requiero que a cada request se cree una nueva instancia
 
 builder.Services.AddSingleton<IDataBaseConnectionService, DataBaseConnectionService>();
+DataBaseCreationService dbCreator = new DataBaseCreationService(
+    builder.Services.BuildServiceProvider().GetService<IDataBaseConnectionService>()!
+    );
+dbCreator.CreateDataBase();
 builder.Services.AddSingleton<IAdo, Ado>();
 #endregion
 
@@ -237,60 +242,124 @@ app.MapGet("/api/Cliente", (IClienteService service) =>
     }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
 #endregion
 
-#region Entrada
-    app.MapGet("/api/Entrada", (IEntradaService service) =>
-    {
-        var result = service.GetEntradas();
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Entrada/{id}", (int id, IEntradaService service) =>
-    {
-        var result = service.DetalleEntrada(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Entrada/{id}/Qr", (int id, IEntradaService service) =>
-    {
-        var result = service.GetQr(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Entrada/qr/validar", (int id, IEntradaService service) =>
-    {
-        var result = service.ValidarQr(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Organizador", "Administrador");
-#endregion
-
 #region Evento
     app.MapGet("/api/Evento", (IEventoService service) =>
     {
         var result = service.GetEventos();
         return result.ToMinimalResult();
-    }).WithTags("Evento").RequireAuthorization("Cliente", "Administrador");
+    }).WithTags("04 - Evento").RequireAuthorization("Cliente", "Administrador");
 
     app.MapGet("/api/Evento/{id}", (int id, IEventoService service) =>
     {
         var result = service.DetalleEvento(id);
         return result.ToMinimalResult();
-    }).WithTags("Evento").RequireAuthorization("Cliente", "Administrador");
+    }).WithTags("04 - Evento").RequireAuthorization("Cliente", "Administrador");
 
     app.MapPut("/api/Evento/{id}", (int id, EventoDto eventoDto, IEventoService service) =>
     {
         var result = service.UpdateEvento(eventoDto, id);
         return result.ToMinimalResult();
-    }).WithTags("Evento").RequireAuthorization("Organizador", "Administrador");
+    }).WithTags("04 - Evento").RequireAuthorization("Organizador", "Administrador");
 
     app.MapPost("/api/Evento", (EventoDto eventoDto, IEventoService service) =>
     {
         var result = service.AltaEvento(eventoDto);
         return result.ToMinimalResult();
-    }).WithTags("Evento").RequireAuthorization("Organizador", "Administrador");
+    }).WithTags("04 - Evento").RequireAuthorization("Organizador", "Administrador");
+#endregion
+
+#region Local
+    app.MapGet("/api/Local", (ILocalService service) =>
+    {
+        var result = service.GetLocales();
+        return result.ToMinimalResult();
+    }).WithTags("05 - Local").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapGet("/api/Local/{id}", (int id, ILocalService service) =>
+    {
+        var result = service.DetalleLocal(id);
+        return result.ToMinimalResult();
+    }).WithTags("05 - Local").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapPut("/api/Local/{id}", (int id, LocalDto localDto, ILocalService service) =>
+    {
+        var result = service.UpdateLocal(localDto, id);
+        return result.ToMinimalResult();
+    }).WithTags("05 - Local").RequireAuthorization("Organizador", "Administrador");
+
+    app.MapPost("/api/Local", (LocalDto localDto, ILocalService service) =>
+    {
+        var result = service.AltaLocal(localDto);
+        return result.ToMinimalResult();
+    }).WithTags("05 - Local").RequireAuthorization("Organizador", "Administrador");
+        
+    app.MapDelete("/api/Local/{id}", (int id, ILocalService service) =>
+    {
+        var result = service.DeleteLocal(id);
+        return result.ToMinimalResult();
+    }).WithTags("05 - Local").RequireAuthorization("Administrador");
+#endregion
+
+#region Sector
+app.MapGet("/api/Sector", (ISectorService service) =>
+    {
+        var result = service.GetSectores();
+        return result.ToMinimalResult();
+    }).WithTags("06 - Sector").RequireAuthorization("Cliente", "Administrador");
+        
+    app.MapGet("/api/Sector/{id}", (int id, ISectorService service) =>
+    {
+        var result = service.DetalleSector(id);
+        return result.ToMinimalResult();
+    }).WithTags("06 - Sector").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapPut("/api/Sector/{id}", (int id, SectorDto sectorDto, ISectorService service) =>
+    {
+        var result = service.UpdateSector(sectorDto, id);
+        return result.ToMinimalResult();
+    }).WithTags("06 - Sector").RequireAuthorization("Organizador", "Administrador");
+        
+    app.MapPost("/api/Sector", (SectorDto sectorDto, ISectorService service) =>
+    {
+        var result = service.AltaSector(sectorDto);
+        return result.ToMinimalResult();
+    }).WithTags("06 - Sector").RequireAuthorization("Organizador", "Administrador");
+    
+    app.MapDelete("/api/Sector/{id}", (int id, ISectorService service) =>
+    {
+        var result = service.DeleteSector(id);
+        return result.ToMinimalResult();
+    }).WithTags("06 - Sector").RequireAuthorization("Administrador");
+#endregion
+
+#region Tarifa
+    app.MapGet("/api/Tarifa", (ITarifaService service) =>
+    {
+        var result = service.GetTarifas();
+        return result.ToMinimalResult();
+    }).WithTags("07 - Tarifa").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapGet("/api/Tarifa/{id}", (int id, ITarifaService service) =>
+    {
+        var result = service.DetalleTarifa(id);
+        return result.ToMinimalResult();
+    }).WithTags("07 - Tarifa").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapPut("/api/Tarifa/{id}", (int id, TarifaDto tarifaDto, ITarifaService service) =>
+    {
+        var result = service.UpdateTarifa(tarifaDto, id);
+        return result.ToMinimalResult();
+    }).WithTags("07 - Tarifa").RequireAuthorization("Organizador", "Administrador");
+            
+    app.MapPost("/api/Tarifa", (TarifaDto tarifaDto, ITarifaService service) =>
+    {
+        var result = service.AltaTarifa(tarifaDto);
+        return result.ToMinimalResult();
+    }).WithTags("07 - Tarifa").RequireAuthorization("Organizador", "Administrador");
 #endregion
 
 #region Funcion
-    app.MapGet("/api/Funcion", (IFuncionService service) =>
+app.MapGet("/api/Funcion", (IFuncionService service) =>
     {
         var result = service.GetFunciones();
         return result.ToMinimalResult();
@@ -315,37 +384,32 @@ app.MapGet("/api/Cliente", (IClienteService service) =>
     }).WithTags("Funcion").RequireAuthorization("Organizador", "Administrador");
 #endregion
 
-#region Local
-    app.MapGet("/api/Local", (ILocalService service) =>
+#region Entrada
+app.MapGet("/api/Entrada", (IEntradaService service) =>
     {
-        var result = service.GetLocales();
+        var result = service.GetEntradas();
         return result.ToMinimalResult();
-    }).WithTags("Local").RequireAuthorization("Cliente", "Administrador");
+    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
 
-    app.MapGet("/api/Local/{id}", (int id, ILocalService service) =>
+    app.MapGet("/api/Entrada/{id}", (int id, IEntradaService service) =>
     {
-        var result = service.DetalleLocal(id);
+        var result = service.DetalleEntrada(id);
         return result.ToMinimalResult();
-    }).WithTags("Local").RequireAuthorization("Cliente", "Administrador");
-        
-        app.MapPut("/api/Local/{id}", (int id, LocalDto localDto, ILocalService service) =>
-        {
-            var result = service.UpdateLocal(localDto, id);
-            return result.ToMinimalResult();
-        }).WithTags("Local").RequireAuthorization("Organizador", "Administrador");
+    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
 
-    app.MapPost("/api/Local", (LocalDto localDto, ILocalService service) =>
+    app.MapGet("/api/Entrada/{id}/Qr", (int id, IEntradaService service) =>
     {
-        var result = service.AltaLocal(localDto);
+        var result = service.GetQr(id);
         return result.ToMinimalResult();
-    }).WithTags("Local").RequireAuthorization("Organizador", "Administrador");
-        
-        app.MapDelete("/api/Local/{id}", (int id, ILocalService service) =>
-        {
-            var result = service.DeleteLocal(id);
-            return result.ToMinimalResult();
-        }).WithTags("Local").RequireAuthorization("Administrador");
+    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
+
+    app.MapPut("/api/Entrada/qr/validar", (int id, IEntradaService service) =>
+    {
+        var result = service.ValidarQr(id);
+        return result.ToMinimalResult();
+    }).WithTags("Entrada").RequireAuthorization("Organizador", "Administrador");
 #endregion
+
 
 #region Orden
     app.MapGet("/api/Orden", (IOrdenService service) =>
@@ -373,63 +437,9 @@ app.MapGet("/api/Cliente", (IClienteService service) =>
     }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
 #endregion
 
-#region Sector
-app.MapGet("/api/Sector", (ISectorService service) =>
-    {
-        var result = service.GetSectores();
-        return result.ToMinimalResult();
-    }).WithTags("Sector").RequireAuthorization("Cliente", "Administrador");
-        
-    app.MapGet("/api/Sector/{id}", (int id, ISectorService service) =>
-    {
-        var result = service.DetalleSector(id);
-        return result.ToMinimalResult();
-    }).WithTags("Sector").RequireAuthorization("Cliente", "Administrador");
 
-    app.MapPut("/api/Sector/{id}", (int id, SectorDto sectorDto, ISectorService service) =>
-    {
-        var result = service.UpdateSector(sectorDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("Sector").RequireAuthorization("Organizador", "Administrador");
-        
-    app.MapPost("/api/Sector", (SectorDto sectorDto, ISectorService service) =>
-    {
-        var result = service.AltaSector(sectorDto);
-        return result.ToMinimalResult();
-    }).WithTags("Sector").RequireAuthorization("Organizador", "Administrador");
-    
-    app.MapDelete("/api/Sector/{id}", (int id, ISectorService service) =>
-    {
-        var result = service.DeleteSector(id);
-        return result.ToMinimalResult();
-    }).WithTags("Sector").RequireAuthorization("Administrador");
-#endregion
 
-#region Tarifa
-    app.MapGet("/api/Tarifa", (ITarifaService service) =>
-    {
-        var result = service.GetTarifas();
-        return result.ToMinimalResult();
-    }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
 
-    app.MapGet("/api/Tarifa/{id}", (int id, ITarifaService service) =>
-    {
-        var result = service.DetalleTarifa(id);
-        return result.ToMinimalResult();
-    }).WithTags("Tarifa").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Tarifa/{id}", (int id, TarifaDto tarifaDto, ITarifaService service) =>
-    {
-        var result = service.UpdateTarifa(tarifaDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
-            
-    app.MapPost("/api/Tarifa", (TarifaDto tarifaDto, ITarifaService service) =>
-    {
-        var result = service.AltaTarifa(tarifaDto);
-        return result.ToMinimalResult();
-    }).WithTags("Tarifa").RequireAuthorization("Organizador", "Administrador");
-#endregion
 
 #endregion
 

@@ -1,106 +1,91 @@
+
+
 CREATE TABLE Local (
-    idLocal INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(45),
-    direccion VARCHAR(45)
+    idLocal INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Evento (
-    idEvento INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(45),
-    descripcion VARCHAR(45),
-    fechaPublicacion DATETIME,
-    publicado BOOLEAN,
+    idEvento INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fechaPublicacion DATETIME NOT NULL,
+    publicado BOOLEAN DEFAULT FALSE,
     cancelado BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE Usuario (
-    idUsuario INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(45),
-    passwordHash VARCHAR(255),
-    rol VARCHAR(45)
+CREATE TABLE Funcion (
+    idFuncion INT PRIMARY KEY AUTO_INCREMENT,
+    idEvento INT NOT NULL,
+    fechaHora DATETIME NOT NULL,
+    stock INT NOT NULL,
+    cancelada BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (idEvento) REFERENCES Evento(idEvento)
+);
+
+CREATE TABLE Tarifa (
+    idTarifa INT PRIMARY KEY AUTO_INCREMENT,
+    precio DECIMAL(10,2) NOT NULL
 );
 
 CREATE TABLE Sector (
-    idSector INT AUTO_INCREMENT PRIMARY KEY,
-    idLocal INT,
-    nombre VARCHAR(45),
+    idSector INT PRIMARY KEY AUTO_INCREMENT,
+    idLocal INT NOT NULL,
+    idFuncion INT NOT NULL,
+    idTarifa INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    capacidad INT NOT NULL,
+    FOREIGN KEY (idLocal) REFERENCES Local(idLocal),
+    FOREIGN KEY (idFuncion) REFERENCES Funcion(idFuncion),
+    FOREIGN KEY (idTarifa) REFERENCES Tarifa(idTarifa)
+);
 
-    CONSTRAINT FK_Sector_Local FOREIGN KEY (idLocal)
-        REFERENCES Local (idLocal)
+CREATE TABLE Usuario (
+    idUsuario INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    passwordHash VARCHAR(255) NOT NULL,
+    rol VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Cliente (
     DNI INT PRIMARY KEY,
-    idUsuario INT,
-    nombre VARCHAR(45),
-    apellido VARCHAR(45),
-    telefono INT,
-
-    CONSTRAINT FK_Cliente_Usuario FOREIGN KEY (idUsuario)
-        REFERENCES Usuario (idUsuario)
+    idUsuario INT UNIQUE NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
 CREATE TABLE RefreshTokens (
-    idRefreshToken INT AUTO_INCREMENT PRIMARY KEY,
+    idRefreshToken INT PRIMARY KEY AUTO_INCREMENT,
     idUsuario INT NOT NULL,
-    token VARCHAR(200) NOT NULL,
+    token VARCHAR(500) NOT NULL,
     expiracion DATETIME NOT NULL,
-    revocado BIT DEFAULT 0,
-
-    CONSTRAINT FK_RefreshToke_Usuario FOREIGN KEY (idUsuario) 
-        REFERENCES Usuario(idUsuario)
-);
-
-CREATE TABLE Tarifa (
-    idTarifa INT AUTO_INCREMENT PRIMARY KEY,
-    idSector INT,
-    precio DECIMAL(10,2),
-
-    CONSTRAINT FK_Tarifa_Sector FOREIGN KEY (idSector) 
-        REFERENCES Sector (idSector)
-);
-
-CREATE TABLE Funcion (
-    idFuncion INT AUTO_INCREMENT PRIMARY KEY,
-    idTarifa INT,
-    idEvento INT,
-    fechaHora DATETIME,
-    stock INT,
-    cancelada BOOLEAN DEFAULT FALSE,
-
-    CONSTRAINT FK_Funcion_Tarifa FOREIGN KEY (idTarifa) 
-        REFERENCES Tarifa (idTarifa),
-    CONSTRAINT FK_Funcion_Evento FOREIGN KEY (idEvento) 
-        REFERENCES Evento (idEvento)
+    revocado BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
 CREATE TABLE Orden (
-    idOrden INT AUTO_INCREMENT PRIMARY KEY,
-    DNI INT,
-    idFuncion INT,
-    fecha DATETIME,
+    idOrden INT PRIMARY KEY AUTO_INCREMENT,
+    DNI INT NOT NULL,
+    idSector INT NOT NULL,
+    fecha DATETIME NOT NULL,
     pagada BOOLEAN DEFAULT FALSE,
-
-    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI) 
-        REFERENCES Cliente (DNI),
-    CONSTRAINT FK_Orden_Funcion FOREIGN KEY (idFuncion)
-        REFERENCES Funcion (idFuncion)
+    FOREIGN KEY (DNI) REFERENCES Cliente(DNI),
+    FOREIGN KEY (idSector) REFERENCES Sector(idSector)
 );
 
 CREATE TABLE Entrada (
-    idEntrada INT AUTO_INCREMENT PRIMARY KEY,
-    idOrden INT,
+    idEntrada INT PRIMARY KEY AUTO_INCREMENT,
+    idOrden INT NOT NULL,
     usada BOOLEAN DEFAULT FALSE,
-
-    CONSTRAINT FK_Entrada_Orden FOREIGN KEY (idOrden)
-        REFERENCES Orden (idOrden)
+    FOREIGN KEY (idOrden) REFERENCES Orden(idOrden)
 );
 
 CREATE TABLE Qr (
-    idQr INT AUTO_INCREMENT PRIMARY KEY,
-    idEntrada INT,
-    url VARCHAR (100),
-
-    CONSTRAINT FK_Qr_Entrada FOREIGN KEY (idEntrada)
-        REFERENCES Entrada (idEntrada)
+    idQr INT PRIMARY KEY AUTO_INCREMENT,
+    idEntrada INT NOT NULL UNIQUE,
+    url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (idEntrada) REFERENCES Entrada(idEntrada)
 );
