@@ -17,6 +17,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SuperProyecto.Api.Helper;
 
+using MySqlConnector; 
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -63,6 +66,7 @@ builder.Services.AddScoped<AuthService>();
 //Servicio y repositorio que me permite entablar la conexion con la base de datos
 #region Configuracion Bd
 //Los creo como singleton ya que no requiero que a cada request se cree una nueva instancia
+
 builder.Services.AddSingleton<IDataBaseConnectionService, DataBaseConnectionService>();
 builder.Services.AddSingleton<IAdo, Ado>();
 #endregion
@@ -234,7 +238,7 @@ app.MapGet("/api/Cliente", (IClienteService service) =>
 #endregion
 
 #region Entrada
-    /* app.MapGet("/api/Entrada", (IEntradaService service) =>
+    app.MapGet("/api/Entrada", (IEntradaService service) =>
     {
         var result = service.GetEntradas();
         return result.ToMinimalResult();
@@ -242,21 +246,21 @@ app.MapGet("/api/Cliente", (IClienteService service) =>
 
     app.MapGet("/api/Entrada/{id}", (int id, IEntradaService service) =>
     {
-        var entrada = service.DetalleEntrada(id);
-        return entrada is not null ? Results.Ok(entrada) : Results.NotFound();
+        var result = service.DetalleEntrada(id);
+        return result.ToMinimalResult();
     }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
 
     app.MapGet("/api/Entrada/{id}/Qr", (int id, IEntradaService service) =>
     {
-        var qr = service.GetQr(id);
-        return qr is not null ? Results.File(qr, "image/png") : Results.NotFound();
+        var result = service.GetQr(id);
+        return result.ToMinimalResult();
     }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
 
     app.MapPut("/api/Entrada/qr/validar", (int id, IEntradaService service) =>
     {
-        var error = service.ValidarQr(id);
-        return error is null ? Results.Ok() : Results.BadRequest(error);
-    }).WithTags("Entrada").RequireAuthorization("Organizador", "Administrador"); */
+        var result = service.ValidarQr(id);
+        return result.ToMinimalResult();
+    }).WithTags("Entrada").RequireAuthorization("Organizador", "Administrador");
 #endregion
 
 #region Evento

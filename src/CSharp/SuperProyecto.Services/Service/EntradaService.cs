@@ -16,23 +16,23 @@ public class EntradaService : IEntradaService
         _repoQr = repoQr;
     }
 
-    public IEnumerable<Entrada> GetEntradas() => _repoEntrada.GetEntradas();
+    public Result<IEnumerable<Entrada>> GetEntradas() => Result<IEnumerable<Entrada>>.Ok(_repoEntrada.GetEntradas());
 
-    public Entrada? DetalleEntrada(int id) => _repoEntrada.DetalleEntrada(id);
+    public  Result<Entrada?> DetalleEntrada(int id) => Result<Entrada?>.Ok(_repoEntrada.DetalleEntrada(id));
 
-    public byte[]? GetQr(int id)
+    public Result<byte[]?> GetQr(int id)
     {
         var qr = _repoQr.DetalleQr(id);
-        if (qr is null) return null;
-        return _qrService.CrearQR(qr.url);
+        if (qr is null) return Result<byte[]?>.BadRequest(default, "QR no encontrado.");
+        return Result<byte[]?>.Ok(_qrService.CrearQR(qr.url));
     }
 
-    public string? ValidarQr(int id)
+    public Result<object> ValidarQr(int id)
     {
         var entrada = _repoEntrada.DetalleEntrada(id);
-        if (entrada is null) return "Entrada no encontrada.";
-        if (entrada.usada) return "La entrada ya fue usada.";
+        if (entrada is null) return Result<object>.BadRequest(default, "Entrada no encontrada.");
+        if (entrada.usada) return Result<object>.BadRequest(default, "La entrada ya fue usada.");
         _repoEntrada.EntradaUsada(entrada.idEntrada);
-        return null;
+        return Result<object>.Ok();
     }
 }

@@ -17,8 +17,8 @@ public static class ResultExtensions
 
             Gracias a esto, podés llamar al método como si fuera parte de la clase:
 
-            var result = ServiceResult<TokensDto>.Ok(tokens);
-            IResult httpResult = result.ToMinimalResult(); // <-- como si fuera un método de ServiceResult
+            var result = service.GetClientes();
+            return result.ToMinimalResult(); // <-- como si fuera un método de Result
 
             Sin this, no sería un método de extensión, y tendrías que llamarlo así:
 
@@ -30,7 +30,9 @@ public static class ResultExtensions
             EResultType.Created => Results.Created(string.Empty, result.Data),
             EResultType.NotFound => Results.NotFound(new { message = result.Message }),
             EResultType.Unauthorized => Results.Unauthorized(),
-            EResultType.BadRequest => Results.BadRequest(new { errors = result.Errors, message = result.Message })
+            EResultType.BadRequest => result.Message is null ? Results.BadRequest(new { error = result.Errors }) : Results.BadRequest(new { message = result.Message })/* Results.BadRequest(new { errors = result.Errors, message = result.Message }) */,
+            EResultType.File => Results.File(result.Bytes ?? Array.Empty<byte>(), "qr/image"),
+            _ => Results.StatusCode(500)
         };
     }
 }

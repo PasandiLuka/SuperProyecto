@@ -7,5 +7,5 @@ public enum EResultType
     NotFound,
     Unauthorized,
     BadRequest,
-    ValidationProblem
+    File
 }

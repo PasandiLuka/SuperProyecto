@@ -11,15 +11,18 @@ public class UsuarioValidator : AbstractValidator<UsuarioDto>
     public UsuarioValidator(IRepoUsuario repoUsuario)
     {
         _repoUsuario = repoUsuario;
-        
+
         RuleFor(u => u.email)
+            .Must(email => !_repoUsuario.UniqueEmail(email)).WithMessage("Ya existe un usuario con ese mail registrado.")
             .NotEmpty().WithMessage("El email es obligatorio.")
             .EmailAddress().WithMessage("El email no se encuentra en un formato valido.")
-            .Must(email => !_repoUsuario.UniqueEmail(email)).WithMessage("Ya existe un usuario con ese mail registrado.");
+            .MinimumLength(5).WithMessage("El email debe tener al menos 5 caracteres.")
+            .MaximumLength(45).WithMessage("El email debe tener como máximo 45 caracteres.");
 
         RuleFor(u => u.password)
             .NotEmpty().WithMessage("La contrasena es obligatoria.")
-            .MinimumLength(6).WithMessage("La contrasena debe contener al menos 6 caracteres.");
+            .MinimumLength(6).WithMessage("La contrasena debe contener al menos 6 caracteres.")
+            .MaximumLength(45).WithMessage("La contrasena debe tener como máximo 45 caracteres.");
 
         RuleFor(u => u.Rol)
             .NotEmpty().WithMessage("El rol es obligatorio.")

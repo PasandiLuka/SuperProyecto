@@ -14,6 +14,7 @@ public class EventoValidator : AbstractValidator<EventoDto>
         
         RuleFor(e => e.descripcion)
             .NotEmpty().WithMessage("La descripcion es obligatoria.")
-            .MinimumLength(5).WithMessage("La descripcion debe contener al menos 5 caracteres.");
+            .MinimumLength(5).WithMessage("La descripcion debe contener al menos 5 caracteres.")
+            .MaximumLength(200).WithMessage("La descripcion debe tener como máximo 200 caracteres.");;
     }
 }

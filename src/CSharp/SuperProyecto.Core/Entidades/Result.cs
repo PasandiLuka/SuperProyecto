@@ -11,14 +11,16 @@ public class Result<T>
     public string? Message { get; private set; }
     public EResultType ResultType { get; private set; }
     public IDictionary<string, string[]>? Errors { get; private set; }
+    public byte[]? Bytes { get; private set; }
 
-    private Result( bool success, EResultType resultType, T? data = default, string? message = null, IDictionary<string, string[]>? errors = null)
+    private Result( bool success, EResultType resultType, T? data = default, string? message = null, IDictionary<string, string[]>? errors = null, byte[]? bytes = null)
     {
         Success = success;
         ResultType = resultType;
         Data = data;
         Message = message;
         Errors = errors;
+        Bytes = bytes;
     }
 
     public static Result<T> Ok(T? data = default, string? message = null)
@@ -31,8 +33,11 @@ public class Result<T>
         => new(false, EResultType.NotFound, default, message);
 
     public static Result<T> Unauthorized()
-        => new(false, EResultType.Unauthorized, default, default);
+        => new(false, EResultType.Unauthorized, default, default, default);
 
     public static Result<T> BadRequest(IDictionary<string, string[]> errors = default, string? message = default)
         => new(false, EResultType.BadRequest, default, message, errors);
+    
+    public static Result<T> File(byte[]? bytes)
+        => new(false, EResultType.File, default, default, default, bytes);
 }

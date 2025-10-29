@@ -15,6 +15,6 @@ public class EntradaValidator : AbstractValidator<EntradaDto>
         RuleFor(e => e.idEntrada)
             .NotEmpty().WithMessage("El idEntrada es obligatorio.")
             .GreaterThan(0).WithMessage("El idEntrada debe ser mayor a 0.")
-            .Must(idEntrada => _repoEntrada.DetalleEntrada(idEntrada) is null).WithMessage("Ya existe una entrada con ese idEntrada registrado.");
+            .Must(idEntrada => _repoEntrada.DetalleEntrada(idEntrada) is null).WithMessage("Ya existe una entrada con ese id registrado.");
     }
 }

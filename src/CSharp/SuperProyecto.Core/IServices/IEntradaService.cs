@@ -4,8 +4,8 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IEntradaService
 {
-    IEnumerable<Entrada> GetEntradas();
-    Entrada? DetalleEntrada(int id);
-    byte[]? GetQr(int id);
-    string? ValidarQr(int id);
+    Result<IEnumerable<Entrada>> GetEntradas();
+    Result<Entrada?> DetalleEntrada(int id);
+    Result<byte[]?> GetQr(int id);
+    Result<object> ValidarQr(int id);
 }
