@@ -21,6 +21,6 @@ public class EventoValidator : AbstractValidator<EventoDto>
             .MinimumLength(5).WithMessage("La descripcion debe contener al menos 5 caracteres.")
             .MaximumLength(_cantMaximaLetrasParaDescripcion).
                 WithMessage($"La descripcion debe tener menos de {_cantMaximaLetrasParaDescripcion + 1} caracteres.");
-            
+
     }
 }

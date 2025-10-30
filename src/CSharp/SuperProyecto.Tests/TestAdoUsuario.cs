@@ -9,17 +9,17 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoObtengoLosRoles_DebeRetornarListaDeRoles_ConResultadoOk()
     {
-        // Arrange
+        
         var mockService = new Mock<IUsuarioService>();
         var roles = Enum.GetNames(typeof(ERol));
 
         mockService.Setup(s => s.ObtenerRoles())
             .Returns(Result<string[]>.Ok(roles));
 
-        // Act
+        
         var resultado = mockService.Object.ObtenerRoles();
 
-        // Assert
+        
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
         Assert.Equal(roles.Length, resultado.Data.Length);
@@ -28,17 +28,17 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoBuscoDetalleDeUsuarioValido_DebeRetornarUsuario_ConResultadoOk()
     {
-        // Arrange
+        
         var mockService = new Mock<IUsuarioService>();
-        var usuario = new Usuario { idUsuario = 1, email = "usuario@test.com", passwordHash = "123456", rol = ERol.Administrador };
+        var usuario = new UsuarioDto {email = "usuario@test.com", password = "123456", Rol = ERol.Administrador };
 
-        mockService.Setup(s => s.DetalleUsuario(usuario.idUsuario))
-            .Returns(Result<Usuario?>.Ok(usuario));
+        mockService.Setup(s => s.(usuario.idUsuario))
+            .Returns(Result<UsuarioDto?>.Ok(usuario));
 
-        // Act
+        
         var resultado = mockService.Object.DetalleUsuario(usuario.idUsuario);
 
-        // Assert
+
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
         Assert.Equal(usuario.idUsuario, resultado.Data.idUsuario);
@@ -48,27 +48,27 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoBuscoDetalleUsuarioPorEmailValido_DebeRetornarUsuario_ConResultadoOk()
     {
-        // Arrange
+        
         var mockService = new Mock<IUsuarioService>();
-        var usuario = new Usuario { idUsuario = 2, email = "correo@test.com", passwordHash = "abcdef", rol = ERol.Organizador };
+        var usuario = new UsuarioDto {  email = "correo@test.com", password = "abcdef", Rol = ERol.Organizador };
 
         mockService.Setup(s => s.DetalleUsuarioXEmail(usuario.email))
             .Returns(Result<Usuario?>.Ok(usuario));
 
-        // Act
+
         var resultado = mockService.Object.DetalleUsuarioXEmail(usuario.email);
 
-        // Assert
+       
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
         Assert.Equal(usuario.email, resultado.Data.email);
-        Assert.Equal(usuario.rol, resultado.Data.rol);
+        Assert.Equal(usuario.Rol, resultado.Data.Rol);
     }
 
     [Fact]
     public void CuandoActualizoElRolDeUnUsuario_DebeRetornarOk()
     {
-        // Arrange
+       
         var mockService = new Mock<IUsuarioService>();
         var usuario = new Usuario { idUsuario = 3, email = "rol@test.com", passwordHash = "pass123", rol = ERol.Organizador };
         var nuevoRol = ERol.Administrador;
@@ -76,10 +76,10 @@ public class TestAdoUsuario
         mockService.Setup(s => s.ActualizarRol(usuario.idUsuario, nuevoRol))
             .Returns(Result<Usuario>.Ok());
 
-        // Act
+       
         var resultado = mockService.Object.ActualizarRol(usuario.idUsuario, nuevoRol);
 
-        // Assert
+        
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
     }
@@ -87,7 +87,7 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoRealizoUnAltaDeUsuarioValido_DebeRetornarCreated()
     {
-        // Arrange
+        
         var mockService = new Mock<IUsuarioService>();
         var usuarioDto = new UsuarioDto { email = "nuevo@correo.com", password = "segura123", Rol = ERol.Organizador };
 
@@ -99,10 +99,10 @@ public class TestAdoUsuario
                 rol = usuarioDto.Rol
             }));
 
-        // Act
+        
         var resultado = mockService.Object.AltaUsuario(usuarioDto);
 
-        // Assert
+        
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Created, resultado.ResultType);
         Assert.Equal(usuarioDto.email, resultado.Data.email);
@@ -112,7 +112,6 @@ public class TestAdoUsuario
     [Fact]
     public void CuandoRealizoUnAltaDeUsuarioInvalido_DebeRetornarBadRequest()
     {
-        // Arrange
         var mockRepoUsuario = new Mock<IRepoUsuario>();
         mockRepoUsuario.Setup(r => r.UniqueEmail(It.IsAny<string>())).Returns(false);
 
@@ -125,7 +124,6 @@ public class TestAdoUsuario
 
         var validator = new UsuarioValidator(mockRepoUsuario.Object);
 
-        // Act
         var validationResult = validator.Validate(usuarioDto);
 
         Result<Usuario> resultado;
@@ -147,7 +145,7 @@ public class TestAdoUsuario
             });
         }
 
-        // Assert
+       
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("email"));

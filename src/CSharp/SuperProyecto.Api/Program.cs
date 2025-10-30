@@ -193,6 +193,7 @@ app.MapPut("/api/Usuario/{id}/rol", (int id, ERol nuevoRol, IUsuarioService serv
     {
         var result = service.UpdateCliente(clienteDto, id);
         return result.ToMinimalResult();
+        // Result.Ok(cliente);
     }).WithTags("Cliente");/* .RequireAuthorization("Cliente", "Administrador"); */
 
     app.MapPost("/api/Cliente", (ClienteDto clienteDto, IClienteService service) =>
