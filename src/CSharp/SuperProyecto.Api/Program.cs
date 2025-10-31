@@ -12,7 +12,6 @@ using SuperProyecto.Core.Enums;
 //Paquetes api
 using Microsoft.OpenApi.Models;
 
-
 //Paquetes para la autenticacion por token
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -66,7 +65,6 @@ builder.Services.AddScoped<AuthService>();
 //Servicio y repositorio que me permite entablar la conexion con la base de datos
 #region Configuracion Bd
 //Los creo como singleton ya que no requiero que a cada request se cree una nueva instancia
-
 builder.Services.AddSingleton<IDataBaseConnectionService, DataBaseConnectionService>();
 DataBaseCreationService dbCreator = new DataBaseCreationService(
     builder.Services.BuildServiceProvider().GetService<IDataBaseConnectionService>()!
@@ -162,10 +160,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-
 if (app.Environment.IsDevelopment())
 {
-    /* app.MapOpenApi(); */
     app.UseSwagger();
     app.UseSwaggerUI();
 }
