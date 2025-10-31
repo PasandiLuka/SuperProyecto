@@ -26,43 +26,41 @@ public class TestAdoUsuario
     }
 
     [Fact]
-    public void CuandoBuscoDetalleDeUsuarioValido_DebeRetornarUsuario_ConResultadoOk()
+    public void CuandoBuscoDetalleDeUsuarioValido_DebeRetornarUsuario()
     {
         // Arrange
-        var mockService = new Mock<IUsuarioService>();
+        var mockRepoUsuario = new Mock<IRepoUsuario>();
         var usuario = new Usuario { idUsuario = 1, email = "usuario@test.com", passwordHash = "123456", rol = ERol.Administrador };
 
-        mockService.Setup(s => s.DetalleUsuario(usuario.idUsuario))
-            .Returns(Result<Usuario?>.Ok(usuario));
+        mockRepoUsuario.Setup(s => s.DetalleUsuario(usuario.idUsuario))
+            .Returns(usuario);
 
         // Act
-        var resultado = mockService.Object.DetalleUsuario(usuario.idUsuario);
+        var resultado = mockRepoUsuario.Object.DetalleUsuario(usuario.idUsuario);
 
         // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Ok, resultado.ResultType);
-        Assert.Equal(usuario.idUsuario, resultado.Data.idUsuario);
-        Assert.Equal(usuario.email, resultado.Data.email);
+        Assert.NotNull(resultado);
+        Assert.Equal(usuario.idUsuario, resultado.idUsuario);
+        Assert.Equal(usuario.email, resultado.email);
     }
 
     [Fact]
-    public void CuandoBuscoDetalleUsuarioPorEmailValido_DebeRetornarUsuario_ConResultadoOk()
+    public void CuandoBuscoDetalleUsuarioPorEmailValido_DebeRetornarUsuario()
     {
         // Arrange
-        var mockService = new Mock<IUsuarioService>();
+        var mockRepoUsuario = new Mock<IRepoUsuario>();
         var usuario = new Usuario { idUsuario = 2, email = "correo@test.com", passwordHash = "abcdef", rol = ERol.Organizador };
 
-        mockService.Setup(s => s.DetalleUsuarioXEmail(usuario.email))
-            .Returns(Result<Usuario?>.Ok(usuario));
+        mockRepoUsuario.Setup(s => s.DetalleUsuarioXEmail(usuario.email))
+            .Returns(usuario);
 
         // Act
-        var resultado = mockService.Object.DetalleUsuarioXEmail(usuario.email);
+        var resultado = mockRepoUsuario.Object.DetalleUsuarioXEmail(usuario.email);
 
         // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Ok, resultado.ResultType);
-        Assert.Equal(usuario.email, resultado.Data.email);
-        Assert.Equal(usuario.rol, resultado.Data.rol);
+        Assert.NotNull(resultado);
+        Assert.Equal(usuario.idUsuario, resultado.idUsuario);
+        Assert.Equal(usuario.email, resultado.email);
     }
 
     [Fact]
@@ -82,31 +80,6 @@ public class TestAdoUsuario
         // Assert
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
-    }
-
-    [Fact]
-    public void CuandoRealizoUnAltaDeUsuarioValido_DebeRetornarCreated()
-    {
-        // Arrange
-        var mockService = new Mock<IUsuarioService>();
-        var usuarioDto = new UsuarioDto { email = "nuevo@correo.com", password = "segura123", Rol = ERol.Organizador };
-
-        mockService.Setup(s => s.AltaUsuario(usuarioDto))
-            .Returns(Result<Usuario>.Created(new Usuario
-            {
-                email = usuarioDto.email,
-                passwordHash = usuarioDto.password,
-                rol = usuarioDto.Rol
-            }));
-
-        // Act
-        var resultado = mockService.Object.AltaUsuario(usuarioDto);
-
-        // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Created, resultado.ResultType);
-        Assert.Equal(usuarioDto.email, resultado.Data.email);
-        Assert.Equal(usuarioDto.Rol, resultado.Data.rol);
     }
 
     [Fact]

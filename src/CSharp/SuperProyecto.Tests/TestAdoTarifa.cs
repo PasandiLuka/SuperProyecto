@@ -53,12 +53,11 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { idTarifa = 3, precio = 2500 };
+        var tarifaDto = new TarifaDto { precio = 2500 };
 
         mockService.Setup(s => s.AltaTarifa(tarifaDto))
             .Returns(Result<TarifaDto>.Created(new TarifaDto
             {
-                idTarifa = tarifaDto.idTarifa,
                 precio = tarifaDto.precio
             }));
 
@@ -68,7 +67,6 @@ public class TestAdoTarifa
         // Assert
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Created, resultado.ResultType);
-        Assert.Equal(tarifaDto.idTarifa, resultado.Data.idTarifa);
         Assert.Equal(tarifaDto.precio, resultado.Data.precio);
     }
 
@@ -77,17 +75,16 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { idTarifa = 1, precio = 2200 };
+        var tarifaDto = new TarifaDto { precio = 2200 };
 
-        mockService.Setup(s => s.UpdateTarifa(tarifaDto, tarifaDto.idTarifa))
+        mockService.Setup(s => s.UpdateTarifa(tarifaDto, 1))
             .Returns(Result<TarifaDto>.Ok(new TarifaDto
             {
-                idTarifa = tarifaDto.idTarifa,
                 precio = tarifaDto.precio
             }));
 
         // Act
-        var resultado = mockService.Object.UpdateTarifa(tarifaDto, tarifaDto.idTarifa);
+        var resultado = mockService.Object.UpdateTarifa(tarifaDto, 1);
 
         // Assert
         Assert.True(resultado.Success);
@@ -99,10 +96,7 @@ public class TestAdoTarifa
     public void CuandoRealizoUnAltaDeTarifaInvalida_DebeRetornarBadRequest()
     {
         // Arrange
-        var mockRepoSector = new Mock<IRepoSector>();
-        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns((Sector?)null);
-
-        var tarifaDto = new TarifaDto { idTarifa = 0, precio = -10 };
+        var tarifaDto = new TarifaDto { precio = -10 };
         var validator = new TarifaValidator();
 
         // Act
@@ -121,7 +115,7 @@ public class TestAdoTarifa
         {
             resultado = Result<Tarifa>.Created(new Tarifa
             {
-                idTarifa = tarifaDto.idTarifa,
+                idTarifa = 0,
                 precio = tarifaDto.precio
             });
         }
@@ -129,7 +123,6 @@ public class TestAdoTarifa
         // Assert
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
-        Assert.True(resultado.Errors.ContainsKey("idSector"));
         Assert.True(resultado.Errors.ContainsKey("precio"));
     }
 }

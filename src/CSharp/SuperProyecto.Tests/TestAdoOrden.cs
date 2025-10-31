@@ -13,8 +13,8 @@ public class TestAdoOrden
         var mockService = new Mock<IOrdenService>();
         var ordenes = new List<Orden>
         {
-            new Orden { idOrden = 1, DNI = 12345678, idFuncion = 1, fecha = DateTime.Today, pagada = false },
-            new Orden { idOrden = 2, DNI = 87654321, idFuncion = 2, fecha = DateTime.Today, pagada = true }
+            new Orden { idOrden = 1, DNI = 12345678, idSector = 1, fecha = DateTime.Today, pagada = false },
+            new Orden { idOrden = 2, DNI = 87654321, idSector = 2, fecha = DateTime.Today, pagada = true }
         };
 
         mockService.Setup(s => s.GetOrdenes()).Returns(Result<IEnumerable<Orden>>.Ok(ordenes));
@@ -33,7 +33,7 @@ public class TestAdoOrden
     {
         // Arrange
         var mockService = new Mock<IOrdenService>();
-        var orden = new Orden { idOrden = 1, DNI = 12345678, idFuncion = 1, fecha = DateTime.Today, pagada = false };
+        var orden = new Orden { idOrden = 1, DNI = 12345678, idSector = 1, fecha = DateTime.Today, pagada = false };
 
         mockService.Setup(s => s.DetalleOrden(orden.idOrden)).Returns(Result<Orden>.Ok(orden));
 
@@ -44,7 +44,7 @@ public class TestAdoOrden
         Assert.True(resultado.Success);
         Assert.Equal(orden.idOrden, resultado.Data.idOrden);
         Assert.Equal(orden.DNI, resultado.Data.DNI);
-        Assert.Equal(orden.idFuncion, resultado.Data.idFuncion);
+        Assert.Equal(orden.idSector, resultado.Data.idSector);
     }
 
     [Fact]
@@ -52,13 +52,13 @@ public class TestAdoOrden
     {
         // Arrange
         var mockRepoCliente = new Mock<IRepoCliente>();
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoFuncion.Object);
+        var mockRepoSector = new Mock<IRepoSector>();
+        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoSector.Object);
 
         mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns(new Cliente { DNI = 12345678 });
-        mockRepoFuncion.Setup(r => r.DetalleFuncion(It.IsAny<int>())).Returns(new Funcion { idFuncion = 1, cancelada = false, stock = 10 });
+        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns(new Sector { idSector = 1, idLocal = 1, idFuncion = 1, idTarifa = 1, nombre = "nombre", capacidad = 1 });
 
-        var orden = new OrdenDto { DNI = 12345678, idFuncion = 1 };
+        var orden = new OrdenDto { DNI = 12345678, idSector = 1 };
 
         // Act
         var validationResult = validator.Validate(orden);
@@ -76,7 +76,7 @@ public class TestAdoOrden
             {
                 idOrden = 1,
                 DNI = orden.DNI,
-                idFuncion = orden.idFuncion,
+                idSector = orden.idSector,
                 fecha = DateTime.Today,
                 pagada = false
             });
@@ -86,7 +86,7 @@ public class TestAdoOrden
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Created, resultado.ResultType);
         Assert.Equal(orden.DNI, resultado.Data.DNI);
-        Assert.Equal(orden.idFuncion, resultado.Data.idFuncion);
+        Assert.Equal(orden.idSector, resultado.Data.idSector);
     }
 
     [Fact]
@@ -94,14 +94,14 @@ public class TestAdoOrden
     {
         // Arrange
         var mockRepoCliente = new Mock<IRepoCliente>();
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoFuncion.Object);
+        var mockRepoSector = new Mock<IRepoSector>();
+        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoSector.Object);
 
         // Simulamos cliente inexistente y función cancelada
         mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns((Cliente)null);
-        mockRepoFuncion.Setup(r => r.DetalleFuncion(It.IsAny<int>())).Returns(new Funcion { cancelada = true, stock = 0 });
+        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns(new Sector { idSector = 1, idLocal = 1, idFuncion = 1, idTarifa = 1, nombre = "nombre", capacidad = 1 });
 
-        var orden = new OrdenDto { DNI = 0, idFuncion = 0 };
+        var orden = new OrdenDto { DNI = 0, idSector = 0 };
 
         // Act
         var validationResult = validator.Validate(orden);
@@ -119,7 +119,7 @@ public class TestAdoOrden
             {
                 idOrden = 1,
                 DNI = orden.DNI,
-                idFuncion = orden.idFuncion,
+                idSector = orden.idSector,
                 fecha = DateTime.Today,
                 pagada = false
             });
@@ -137,13 +137,13 @@ public class TestAdoOrden
     {
         // Arrange
         var mockRepoCliente = new Mock<IRepoCliente>();
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoFuncion.Object);
+        var mockRepoSector = new Mock<IRepoSector>();
+        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoSector.Object);
 
         mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns(new Cliente { DNI = 12345678 });
-        mockRepoFuncion.Setup(r => r.DetalleFuncion(It.IsAny<int>())).Returns(new Funcion { idFuncion = 1, cancelada = false, stock = 10 });
+        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns(new Sector { idSector = 1, idLocal = 1, idFuncion = 1, idTarifa = 1, nombre = "nombre", capacidad = 1 });
 
-        var orden = new OrdenDto { DNI = 12345678, idFuncion = 1 };
+        var orden = new OrdenDto { DNI = 12345678, idSector = 1 };
 
         // Act
         var validationResult = validator.Validate(orden);
@@ -161,7 +161,7 @@ public class TestAdoOrden
             {
                 idOrden = 1,
                 DNI = orden.DNI,
-                idFuncion = orden.idFuncion,
+                idSector = orden.idSector,
                 fecha = DateTime.Today,
                 pagada = false
             });
@@ -171,7 +171,7 @@ public class TestAdoOrden
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
         Assert.Equal(orden.DNI, resultado.Data.DNI);
-        Assert.Equal(orden.idFuncion, resultado.Data.idFuncion);
+        Assert.Equal(orden.idSector, resultado.Data.idSector);
     }
 
     [Fact]
@@ -179,13 +179,13 @@ public class TestAdoOrden
     {
         // Arrange
         var mockRepoCliente = new Mock<IRepoCliente>();
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoFuncion.Object);
+        var mockRepoSector = new Mock<IRepoSector>();
+        var validator = new OrdenValidator(mockRepoCliente.Object, mockRepoSector.Object);
 
         mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns((Cliente)null);
-        mockRepoFuncion.Setup(r => r.DetalleFuncion(It.IsAny<int>())).Returns(new Funcion { cancelada = true, stock = 0 });
+        mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns(new Sector { idSector = 1, idLocal = 1, idFuncion = 1, idTarifa = 1, nombre = "nombre", capacidad = 1 });
 
-        var orden = new OrdenDto { DNI = 0, idFuncion = 0 };
+        var orden = new OrdenDto { DNI = 0, idSector = 0 };
 
         // Act
         var validationResult = validator.Validate(orden);
@@ -203,7 +203,7 @@ public class TestAdoOrden
             {
                 idOrden = 1,
                 DNI = orden.DNI,
-                idFuncion = orden.idFuncion,
+                idSector = orden.idSector,
                 fecha = DateTime.Today,
                 pagada = false
             });

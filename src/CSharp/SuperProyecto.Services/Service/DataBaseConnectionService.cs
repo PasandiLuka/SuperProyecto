@@ -7,7 +7,7 @@ namespace SuperProyecto.Services.Service;
 
 public class DataBaseConnectionService : IDataBaseConnectionService
 {
-    public string GetConnectionString(bool isRoot = true)
+    public string GetConnectionString(bool isRoot)
     {
         string appsettingsText = string.Empty;
 

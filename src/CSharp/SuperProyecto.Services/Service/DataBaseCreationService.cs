@@ -14,7 +14,7 @@ public class DataBaseCreationService
     public DataBaseCreationService(IDataBaseConnectionService dataBaseConnectionService)
     {
         _dataBaseConnectionService = dataBaseConnectionService;
-        connectionString = _dataBaseConnectionService.GetConnectionString(default);
+        connectionString = _dataBaseConnectionService.GetConnectionString(true);
     }
 
     public void CreateDataBase()
