@@ -61,6 +61,15 @@ public class AuthService
         return Result<TokenResponseDto>.Ok(tokens);
     }
 
+    public Result<TokenResponseDto> Logout(string refreshToken)
+    {
+        var refreshTokenRequest = _repoToken.DetalleRefreshToken(refreshToken);
+        if (refreshTokenRequest is null) return Result<TokenResponseDto>.BadRequest(default!, "Token no valido.");
+        if (refreshTokenRequest.revocado) return Result<TokenResponseDto>.BadRequest(default!, "Este refresh token ya fue revocado.");
+        _repoToken.RevocarRefreshToken(refreshToken);        
+        return Result<TokenResponseDto>.Ok();
+    }
+
     // Helpers para password
     public static string HashPassword(string password)
     {

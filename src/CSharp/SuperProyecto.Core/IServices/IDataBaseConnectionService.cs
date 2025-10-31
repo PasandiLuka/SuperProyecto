@@ -1,6 +1,9 @@
+using SuperProyecto.Core.Enums;
+
 namespace SuperProyecto.Core.IServices;
 
 public interface IDataBaseConnectionService
 {
-    string GetConnectionString(bool isRoot);
+    string GetConnectionRootString();
+    string GetConnectionUserString(ERol rol);
 }

@@ -8,7 +8,7 @@ namespace SuperProyecto.Dapper;
 public class Ado : IAdo
 {
     private readonly string _conexion;
-    public Ado(IDataBaseConnectionService _service) => _conexion = _service.GetConnectionString(default);
+    public Ado(IDataBaseConnectionService _service) => _conexion = _service.GetConnectionRootString();
 
     public IDbConnection GetDbConnection()
     {

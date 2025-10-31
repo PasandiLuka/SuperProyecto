@@ -1,29 +1,20 @@
 using SuperProyecto.Core.IServices;
 using MySqlConnector;
 using Microsoft.Extensions.Configuration;
+using SuperProyecto.Core.Enums;
 
 
 namespace SuperProyecto.Services.Service;
 
 public class DataBaseConnectionService : IDataBaseConnectionService
 {
-    public string GetConnectionString(bool isRoot)
+    public string GetConnectionRootString()
     {
-        string appsettingsText = string.Empty;
-
         // 1) Leer Json
         var configuration = LeerJson();
-        
-        if(isRoot)
-        {
-            appsettingsText = "Root";
-        }else
-        {
-            appsettingsText = "Users";
-        }
 
         // 2) Obtener todas las cadenas de conexión
-            var connectionStrings = configuration.GetSection(appsettingsText).GetChildren();
+        var connectionStrings = configuration.GetSection("Root").GetChildren();
 
         // 3) Probar cada conexión
         string? conectionString = ProbarCadenas(connectionStrings);
@@ -37,8 +28,17 @@ public class DataBaseConnectionService : IDataBaseConnectionService
         {
             Console.WriteLine($"✔ Usando conexión: {conectionString}");
         }
-
+        
         return conectionString;
+    }
+
+    public string GetConnectionUserString(ERol rol)
+    {
+        var configuration = LeerJson();
+
+        var connectionStrings = configuration.GetSection("Users").GetChildren();
+
+        return connectionStrings.First(c => c.Key == rol.ToString()).Value!;
     }
     
     static IConfigurationRoot LeerJson()
