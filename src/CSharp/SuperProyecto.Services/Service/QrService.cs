@@ -7,9 +7,9 @@ namespace SuperProyecto.Services.Service;
 
 public class QrService : IQrService
 {
-    readonly IUrlConstructor _urlConstructor;
+    readonly IUrlConstructorService _urlConstructor;
 
-    public QrService(IUrlConstructor urlConstructor)
+    public QrService(IUrlConstructorService urlConstructor)
     {
         _urlConstructor = urlConstructor;
     }

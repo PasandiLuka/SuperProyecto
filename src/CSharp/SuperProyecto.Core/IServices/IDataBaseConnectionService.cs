@@ -2,5 +2,5 @@ namespace SuperProyecto.Core.IServices;
 
 public interface IDataBaseConnectionService
 {
-    string GetConnectionString();
+    string GetConnectionString(bool isRoot);
 }

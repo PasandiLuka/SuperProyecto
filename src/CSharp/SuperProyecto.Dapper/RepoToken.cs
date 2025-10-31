@@ -23,15 +23,15 @@ public class RepoToken : Repo, IRepoToken
     }
 
     private static readonly string _queryAltaRefreshToken
-        = @"INSERT INTO RefreshTokens (idUsuario, token, expiracion) VALUES (@idUsuario, @token, @expiracion)";
-    public void AltaRefreshToken(int idUsuario, string token, DateTime expiracion)
+        = @"INSERT INTO RefreshTokens (idUsuario, refreshToken, expiracion) VALUES (@idUsuario, @refreshToken, @expiracion)";
+    public void AltaRefreshToken(int idUsuario, string refreshToken, DateTime expiracion)
     {
         _conexion.Execute(
             _queryAltaRefreshToken,
             new
             {
                 idUsuario,
-                token,
+                refreshToken,
                 expiracion
             });
     }

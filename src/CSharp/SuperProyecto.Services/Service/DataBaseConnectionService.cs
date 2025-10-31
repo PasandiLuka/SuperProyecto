@@ -7,13 +7,23 @@ namespace SuperProyecto.Services.Service;
 
 public class DataBaseConnectionService : IDataBaseConnectionService
 {
-    public string GetConnectionString()
+    public string GetConnectionString(bool isRoot = true)
     {
+        string appsettingsText = string.Empty;
+
         // 1) Leer Json
         var configuration = LeerJson();
+        
+        if(isRoot)
+        {
+            appsettingsText = "Root";
+        }else
+        {
+            appsettingsText = "Users";
+        }
 
         // 2) Obtener todas las cadenas de conexión
-        var connectionStrings = configuration.GetSection("ConnectionStrings").GetChildren();
+            var connectionStrings = configuration.GetSection(appsettingsText).GetChildren();
 
         // 3) Probar cada conexión
         string? conectionString = ProbarCadenas(connectionStrings);

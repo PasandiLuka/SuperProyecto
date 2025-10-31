@@ -1,6 +1,6 @@
 namespace SuperProyecto.Core.IServices;
 
-public interface IUrlConstructor
+public interface IUrlConstructorService
 {
     string GenerarQrUrl(int id);
 }

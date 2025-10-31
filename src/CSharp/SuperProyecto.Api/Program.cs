@@ -1,3 +1,5 @@
+//Crear un metodo por cada rol y que cuando me logeo estos metodos instancien la base de datos bajo el rol designado.
+
 //Referencias a los proyectos
 using SuperProyecto.Services.Service;
 using SuperProyecto.Services.Validators;
@@ -9,7 +11,7 @@ using SuperProyecto.Core.Enums;
 
 //Paquetes api
 using Microsoft.OpenApi.Models;
-using SuperProyecto.Web.Helpers;
+
 
 //Paquetes para la autenticacion por token
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,9 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<DataBaseCreationService>();
-
-
-
 
 //Servicios para implementar la autenticacion y autorizacion
 #region Auth
@@ -112,7 +111,7 @@ builder.Services.AddScoped<UsuarioValidator>();
 //Instaciamos los servicios
 #region Servicios
 builder.Services.AddScoped<IQrService, QrService>();
-builder.Services.AddScoped<IUrlConstructor, UrlConstructor>();
+builder.Services.AddScoped<IUrlConstructorService, UrlConstructorService>();
 //Necesario para poder inyectar el HttpContext en el AuthService y obtener el usuario logueado
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();

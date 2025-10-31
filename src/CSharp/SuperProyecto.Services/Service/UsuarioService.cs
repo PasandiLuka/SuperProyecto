@@ -55,7 +55,7 @@ public class UsuarioService : IUsuarioService
         return new Usuario
         {
             email = usuarioDto.email,
-            passwordHash = usuarioDto.password,
+            passwordHash = AuthService.HashPassword(usuarioDto.password),
             rol = usuarioDto.Rol
         };
     }

@@ -56,7 +56,7 @@ public class OrdenService : IOrdenService
         return new Orden
         {
             DNI = ordenDto.DNI,
-            idFuncion = ordenDto.idFuncion,
+            idSector = ordenDto.idSector,
             fecha = DateTime.Now,
             pagada = false
         };

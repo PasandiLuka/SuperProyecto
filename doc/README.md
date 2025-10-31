@@ -198,18 +198,18 @@ erDiagram
 
 ### **Lista de tareas**
 
-| **Orden** | **Tarea**                         | **Duracion (hs)** | **Dependencias** |
-|-------|---------------------------------------|:-------------:|:------------:|
-|a  |Configurar el entorno de desarrollo        | 1             | -            |
-|b	|Crear y preparar la base de datos	        | 2	            | a            |
-|c	|Integrar validadores en la API	            | 2	            | a            |
-|d	|Ejecutar las pruebas unitarias existentes	| 3	            | b, c         |
-|e	|Probar autenticación y autorización JWT	| 2	            | d            |
-|f	|Documentar la API y el proyecto	        | 2	            | d            |
-|g	|Preparar el despliegue en producción	    | 3	            | e, f         |
-|h	|Desplegar la aplicación	                | 2	            | g            |
-|i	|Realizar pruebas de aceptación	            | 2	            | h            |
-|j	|Cierre del proyecto	                    | 1	            | i            |
+| **Orden** | **Tarea**                             | **Duracion (hs)** | **Dependencias** |
+|-------|-------------------------------------------|:-------------:|:------------:|
+|a  |Evaluar requerimientos                         | 2             | -            |
+|b	|Realizar el DER y diagrama de clases	        | 2	            | a            |
+|c	|Realizar el DDL y USERS                        | 3	            | b            |
+|d	|Realizar capa Core	                            | 4	            | c            |
+|e	|Realizar capa Dapper	                        | 4	            | d            |
+|f	|Realizar capa Servicios	                    | 6	            | e            |
+|g	|Investigar sobre JWT e implementarlo	        | 1	            | f            |
+|h	|Habilitar la validacion por JWT en el Swagger  | 1	            | g            |
+|i	|Realizar tests xUnit	                        | 4	            | f            |
+|j	|Documentacion	                                | 2	            | i, h         |
 
 ### **Gantt**
 
@@ -218,21 +218,22 @@ gantt
     title Proyecto: Boletería Digital
     dateFormat  HH
     axisFormat  %Hh
+
     section Preparación
-    a : a, 00, 1h
+    a : a, 00, 2h
     b : b, after a, 2h
-    c : c, after a, 2h
+    c : c, after b, 3h
 
-    section Desarrollo y Pruebas
-    d : d, after b c, 3h
-    e : e, after d, 2h
-    f : f, after d, 2h
+    section Desarrollo
+    d : d, after c, 4h
+    e : e, after d, 4h
+    f : f, after e, 6h
 
-    section Despliegue
-    g : g, after e f, 3h
-    h : h, after g, 2h
+    section Seguridad
+    g : g, after f, 1h
+    h : h, after g, 1h
 
-    section Finalización
-    i : i, after h, 2h
-    j : j, after i, 1h
+    section Pruebas y Documentación
+    i : i, after f, 4h
+    j : j, after i h, 2h
 ```

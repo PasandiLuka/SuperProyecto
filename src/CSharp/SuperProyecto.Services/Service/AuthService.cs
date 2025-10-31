@@ -62,7 +62,7 @@ public class AuthService
     }
 
     // Helpers para password
-    static string HashPassword(string password)
+    public static string HashPassword(string password)
     {
         using var sha = SHA256.Create();
         var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(password));

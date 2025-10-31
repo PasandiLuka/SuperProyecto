@@ -1,3 +1,6 @@
+SET AUTOCOMMIT=0;
+START TRANSACTION;
+
 CREATE TABLE Local (
     idLocal INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(45) NOT NULL,
@@ -78,7 +81,7 @@ CREATE TABLE Orden (
     pagada BOOLEAN DEFAULT FALSE,
     CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI) 
         REFERENCES Cliente(DNI),
-    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (idSector) 
+    CONSTRAINT FK_Orden_Sector FOREIGN KEY (idSector) 
         REFERENCES Sector(idSector)
 );
 
@@ -94,6 +97,8 @@ CREATE TABLE Qr (
     idQr INT PRIMARY KEY AUTO_INCREMENT,
     idEntrada INT NOT NULL UNIQUE,
     url VARCHAR(255) NOT NULL,
-    CONSTAINT FK_Qr_Entrada FOREIGN KEY (idEntrada) 
+    CONSTRAINT FK_Qr_Entrada FOREIGN KEY (idEntrada) 
         REFERENCES Entrada(idEntrada)
 );
+
+COMMIT;
