@@ -27,7 +27,7 @@ public class RepoTarifa : Repo, IRepoTarifa
     }
 
     private static readonly string _queryAltaTarifa
-        = @"INSERT INTO Tarifa (idTarifa, idSector, precio) VALUES (@idTarifa, @idSector, @precio)";
+        = @"INSERT INTO Tarifa (idTarifa, precio) VALUES (@idTarifa, @precio)";
     public void AltaTarifa(Tarifa tarifa)
     {
         _conexion.Execute(
@@ -35,20 +35,18 @@ public class RepoTarifa : Repo, IRepoTarifa
             new
             {
                 tarifa.idTarifa,
-                tarifa.idSector,
                 tarifa.precio
             });
     }
 
     private static readonly string _queryUpdateTarifa
-        = @"UPDATE Sector SET idSector = @idSector, precio = @precio WHERE idTarifa = @idTarifa";
+        = @"UPDATE Sector SET precio = @precio WHERE idTarifa = @idTarifa";
     public void UpdateTarifa(Tarifa tarifa, int id)
     {
         _conexion.Execute(
             _queryUpdateTarifa,
             new
             {
-                tarifa.idSector,
                 tarifa.precio,
                 idTarifa = id
             });

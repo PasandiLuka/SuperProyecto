@@ -13,8 +13,8 @@ public class TestAdoTarifa
         var mockService = new Mock<ITarifaService>();
         var tarifas = new List<Tarifa>
         {
-            new Tarifa { idTarifa = 1, idSector = 2, precio = 1500 },
-            new Tarifa { idTarifa = 2, idSector = 3, precio = 2000 }
+            new Tarifa { idTarifa = 1, precio = 1500 },
+            new Tarifa { idTarifa = 2, precio = 2000 }
         };
 
         mockService.Setup(s => s.GetTarifas())
@@ -34,7 +34,7 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifa = new Tarifa { idTarifa = 1, idSector = 2, precio = 1800 };
+        var tarifa = new Tarifa { idTarifa = 1, precio = 1800 };
 
         mockService.Setup(s => s.DetalleTarifa(tarifa.idTarifa))
             .Returns(Result<Tarifa>.Ok(tarifa));
@@ -53,13 +53,12 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { idTarifa = 3, idSector = 4, precio = 2500 };
+        var tarifaDto = new TarifaDto { idTarifa = 3, precio = 2500 };
 
         mockService.Setup(s => s.AltaTarifa(tarifaDto))
             .Returns(Result<TarifaDto>.Created(new TarifaDto
             {
                 idTarifa = tarifaDto.idTarifa,
-                idSector = tarifaDto.idSector,
                 precio = tarifaDto.precio
             }));
 
@@ -78,13 +77,12 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { idTarifa = 1, idSector = 2, precio = 2200 };
+        var tarifaDto = new TarifaDto { idTarifa = 1, precio = 2200 };
 
         mockService.Setup(s => s.UpdateTarifa(tarifaDto, tarifaDto.idTarifa))
             .Returns(Result<TarifaDto>.Ok(new TarifaDto
             {
                 idTarifa = tarifaDto.idTarifa,
-                idSector = tarifaDto.idSector,
                 precio = tarifaDto.precio
             }));
 
@@ -104,8 +102,8 @@ public class TestAdoTarifa
         var mockRepoSector = new Mock<IRepoSector>();
         mockRepoSector.Setup(r => r.DetalleSector(It.IsAny<int>())).Returns((Sector?)null);
 
-        var tarifaDto = new TarifaDto { idTarifa = 0, idSector = 0, precio = -10 };
-        var validator = new TarifaValidator(mockRepoSector.Object);
+        var tarifaDto = new TarifaDto { idTarifa = 0, precio = -10 };
+        var validator = new TarifaValidator();
 
         // Act
         var validationResult = validator.Validate(tarifaDto);
@@ -124,7 +122,6 @@ public class TestAdoTarifa
             resultado = Result<Tarifa>.Created(new Tarifa
             {
                 idTarifa = tarifaDto.idTarifa,
-                idSector = tarifaDto.idSector,
                 precio = tarifaDto.precio
             });
         }

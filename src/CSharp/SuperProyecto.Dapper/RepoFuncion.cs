@@ -21,14 +21,13 @@ public class RepoFuncion : Repo, IRepoFuncion
     }
 
     private static readonly string _queryAltaFuncion
-        = @"INSERT INTO Funcion (idTarifa, idEvento, fechaHora, stock) VALUES (@idTarifa, @idEvento, @fechaHora, @stock)";
+        = @"INSERT INTO Funcion (idEvento, fechaHora, stock) VALUES ( @idEvento, @fechaHora, @stock)";
     public void AltaFuncion(Funcion funcion)
     {
         _conexion.Execute(
             _queryAltaFuncion,
             new
             {
-                funcion.idTarifa,
                 funcion.idEvento,
                 funcion.fechaHora,
                 funcion.stock
@@ -36,14 +35,13 @@ public class RepoFuncion : Repo, IRepoFuncion
     }
     
     private static readonly string _queryUpdateFuncion
-        = @"UPDATE Funcion SET idTarifa = @idTarifa, idEvento = @idEvento, fechaHora = @fechaHora, stock = @stock WHERE idFuncion = @unIdFuncion";
+        = @"UPDATE Funcion SET idEvento = @idEvento, fechaHora = @fechaHora, stock = @stock WHERE idFuncion = @unIdFuncion";
     public void UpdateFuncion(Funcion funcion, int id)
     {
         _conexion.Execute(
             _queryUpdateFuncion,
             new
             {
-                funcion.idTarifa,
                 funcion.idEvento,
                 funcion.fechaHora,
                 funcion.stock,

@@ -65,7 +65,6 @@ public class TarifaService : ITarifaService
     {
         return new Tarifa
         {
-            idSector = tarifaDto.idSector,
             precio = tarifaDto.precio
         };
     }

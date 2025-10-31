@@ -7,11 +7,9 @@ namespace SuperProyecto.Services.Validators;
 
 public class FuncionValidator : AbstractValidator<FuncionDto>
 {
-    IRepoTarifa _repoTarifa;
     IRepoEvento _repoEvento;
-    public FuncionValidator(IRepoTarifa repoTarifa, IRepoEvento repoEvento)
+    public FuncionValidator(IRepoEvento repoEvento)
     {
-        _repoTarifa = repoTarifa;
         _repoEvento = repoEvento;
 
         RuleFor(f => f.idEvento)
@@ -19,11 +17,6 @@ public class FuncionValidator : AbstractValidator<FuncionDto>
             .GreaterThan(0).WithMessage("El idEvento debe ser mayor a 0.")
             .Must(idEvento => _repoEvento.DetalleEvento(idEvento) is not null).WithMessage("El evento referenciado no existe.")
             .Must(idEvento => _repoEvento.DetalleEvento(idEvento)?.cancelado != true).WithMessage("No se pueden agregar funciones a un evento cancelado.");
-
-        RuleFor(f => f.idTarifa)
-            .NotEmpty().WithMessage("El idTarifa es obligatorio.")
-            .GreaterThan(0).WithMessage("El idTarifa debe ser mayor a 0.")
-            .Must(idTarifa => _repoTarifa.DetalleTarifa(idTarifa) is not null).WithMessage("La tarifa referenciada no existe.");
 
         RuleFor(f => f.fechaHora)
             .NotEmpty().WithMessage("La fecha es obligatoria.")
