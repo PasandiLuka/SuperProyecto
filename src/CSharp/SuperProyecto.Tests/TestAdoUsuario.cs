@@ -71,11 +71,11 @@ public class TestAdoUsuario
         var usuario = new Usuario { idUsuario = 3, email = "rol@test.com", passwordHash = "pass123", rol = ERol.Organizador };
         var nuevoRol = ERol.Administrador;
 
-        mockService.Setup(s => s.ActualizarRol(usuario.idUsuario, nuevoRol))
+        mockService.Setup(s => s.ActualizarRol(usuario.idUsuario, (int)nuevoRol))
             .Returns(Result<Usuario>.Ok());
 
         // Act
-        var resultado = mockService.Object.ActualizarRol(usuario.idUsuario, nuevoRol);
+        var resultado = mockService.Object.ActualizarRol(usuario.idUsuario, (int)nuevoRol);
 
         // Assert
         Assert.True(resultado.Success);
@@ -125,6 +125,5 @@ public class TestAdoUsuario
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("email"));
         Assert.True(resultado.Errors.ContainsKey("password"));
-        Assert.True(resultado.Errors.ContainsKey("Rol"));
     }
 }

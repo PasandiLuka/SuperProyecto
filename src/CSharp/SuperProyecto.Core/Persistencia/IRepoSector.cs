@@ -4,6 +4,7 @@ namespace SuperProyecto.Core.Persistencia;
 
 public interface IRepoSector
 {
+    Sector? DetalleSectorDeleteLocal(int idLocal);
     IEnumerable<Sector> GetSectores();
     Sector? DetalleSector(int idSector);
     void AltaSector(Sector sector);

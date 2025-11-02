@@ -8,5 +8,5 @@ public interface IUsuarioService
 {
     Result<string[]> ObtenerRoles();
     Result<UsuarioDto> AltaUsuario(UsuarioDto usuarioDto);
-    Result<Usuario> ActualizarRol(int id, ERol rol);
+    Result<Usuario> ActualizarRol(int id, int rol);
 }

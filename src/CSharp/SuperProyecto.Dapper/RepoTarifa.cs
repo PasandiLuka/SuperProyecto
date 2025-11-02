@@ -40,7 +40,7 @@ public class RepoTarifa : Repo, IRepoTarifa
     }
 
     private static readonly string _queryUpdateTarifa
-        = @"UPDATE Sector SET precio = @precio WHERE idTarifa = @idTarifa";
+        = @"UPDATE Tarifa SET precio = @precio WHERE idTarifa = @idTarifa";
     public void UpdateTarifa(Tarifa tarifa, int id)
     {
         _conexion.Execute(

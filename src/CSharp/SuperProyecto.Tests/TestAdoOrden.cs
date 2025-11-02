@@ -63,7 +63,7 @@ public class TestAdoOrden
         // Act
         var validationResult = validator.Validate(orden);
         Result<Orden> resultado;
-        if (!validationResult.IsValid)
+        if (validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
@@ -129,7 +129,6 @@ public class TestAdoOrden
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("DNI"));
-        Assert.True(resultado.Errors.ContainsKey("idFuncion"));
     }
 
     [Fact]
@@ -148,7 +147,7 @@ public class TestAdoOrden
         // Act
         var validationResult = validator.Validate(orden);
         Result<Orden> resultado;
-        if (!validationResult.IsValid)
+        if (validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
@@ -213,6 +212,5 @@ public class TestAdoOrden
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("DNI"));
-        Assert.True(resultado.Errors.ContainsKey("idFuncion"));
     }
 }

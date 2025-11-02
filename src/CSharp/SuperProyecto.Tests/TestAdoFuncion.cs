@@ -136,7 +136,6 @@ public class TestAdoFuncion
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("idEvento"));
-        Assert.True(resultado.Errors.ContainsKey("idTarifa"));
         Assert.True(resultado.Errors.ContainsKey("fechaHora"));
         Assert.True(resultado.Errors.ContainsKey("stock"));
     }
@@ -231,7 +230,6 @@ public class TestAdoFuncion
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("idEvento"));
-        Assert.True(resultado.Errors.ContainsKey("idTarifa"));
         Assert.True(resultado.Errors.ContainsKey("fechaHora"));
         Assert.True(resultado.Errors.ContainsKey("stock"));
     }

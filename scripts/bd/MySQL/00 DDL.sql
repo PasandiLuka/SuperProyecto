@@ -54,8 +54,9 @@ CREATE TABLE Usuario (
 );
 
 CREATE TABLE Cliente (
-    DNI INT PRIMARY KEY,
-    idUsuario INT UNIQUE NOT NULL,
+    idCliente INT PRIMARY KEY AUTO_INCREMENT,
+    DNI INT NOT NULL,
+    idUsuario INT NOT NULL,
     nombre VARCHAR(45) NOT NULL,
     apellido VARCHAR(45) NOT NULL,
     telefono INT,
@@ -67,6 +68,7 @@ CREATE TABLE RefreshTokens (
     idRefreshToken INT AUTO_INCREMENT PRIMARY KEY,
     idUsuario INT NOT NULL,
     refreshToken VARCHAR(200) NOT NULL,
+    emitido DATETIME NOT NULL,
     expiracion DATETIME NOT NULL,
     revocado BOOLEAN DEFAULT FALSE,
     CONSTRAINT FK_RefreshTokens_Usuario FOREIGN KEY (idUsuario) 
@@ -75,12 +77,12 @@ CREATE TABLE RefreshTokens (
 
 CREATE TABLE Orden (
     idOrden INT PRIMARY KEY AUTO_INCREMENT,
-    DNI INT NOT NULL,
+    idCliente INT NOT NULL,
     idSector INT NOT NULL,
     fecha DATETIME NOT NULL,
     pagada BOOLEAN DEFAULT FALSE,
-    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (DNI) 
-        REFERENCES Cliente(DNI),
+    CONSTRAINT FK_Orden_Cliente FOREIGN KEY (idCliente) 
+        REFERENCES Cliente(idCliente),
     CONSTRAINT FK_Orden_Sector FOREIGN KEY (idSector) 
         REFERENCES Sector(idSector)
 );

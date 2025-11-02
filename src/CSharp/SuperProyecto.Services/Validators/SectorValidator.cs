@@ -25,7 +25,12 @@ public class SectorValidator : AbstractValidator<SectorDto>
         RuleFor(s => s.idFuncion)
             .NotEmpty().WithMessage("El idFuncion es obligatorio.")
             .GreaterThan(0).WithMessage("El idFuncion debe ser mayor a 0.")
-            .Must(idFuncion => _repoFuncion.DetalleFuncion(idFuncion) is not null).WithMessage("La funcion referenciada no existe.");
+            .Must(idFuncion => _repoFuncion.DetalleFuncion(idFuncion) is not null).WithMessage("La funcion referenciada no existe.")
+            .Must(idFuncion =>
+            {
+                var funcion = _repoFuncion.DetalleFuncion(idFuncion);
+                return funcion is not null && funcion.stock > 0;
+            }).WithMessage("La funcion seleccionada ya no tiene stock.");
 
         RuleFor(s => s.idTarifa)
             .NotEmpty().WithMessage("El idTarifa es obligatorio.")

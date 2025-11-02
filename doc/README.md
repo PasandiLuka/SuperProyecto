@@ -1,197 +1,97 @@
 # ***Documentacion Proyecto Plan de Estudio***
 
-## **Diagrama de Clases:**
+## **Principios SOLID y POO orientada a objetos**
+
+### ¿Qué es el principio SOLID?
+~~~bash
+S — Single Responsibility Principle (SRP)
+Cada clase debe tener una única responsabilidad o motivo de cambio. 
+Esto evita que una clase haga demasiadas cosas y se vuelva difícil de mantener.
+
+O — Open/Closed Principle (OCP)
+Las entidades de software (clases, módulos, funciones) 
+deben estar abiertas a la extensión pero cerradas a la modificación. 
+Es decir, se debe poder agregar funcionalidad sin modificar el código existente.
+
+L — Liskov Substitution Principle (LSP)
+Las subclases deben ser sustituibles por sus superclases sin 
+romper el comportamiento del programa. Esto garantiza que el 
+polimorfismo funcione correctamente.
+
+I — Interface Segregation Principle (ISP)
+Las interfaces deben ser específicas y pequeñas, no generales. 
+Es mejor tener varias interfaces enfocadas que una sola 
+muy grande que obligue a implementar métodos innecesarios.
+
+D — Dependency Inversion Principle (DIP)
+Los módulos de alto nivel no deben depender de módulos de bajo nivel, 
+ambos deben depender de abstracciones (interfaces o clases abstractas). 
+Esto reduce el acoplamiento y facilita los tests y la flexibilidad.
+~~~
 
 
-```mermaid
-classDiagram
-    class Local {
-        +int idLocal
-        +string nombre
-        +string direccion
-    }
 
-    class Evento {
-        +int idEvento
-        +string nombre
-        +string descripcion
-        +DateTime fechaPublicacion
-        +bool publicado
-        +bool cancelado
-    }
+## **Arquitectura en capas**
 
-    class Funcion {
-        +int idFuncion
-        +int idEvento
-        +DateTime fechaHora
-        +int stock
-        +bool cancelada
-    }
+### El proyecto sigue una arquitectura en capas que separa responsabilidades
+- ### La capa Core (dominio) contiene las clases de entidades, interfaces de repositorios y servicios, así como validadores de reglas de negocio, sin referencias a infraestructura
+- ### La capa Dapper (infraestructura) implementa esos repositorios usando ADO.NET y Dapper (micro-ORM). 
+- ### La capa Services implementa la lógica de negocio coordinando las operaciones entre servicios y repositorios. 
+- ### La capa API contiene los controladores ASP.NET Core y la configuración del pipeline (inyección de dependencias, autenticación JWT, Swagger, etc.). 
+- ### La capa Tests incluye las pruebas unitarias. Gracias a esta separación, las capas internas definen interfaces y las implementaciones concretas se inyectan en tiempo de ejecución (Principio de Inversión de Dependencias).
 
-    class Sector {
-        +int idSector
-        +int idLocal
-        +int idFuncion
-        +int idTarifa
-        +string nombre
-        +int capacidad
-    }
+## **Persistencia de datos con Dapper y patrón Repositorio**
 
-    class Tarifa {
-        +int idTarifa
-        +decimal precio
-    }
+### La persistencia se realiza con Dapper, un micro-ORM ligero y de alto rendimiento para .NET
+- ### Dapper permite ejecutar consultas SQL directamente y mapear resultados a objetos C#. Cada entidad principal tiene un repositorio específico (por ejemplo RepoEvento, RepoOrden) que implementa interfaces definidas en Core. El uso del patrón Repositorio separa la lógica de acceso a datos de la lógica de negocio, facilitando la inyección de dependencias y las pruebas unitarias.
 
-    class Usuario {
-        +int idUsuario
-        +string email
-        +string passwordHash
-        +string rol
-    }
+## **Autenticación y autorización con JWT**
 
-    class Cliente {
-        +int DNI
-        +int idUsuario
-        +string nombre
-        +string apellido
-        +int telefono
-    }
+### Para seguridad se implementa JWT (JSON Web Token) en la API
+- ### Al iniciar sesión, el servidor emite un token firmado que el cliente incluye en el encabezado Authorization: Bearer <token> en cada petición. ASP.NET Core valida este token en cada endpoint, extrayendo la identidad del usuario a partir de las claims. Se gestionan roles (Administrador, Organizador, Cliente, Default) para autorizar permisos. 
+### Los endpoints de autenticación son /auth/register, /auth/login, /auth/refresh, /auth/logout, /auth/me y otros para gestión de roles de usuarios.
 
-    class RefreshTokens {
-        +int idRefreshToken
-        +int idUsuario
-        +string token
-        +DateTime expiracion
-        +bool revocado
-    }
+## **Endpoints principales de la API REST**
 
-    class Orden {
-        +int idOrden
-        +int DNI
-        +int idSector
-        +DateTime fecha
-        +bool pagada
-    }
+### Se exponen recursos RESTful con respuestas JSON y códigos HTTP estándar (200, 201, 204, 400, 401, 403, 404). Los endpoints cubren CRUD(Create, Read, Update, Delete) para cada entidad clave y operaciones específicas:
 
-    class Entrada {
-        +int idEntrada
-        +int idOrden
-        +bool usada
-    }
+- ### Locales: POST /locales, GET /locales, GET /locales/{id}, PUT /locales/{id}, DELETE /locales/{id}.
 
-    class Qr {
-        +int idQr
-        +int idEntrada
-        +string url
-    }
+- ### Sectores: POST /locales/{id}/sectores, GET /locales/{id}/sectores, PUT /sectores/{id}, DELETE /sectores/{id}.
 
-    %% RELACIONES
-    Local "1" --> "many" Sector : contiene
-    Tarifa "1" --> "many" Sector : define
-    Funcion "1" --> "many" Sector : aplica
-    Evento "1" --> "many" Funcion : organiza
-    Sector "1" --> "1" Orden : genera
-    Qr "1" <-- "1" Entrada : tiene
-    Cliente "1" --> "many" Orden : realiza
-    Orden "1" --> "1" Entrada : incluye
-    Usuario "1" --> "1" Cliente : tiene
-    RefreshTokens "many" <-- "1" Usuario : genera
-```
+- ### Eventos: POST /eventos, GET /eventos, GET /eventos/{id}, PUT /eventos/{id}, POST /eventos/{id}/publicar, POST /eventos/{id}/cancelar.
 
-## **DER**
+- ### Funciones: POST /funciones, GET /funciones, GET /funciones/{id}, PUT /funciones/{id}, POST /funciones/{id}/cancelar.
 
-```mermaid
-erDiagram
-    Local ||--o{ Sector : contiene
-    Evento ||--o{ Funcion : organiza
-    Funcion ||--o{ Sector : aplica
-    Tarifa ||--o{ Sector : define
-    Cliente ||--o{ Orden : realiza
-    Orden ||--o{ Entrada : incluye
-    Entrada ||--|| Qr : tiene
-    Usuario ||--|| Cliente : tiene
-    Usuario ||--o{ RefreshTokens : genera
+- ### Tarifas: POST /tarifas, GET /funciones/{id}/tarifas, PUT /tarifas/{id}, GET /tarifas/{id}.
 
-    Local {
-        INT idLocal PK
-        VARCHAR(45) nombre
-        VARCHAR(45) direccion
-    }
+- ### Clientes: POST /clientes, GET /clientes, GET /clientes/{id}, PUT /clientes/{id}.
 
-    Evento {
-        INT idEvento PK
-        VARCHAR(45) nombre
-        VARCHAR(200) descripcion
-        datetime fechaPublicacion
-        bool publicado
-        bool cancelado
-    }
+- ### Órdenes de Compra: POST /ordenes, GET /ordenes, GET /ordenes/{id}, POST /ordenes/{id}/pagar, POST /ordenes/{id}/cancelar.
 
-    Funcion {
-        INT idFuncion PK
-        INT idEvento FK
-        DATETIME fechaHora
-        INT stock
-        BOOL cancelada
-    }
+- ### Entradas (Tickets): GET /entradas, GET /entradas/{id}, POST /entradas/{id}/anular.
 
-    Tarifa {
-        INT idTarifa PK
-        DECIMAL(10-2) precio
-    }
+- ### Usuarios y autenticación: POST /auth/register, POST /auth/login, POST /auth/refresh, POST /auth/logout, GET /auth/me, GET /auth/roles, POST /usuarios/{id}/roles.
 
-    Sector {
-        INT idSector PK
-        INT idLocal FK
-        INT idFuncion FK
-        INT idTarifa FK
-        VARCHAR(45) nombre
-        INT capacidad
-    }
+- ### Códigos QR: GET /entradas/{id}/qr (genera código QR para la entrada); POST /qr/validar (valida un QR escaneado).
 
-    Usuario {
-        int idUsuario PK
-        VARCHAR(45) email
-        VARCHAR(45) passwordHash
-        int rol
-    }
+### Estos endpoints siguen convenciones REST y pueden probarse fácilmente usando Swagger UI
 
-    Cliente {
-        INT DNI PK
-        INT idUsuario FK
-        VARCHAR(45) nombre
-        VARCHAR(45) apellido
-        VARCHAR(45) telefono
-    }
+## **Pruebas unitarias y Moq**
 
-    RefreshTokens {
-        INT idRefreshToken PK
-        INT idUsuario FK
-        VARCHAR(200) token
-        DATETIME expiracion
-        BOOL revocado
-    }
+### Hay un proyecto de pruebas (xUnit) que verifica la lógica de negocio y de acceso a datos. Se definen casos de prueba claros siguiendo buenas prácticas de nomenclatura. Para simular dependencias externas (como llamadas a la base de datos), se usa Moq, un framework de simulación de objetos open-source muy popular en .NET
+- ### Moq permite crear mocks de repositorios y servicios, verificando que las capas superiores actúen según lo esperado sin tocar recursos reales.
 
-    Orden {
-        INT idOrden PK
-        INT DNI FK
-        INT idSector FK
-        DATETIME fecha
-        BOOL pagada
-    }
+## **Documentación con Swagger**
 
-    Entrada {
-        INT idEntrada PK
-        INT idOrden FK
-        BOOL usada
-    }
+### Se integra Swagger/OpenAPI (mediante Swashbuckle) para generar documentación interactiva de la API. Swagger UI provee una interfaz web que muestra todos los endpoints definidos en la aplicación.
+- ### Cada acción pública en los controladores es accesible y ejecutable desde esa interfaz, lo que permite agregar parámetros y probar el método directamente con “Try it out!”
+- ### Esto agiliza el desarrollo y la validación. En Program.cs también se configura la lectura de parámetros (appsettings, cadenas de conexión) y se registra la inyección de dependencias necesaria.
 
-    Qr {
-        INT idQr PK
-        INT idEntrada FK
-        VARCHAR(45) url
-    }
-```
+## **Generación y validación de códigos QR**
+
+### La generación de códigos QR se maneja con la librería QRCoder para .NET
+- ### Al procesar una orden de compra pagada, se emite un código QR único por cada entrada (en formato PNG/Base64) que incluye los datos firmados. El endpoint de validación (POST /qr/validar) verifica la firma y el estado de la entrada, devolviendo resultados como Ok, YaUsada, Expirada, FirmaInvalida o NoExiste según las reglas de negocio definidas en la consigna.
 
 
 ## **Tareas**

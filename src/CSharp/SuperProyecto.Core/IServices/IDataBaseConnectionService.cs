@@ -5,5 +5,5 @@ namespace SuperProyecto.Core.IServices;
 public interface IDataBaseConnectionService
 {
     string GetConnectionRootString();
-    string GetConnectionUserString(ERol rol);
+    string GetConnectionUserString(string rol);
 }

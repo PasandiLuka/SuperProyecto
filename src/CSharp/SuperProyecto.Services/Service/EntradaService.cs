@@ -1,6 +1,7 @@
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.IServices;
+using MySqlConnector;
 
 namespace SuperProyecto.Services.Service;
 
@@ -16,23 +17,47 @@ public class EntradaService : IEntradaService
         _repoQr = repoQr;
     }
 
-    public Result<IEnumerable<Entrada>> GetEntradas() => Result<IEnumerable<Entrada>>.Ok(_repoEntrada.GetEntradas());
+    public Result<IEnumerable<Entrada>> GetEntradas()
+    {
+        try
+        {
+            return Result<IEnumerable<Entrada>>.Ok(_repoEntrada.GetEntradas());
+        }
+        catch (MySqlException)
+        {
+            return Result<IEnumerable<Entrada>>.Unauthorized();
+        }
+    }
 
     public  Result<Entrada?> DetalleEntrada(int id) => Result<Entrada?>.Ok(_repoEntrada.DetalleEntrada(id));
 
     public Result<byte[]?> GetQr(int id)
     {
-        var qr = _repoQr.DetalleQr(id);
-        if (qr is null) return Result<byte[]?>.BadRequest(default, "QR no encontrado.");
-        return Result<byte[]?>.Ok(_qrService.CrearQR(qr.url));
+        try
+        {
+            var qr = _repoQr.DetalleQr(id);
+            if (qr is null) return Result<byte[]?>.BadRequest(default, "QR no encontrado.");
+            return Result<byte[]?>.File(_qrService.CrearQR(qr.url));
+        }
+        catch (MySqlException)
+        {
+            return Result<byte[]?>.Unauthorized();
+        }
     }
 
     public Result<object> ValidarQr(int id)
     {
-        var entrada = _repoEntrada.DetalleEntrada(id);
-        if (entrada is null) return Result<object>.BadRequest(default, "Entrada no encontrada.");
-        if (entrada.usada) return Result<object>.BadRequest(default, "La entrada ya fue usada.");
-        _repoEntrada.EntradaUsada(entrada.idEntrada);
-        return Result<object>.Ok();
+        try
+        {
+            var entrada = _repoEntrada.DetalleEntrada(id);
+            if (entrada is null) return Result<object>.BadRequest(default, "Entrada no valida.");
+            if (entrada.usada) return Result<object>.BadRequest(default, "La entrada ya fue usada.");
+            _repoEntrada.EntradaUsada(entrada.idEntrada);
+            return Result<object>.Ok();     
+        }
+        catch (MySqlException)
+        {
+            return Result<object>.Unauthorized();
+        }
     }
 }

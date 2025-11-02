@@ -22,23 +22,19 @@ public class DataBaseConnectionService : IDataBaseConnectionService
         // 4) Resultado final
         if (conectionString == null)
         {
-            throw new ArgumentException("⚠ Ninguna cadena de conexión funcionó.");
-        }
-        else
-        {
-            Console.WriteLine($"✔ Usando conexión: {conectionString}");
+            throw new ArgumentException("Ninguna cadena de conexión root funcionó.");
         }
         
         return conectionString;
     }
 
-    public string GetConnectionUserString(ERol rol)
+    public string GetConnectionUserString(string rol)
     {
         var configuration = LeerJson();
 
         var connectionStrings = configuration.GetSection("Users").GetChildren();
 
-        return connectionStrings.First(c => c.Key == rol.ToString()).Value!;
+        return connectionStrings.First(c => c.Key == rol).Value!;
     }
     
     static IConfigurationRoot LeerJson()
@@ -81,16 +77,10 @@ public class DataBaseConnectionService : IDataBaseConnectionService
         {
             foreach (var cs in connectionStrings)
             {
-                Console.WriteLine($"🔄 Probando: {cs.Key}");
                 var connection = RemoverDatabaseDeLaCadena(cs.Value);
                 if (ProbarConexion(connection))
                 {
-                    Console.WriteLine($"✅ Conexión válida: {cs.Key}");
                     return cs.Value;
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Falló: {cs.Key}");
                 }
             }
             return null;

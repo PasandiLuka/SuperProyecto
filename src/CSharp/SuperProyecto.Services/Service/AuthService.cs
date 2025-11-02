@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-
+using MySqlConnector;
 namespace SuperProyecto.Services.Service;
 
 public class AuthService
@@ -26,48 +26,78 @@ public class AuthService
 
     public Result<TokenResponseDto> Login(LoginRequest model)
     {
-        var usuario = _repoUsuario.DetalleUsuarioXEmail(model.email);
-        if (usuario == null) return Result<TokenResponseDto>.BadRequest(default, "Usuario o contraseña incorrectos.");
-        if (!VerificarPassword(model.password, usuario.passwordHash))
-            return Result<TokenResponseDto>.BadRequest(default, "Usuario o contraseña incorrectos.");
-        var tokens = _tokenService.GenerarTokens(usuario);
-        _repoToken.AltaRefreshToken(usuario.idUsuario, tokens.refreshToken, DateTime.UtcNow.AddDays(7));
-        return Result<TokenResponseDto>.Ok(tokens);
+        try
+        {    
+            var usuario = _repoUsuario.DetalleUsuarioXEmail(model.email);
+            if (usuario == null) return Result<TokenResponseDto>.BadRequest(default, "Usuario o contraseña incorrectos.");
+            if (!VerificarPassword(model.password, usuario.passwordHash))
+                return Result<TokenResponseDto>.BadRequest(default, "Usuario o contraseña incorrectos.");
+            var tokens = _tokenService.GenerarTokens(usuario);
+            _repoToken.AltaRefreshToken(usuario.idUsuario, tokens.refreshToken, tokens.emitido, DateTime.UtcNow.AddDays(7));
+            return Result<TokenResponseDto>.Ok(tokens);
+        }
+        catch (MySqlException)
+        {
+            return Result<TokenResponseDto>.Unauthorized();
+        }
     }
 
     public Result<AuthMeDto> Me()
     {
-        var User = _httpContextAccessor.HttpContext?.User;
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim is null) return Result<AuthMeDto>.Unauthorized();
-        var usuario = _repoUsuario.DetalleUsuario(int.Parse(userIdClaim));
-        if (usuario is null) return Result<AuthMeDto>.BadRequest();
-        var result = new AuthMeDto
+        try
         {
-            email = usuario.email,
-            rol = usuario.rol.ToString()
-        };
-        return Result<AuthMeDto>.Ok(result);
+            var User = _httpContextAccessor.HttpContext?.User;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim is null) return Result<AuthMeDto>.Unauthorized();
+            var usuario = _repoUsuario.DetalleUsuario(int.Parse(userIdClaim));
+            if (usuario is null) return Result<AuthMeDto>.BadRequest();
+            var result = new AuthMeDto
+            {
+                email = usuario.email,
+                rol = usuario.rol.ToString()
+            };
+            return Result<AuthMeDto>.Ok(result);
+        }
+        catch (MySqlException)
+        {
+            return Result<AuthMeDto>.Unauthorized();
+        }
     }
 
     public Result<TokenResponseDto> RefreshToken(RefreshTokenRequest model)
     {
-        var tokenInfo = _repoToken.DetalleRefreshToken(model.refreshToken);
-        if (tokenInfo == null || tokenInfo.revocado || tokenInfo.expiracion < DateTime.UtcNow) return Result<TokenResponseDto>.BadRequest(default, "Refresh token no valido.");
-        var usuario = _repoUsuario.DetalleUsuario(tokenInfo.idUsuario);
-        var tokens = _tokenService.GenerarTokens(usuario);
-        _repoToken.RevocarRefreshToken(model.refreshToken);
-        _repoToken.AltaRefreshToken(usuario.idUsuario, tokens.refreshToken, DateTime.UtcNow.AddDays(7));
-        return Result<TokenResponseDto>.Ok(tokens);
+        try
+        {
+            var tokenInfo = _repoToken.DetalleRefreshToken(model.refreshToken);
+            if (tokenInfo == null || tokenInfo.revocado || tokenInfo.expiracion < DateTime.UtcNow) return Result<TokenResponseDto>.BadRequest(default, "Refresh token no valido.");
+            var usuario = _repoUsuario.DetalleUsuario(tokenInfo.idUsuario);
+            var tokens = _tokenService.GenerarTokens(usuario);
+            _repoToken.RevocarRefreshToken(model.refreshToken);
+            _repoToken.AltaRefreshToken(usuario.idUsuario, tokens.refreshToken, tokens.emitido, DateTime.UtcNow.AddDays(7));
+            return Result<TokenResponseDto>.Ok(tokens);
+        }
+        catch (MySqlException)
+        {
+            return Result<TokenResponseDto>.Unauthorized();
+        }
     }
 
-    public Result<TokenResponseDto> Logout(string refreshToken)
+    public Result<TokenResponseDto> Logout()
     {
-        var refreshTokenRequest = _repoToken.DetalleRefreshToken(refreshToken);
-        if (refreshTokenRequest is null) return Result<TokenResponseDto>.BadRequest(default!, "Token no valido.");
-        if (refreshTokenRequest.revocado) return Result<TokenResponseDto>.BadRequest(default!, "Este refresh token ya fue revocado.");
-        _repoToken.RevocarRefreshToken(refreshToken);        
-        return Result<TokenResponseDto>.Ok();
+        try
+        {
+            var User = _httpContextAccessor.HttpContext?.User;
+            var DateOfBirth = User.FindFirst(ClaimTypes.DateOfBirth)?.Value;
+            var refreshTokenRequest = _repoToken.DetalleRefreshTokenXEmision(DateTime.Parse(DateOfBirth));
+            if (refreshTokenRequest is null) return Result<TokenResponseDto>.BadRequest(default!, "Token no valido.");
+            if (refreshTokenRequest.revocado) return Result<TokenResponseDto>.BadRequest(default!, "Este refresh token ya fue revocado.");
+            _repoToken.RevocarRefreshToken(refreshTokenRequest.refreshToken);        
+            return Result<TokenResponseDto>.Ok();
+        }
+        catch (MySqlException)
+        {
+            return Result<TokenResponseDto>.Unauthorized();
+        }
     }
 
     // Helpers para password

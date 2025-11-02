@@ -28,7 +28,8 @@ public class TokenService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // ID único del token
             new Claim(ClaimTypes.NameIdentifier, usuario.idUsuario.ToString()),
             new Claim(ClaimTypes.Email, usuario.email),
-            new Claim(ClaimTypes.Role, usuario.rol.ToString())
+            new Claim(ClaimTypes.Role, usuario.rol.ToString()),
+            new Claim(ClaimTypes.DateOfBirth, DateTime.UtcNow.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -60,6 +61,7 @@ public class TokenService
         {
             accessToken = accessToken,
             refreshToken = refreshToken,
+            emitido = DateTime.UtcNow,
             expiracion = expiracion
         };
     }

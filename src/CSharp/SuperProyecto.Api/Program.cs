@@ -1,13 +1,10 @@
-//Crear un metodo por cada rol y que cuando me logeo estos metodos instancien la base de datos bajo el rol designado.
+#region Usings
+//Carpeta donde se encuentran los endpoints
+using SuperProyecto.Api.Endpoints;
 
 //Referencias a los proyectos
-using SuperProyecto.Services.Service;
-using SuperProyecto.Services.Validators;
 using SuperProyecto.Dapper;
-using SuperProyecto.Core.IServices;
-using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Core.DTO;
-using SuperProyecto.Core.Enums;
+using SuperProyecto.Services.Validators;
 
 //Paquetes api
 using Microsoft.OpenApi.Models;
@@ -16,15 +13,14 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using SuperProyecto.Api.Helper;
+#endregion
+
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSingleton<DataBaseCreationService>();
 
-//Servicios para implementar la autenticacion y autorizacion
 #region Auth
+//Servicios para implementar la autenticacion y autorizacion por tokens JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,7 +41,6 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero //tiempo de tolerancia por defecto de 5mins antes de inhabilitar el token
     };
 }); // Ejemplo con JWT
-builder.Services.AddAuthorization();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Administrador", policy =>
@@ -62,22 +57,21 @@ builder.Services.AddScoped<AuthService>();
 #endregion
 
 
-//Servicio y repositorio que me permite entablar la conexion con la base de datos
 #region Configuracion Bd
-//Los creo como singleton ya que no requiero que a cada request se cree una nueva instancia
+//Servicio y repositorio que me permite entablar la conexion con la base de datos y crear la misma.
+builder.Services.AddSingleton<DataBaseCreationService>();
+builder.Services.AddScoped<IGetRolActualService, GetRolActualService>();
 builder.Services.AddSingleton<IDataBaseConnectionService, DataBaseConnectionService>();
-DataBaseCreationService dbCreator = new DataBaseCreationService(
-    builder.Services.BuildServiceProvider().GetService<IDataBaseConnectionService>()!
-    );
-dbCreator.CreateDataBase();
-builder.Services.AddSingleton<IAdo, Ado>();
+
+//Este hostedService lo que hace es ejecutarse una unica vez cuando se inicia la aplicacion,
+//esto me permite crear la base de datos de manera automatica.
+builder.Services.AddHostedService<DatabaseInitHostedService>();
+builder.Services.AddScoped<IAdo, Ado>();
 #endregion
 
-//Permite acceder al servico que nos deja ver la informacion del usuario que se encuentra actualmente logueado
-builder.Services.AddHttpContextAccessor();
 
-//Instanciamos todos los repositorios
 #region Repositorios
+//Instanciamos todos los repositorios
 builder.Services.AddScoped<IRepoQr, RepoQr>();
 builder.Services.AddScoped<IRepoToken, RepoToken>();
 builder.Services.AddScoped<IRepoUsuario, RepoUsuario>();
@@ -92,9 +86,10 @@ builder.Services.AddScoped<IRepoTarifa, RepoTarifa>();
 #endregion
 
 
-//Instancio los validadores
 #region Validadores
-builder.Services.AddScoped<ClienteValidator>();
+//Instancio los validadores
+builder.Services.AddScoped<ClienteDtoAltaValidator>();
+builder.Services.AddScoped<ClienteDtoUpdateValidator>();
 builder.Services.AddScoped<EntradaValidator>();
 builder.Services.AddScoped<EventoValidator>();
 builder.Services.AddScoped<FuncionValidator>();
@@ -106,8 +101,8 @@ builder.Services.AddScoped<UsuarioValidator>();
 #endregion
 
 
-//Instaciamos los servicios
 #region Servicios
+//Instaciamos los servicios
 builder.Services.AddScoped<IQrService, QrService>();
 builder.Services.AddScoped<IUrlConstructorService, UrlConstructorService>();
 //Necesario para poder inyectar el HttpContext en el AuthService y obtener el usuario logueado
@@ -123,6 +118,8 @@ builder.Services.AddScoped<ISectorService, SectorService>();
 builder.Services.AddScoped<ITarifaService, TarifaService>();
 #endregion
 
+//Esto permite al swagger mapear todos los endpoints
+builder.Services.AddEndpointsApiExplorer();
 
 // Configuracion swagger para implementar la autenticacion por token
 builder.Services.AddSwaggerGen(c =>
@@ -156,10 +153,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+//Habilita nuestra autentificacion
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+//algo hace...
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -168,275 +166,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello World!").WithTags("HelloWorld");
-
-#region EndPoints
-
-
-#region Usuario
-    app.MapGet("/api/Usuario/roles", (IUsuarioService service) =>   
-    {
-        var result = service.ObtenerRoles();
-        return result.ToMinimalResult();
-    }).WithTags("01 - Usuario");
-    app.MapPost("/api/auth/register", (UsuarioDto usuarioDto, IUsuarioService service) =>
-    {
-        var result = service.AltaUsuario(usuarioDto);
-        return result.ToMinimalResult();
-    }).WithTags("01 - Usuario");
-    app.MapPut("/api/Usuario/{id}/rol", (int id, ERol nuevoRol, IUsuarioService service) =>
-    {
-        var result = service.ActualizarRol(id, nuevoRol);
-        return result.ToMinimalResult();
-    }).WithTags("01 - Usuario");
+#region Endpoints
+app.MapGet("/", () => "Hello World!").WithTags("00 - HelloWorld");
+app.MapUsuarioEndpoints();
+app.MapAuthEndpoints();
+app.MapClienteEndpoints();
+app.MapEventoEndpoints();
+app.MapLocalEndpoints();
+app.MapTarifaEndpoints();
+app.MapFuncionEndpoints();
+app.MapSectorEndpoints();
+app.MapOrdenEndpoints();
+app.MapEntradaEndpoints();
 #endregion
 
-#region Auth
-    app.MapPost("/api/auth/login", (LoginRequest loginRequest, AuthService authService) =>
-    {
-        var result = authService.Login(loginRequest);
-        return result.ToMinimalResult();
-    }).WithTags("02 - Auth");
-
-    app.MapGet("/api/auth/me", (AuthService authService) =>
-    {
-        var result = authService.Me();
-        return result.ToMinimalResult();
-    }).WithTags("02 - Auth").RequireAuthorization();
-
-    app.MapPost("/api/auth/refresh", (RefreshTokenRequest refreshTokenRequest, AuthService authService) =>
-    {
-        var result = authService.RefreshToken(refreshTokenRequest);
-        return result.ToMinimalResult();
-    }).WithTags("02 - Auth");
-#endregion
-
-#region Cliente
-app.MapGet("/api/Cliente", (IClienteService service) =>
-    {
-        var result = service.GetClientes();
-        return result.ToMinimalResult();
-    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Cliente/{id}", (int id, IClienteService service) =>
-    {
-        var result = service.DetalleCliente(id);
-        return result.ToMinimalResult();
-    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Cliente/{id}", (int id, ClienteDto clienteDto, IClienteService service) =>
-    {
-        var result = service.UpdateCliente(clienteDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPost("/api/Cliente", (ClienteDto clienteDto, IClienteService service) =>
-    {
-        var result = service.AltaCliente(clienteDto);
-        return result.ToMinimalResult();
-    }).WithTags("03 - Cliente").RequireAuthorization("Cliente", "Administrador");
-#endregion
-
-#region Evento
-    app.MapGet("/api/Evento", (IEventoService service) =>
-    {
-        var result = service.GetEventos();
-        return result.ToMinimalResult();
-    }).WithTags("04 - Evento").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Evento/{id}", (int id, IEventoService service) =>
-    {
-        var result = service.DetalleEvento(id);
-        return result.ToMinimalResult();
-    }).WithTags("04 - Evento").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Evento/{id}", (int id, EventoDto eventoDto, IEventoService service) =>
-    {
-        var result = service.UpdateEvento(eventoDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("04 - Evento").RequireAuthorization("Organizador", "Administrador");
-
-    app.MapPost("/api/Evento", (EventoDto eventoDto, IEventoService service) =>
-    {
-        var result = service.AltaEvento(eventoDto);
-        return result.ToMinimalResult();
-    }).WithTags("04 - Evento").RequireAuthorization("Organizador", "Administrador");
-#endregion
-
-#region Local
-    app.MapGet("/api/Local", (ILocalService service) =>
-    {
-        var result = service.GetLocales();
-        return result.ToMinimalResult();
-    }).WithTags("05 - Local").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Local/{id}", (int id, ILocalService service) =>
-    {
-        var result = service.DetalleLocal(id);
-        return result.ToMinimalResult();
-    }).WithTags("05 - Local").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Local/{id}", (int id, LocalDto localDto, ILocalService service) =>
-    {
-        var result = service.UpdateLocal(localDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("05 - Local").RequireAuthorization("Organizador", "Administrador");
-
-    app.MapPost("/api/Local", (LocalDto localDto, ILocalService service) =>
-    {
-        var result = service.AltaLocal(localDto);
-        return result.ToMinimalResult();
-    }).WithTags("05 - Local").RequireAuthorization("Organizador", "Administrador");
-        
-    app.MapDelete("/api/Local/{id}", (int id, ILocalService service) =>
-    {
-        var result = service.DeleteLocal(id);
-        return result.ToMinimalResult();
-    }).WithTags("05 - Local").RequireAuthorization("Administrador");
-#endregion
-
-#region Sector
-app.MapGet("/api/Sector", (ISectorService service) =>
-    {
-        var result = service.GetSectores();
-        return result.ToMinimalResult();
-    }).WithTags("06 - Sector").RequireAuthorization("Cliente", "Administrador");
-        
-    app.MapGet("/api/Sector/{id}", (int id, ISectorService service) =>
-    {
-        var result = service.DetalleSector(id);
-        return result.ToMinimalResult();
-    }).WithTags("06 - Sector").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Sector/{id}", (int id, SectorDto sectorDto, ISectorService service) =>
-    {
-        var result = service.UpdateSector(sectorDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("06 - Sector").RequireAuthorization("Organizador", "Administrador");
-        
-    app.MapPost("/api/Sector", (SectorDto sectorDto, ISectorService service) =>
-    {
-        var result = service.AltaSector(sectorDto);
-        return result.ToMinimalResult();
-    }).WithTags("06 - Sector").RequireAuthorization("Organizador", "Administrador");
-    
-    app.MapDelete("/api/Sector/{id}", (int id, ISectorService service) =>
-    {
-        var result = service.DeleteSector(id);
-        return result.ToMinimalResult();
-    }).WithTags("06 - Sector").RequireAuthorization("Administrador");
-#endregion
-
-#region Tarifa
-    app.MapGet("/api/Tarifa", (ITarifaService service) =>
-    {
-        var result = service.GetTarifas();
-        return result.ToMinimalResult();
-    }).WithTags("07 - Tarifa").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Tarifa/{id}", (int id, ITarifaService service) =>
-    {
-        var result = service.DetalleTarifa(id);
-        return result.ToMinimalResult();
-    }).WithTags("07 - Tarifa").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Tarifa/{id}", (int id, TarifaDto tarifaDto, ITarifaService service) =>
-    {
-        var result = service.UpdateTarifa(tarifaDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("07 - Tarifa").RequireAuthorization("Organizador", "Administrador");
-            
-    app.MapPost("/api/Tarifa", (TarifaDto tarifaDto, ITarifaService service) =>
-    {
-        var result = service.AltaTarifa(tarifaDto);
-        return result.ToMinimalResult();
-    }).WithTags("07 - Tarifa").RequireAuthorization("Organizador", "Administrador");
-#endregion
-
-#region Funcion
-app.MapGet("/api/Funcion", (IFuncionService service) =>
-    {
-        var result = service.GetFunciones();
-        return result.ToMinimalResult();
-    }).WithTags("Funcion").RequireAuthorization("Cliente", "Administrador");
-    
-    app.MapGet("/api/Funcion/{id}", (int id, IFuncionService service) =>
-    {
-        var result = service.DetalleFuncion(id);
-        return result.ToMinimalResult();
-    }).WithTags("Funcion").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Funcion/{id}", (int id, FuncionDto funcionDto, IFuncionService service) =>
-    {
-        var result = service.UpdateFuncion(funcionDto, id);
-        return result.ToMinimalResult();
-    }).WithTags("Funcion").RequireAuthorization("Organizador", "Administrador");
-        
-    app.MapPost("/api/Funcion", (FuncionDto funcionDto, IFuncionService service) =>
-    {
-        var result = service.AltaFuncion(funcionDto);
-        return result.ToMinimalResult();
-    }).WithTags("Funcion").RequireAuthorization("Organizador", "Administrador");
-#endregion
-
-#region Entrada
-app.MapGet("/api/Entrada", (IEntradaService service) =>
-    {
-        var result = service.GetEntradas();
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Entrada/{id}", (int id, IEntradaService service) =>
-    {
-        var result = service.DetalleEntrada(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapGet("/api/Entrada/{id}/Qr", (int id, IEntradaService service) =>
-    {
-        var result = service.GetQr(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPut("/api/Entrada/qr/validar", (int id, IEntradaService service) =>
-    {
-        var result = service.ValidarQr(id);
-        return result.ToMinimalResult();
-    }).WithTags("Entrada").RequireAuthorization("Organizador", "Administrador");
-#endregion
-
-
-#region Orden
-    app.MapGet("/api/Orden", (IOrdenService service) =>
-    {
-        var result = service.GetOrdenes();
-        return result.ToMinimalResult();
-    }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
-        
-        app.MapGet("/api/Orden/{id}", (int id, IOrdenService service) =>
-        {
-            var result = service.DetalleOrden(id);
-            return result.ToMinimalResult();
-        }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
-
-    app.MapPost("/api/Orden", (OrdenDto ordenDto, IOrdenService service) =>
-    {
-        var result = service.AltaOrden(ordenDto);
-        return result.ToMinimalResult();
-    }).WithTags("Orden").RequireAuthorization("Organizador", "Administrador");
-        
-        app.MapPut("/api/Orden/{id}/pagar", (int id, IOrdenService service) =>
-        {
-            var result = service.PagarOrden(id);
-            return result.ToMinimalResult();
-    }).WithTags("Orden").RequireAuthorization("Cliente", "Administrador");
-#endregion
-
-
-
-
-
-#endregion
 
 app.Run();
 

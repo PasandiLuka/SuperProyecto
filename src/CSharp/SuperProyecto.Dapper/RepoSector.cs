@@ -52,6 +52,18 @@ public class RepoSector : Repo, IRepoSector
                 idSector = id
             });
     }
+    private static readonly string _queryDetalleSectorDeleteLocal
+        = @"SELECT * FROM Sector WHERE idLocal = @idLocal";
+    public Sector? DetalleSectorDeleteLocal(int idLocal)
+    {
+        return _conexion.QueryFirstOrDefault(
+            _queryDetalleSectorDeleteLocal,
+            new
+            {
+                idLocal
+            }
+        );
+    }
 
     private static readonly string _queryDeleteSector
         = @"DELETE FROM Sector WHERE idSector = @idSector";

@@ -2,6 +2,7 @@ using Dapper;
 
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Dapper;
 
@@ -11,7 +12,7 @@ public class RepoCliente : Repo, IRepoCliente
 
     private static readonly string _queryClientes
         = "SELECT * FROM Cliente";
-    public IEnumerable<Cliente> GetClientes() => _conexion.Query<Cliente>(_queryClientes); 
+    public IEnumerable<ClienteResponse> GetClientes() => _conexion.Query<ClienteResponse>(_queryClientes); 
     
     private static readonly string _queryDetalleCliente 
         = @"SELECT * FROM Cliente WHERE DNI = @unDNI"; 

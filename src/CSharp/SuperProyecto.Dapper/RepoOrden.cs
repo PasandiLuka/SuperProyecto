@@ -43,4 +43,17 @@ public class RepoOrden : Repo, IRepoOrden
                 unIdOrden = idOrden
             });
     }
+
+    private static readonly string _queryDetalleOrdenDeleteSector
+        = @"SELECT * FROM Orden WHERE idSector = @idSector";
+    public Orden? DetalleOrdenDeleteSector(int idSector)
+    {
+        return _conexion.QueryFirstOrDefault(
+            _queryDetalleOrdenDeleteSector,
+            new
+            {
+                idSector
+            }
+        );
+    }
 }

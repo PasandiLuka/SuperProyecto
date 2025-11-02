@@ -11,14 +11,14 @@ public class TestAdoCliente
     {
         // Arrange
         var mockService = new Mock<IClienteService>();
-        var clientes = new List<Cliente>
+        var clientes = new List<ClienteResponse>
         {
-            new Cliente { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez", telefono = 12345 },
-            new Cliente { DNI = 87654321, idUsuario = 2, nombre = "Maria", apellido = "Gomez", telefono = 67890 }
+            new ClienteResponse { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez", telefono = 12345 },
+            new ClienteResponse { DNI = 87654321, idUsuario = 2, nombre = "Maria", apellido = "Gomez", telefono = 67890 }
         };
 
         mockService.Setup(s => s.GetClientes())
-            .Returns(Result<IEnumerable<Cliente>>.Ok(clientes));
+            .Returns(Result<IEnumerable<ClienteResponse>>.Ok(clientes));
 
         // Act
         var resultado = mockService.Object.GetClientes();
@@ -34,10 +34,10 @@ public class TestAdoCliente
     {
         // Arrange
         var mockService = new Mock<IClienteService>();
-        var cliente = new Cliente { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez", telefono = 12345 };
+        var cliente = new ClienteResponse { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez", telefono = 12345 };
 
         mockService.Setup(s => s.DetalleCliente(cliente.DNI))
-            .Returns(Result<Cliente>.Ok(cliente));
+            .Returns(Result<ClienteResponse>.Ok(cliente));
 
         // Act
         var resultado = mockService.Object.DetalleCliente(cliente.DNI);
@@ -53,10 +53,10 @@ public class TestAdoCliente
     {
         // Arrange
         var mockService = new Mock<IClienteService>();
-        var cliente = new ClienteDto { DNI = 23456789, idUsuario = 3, nombre = "Carlos", apellido = "Lopez", telefono = 55555 };
+        var cliente = new ClienteDtoAlta { DNI = 23456789, idUsuario = 3, nombre = "Carlos", apellido = "Lopez", telefono = 55555 };
 
         mockService.Setup(s => s.AltaCliente(cliente))
-            .Returns(Result<Cliente>.Created(new Cliente
+            .Returns(Result<ClienteResponse>.Created(new ClienteResponse
             {
                 DNI = cliente.DNI,
                 idUsuario = cliente.idUsuario,
@@ -84,8 +84,8 @@ public class TestAdoCliente
 
         mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns(new Cliente());
 
-        var cliente = new ClienteDto { DNI = 123, idUsuario = 0, nombre = "Jo", apellido = "", telefono = 0 };
-        var validator = new ClienteValidator(mockRepoUsuario.Object, mockRepoCliente.Object);
+        var cliente = new ClienteDtoAlta { DNI = 123, idUsuario = 0, nombre = "Jo", apellido = "", telefono = 0 };
+        var validator = new ClienteDtoAltaValidator(mockRepoUsuario.Object, mockRepoCliente.Object);
 
         // Act
         var validationResult = validator.Validate(cliente);

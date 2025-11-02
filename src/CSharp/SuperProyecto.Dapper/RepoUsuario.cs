@@ -1,5 +1,5 @@
 using Dapper;
-
+using SuperProyecto.Core.DTO;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.Enums;
 using SuperProyecto.Core.Persistencia;
@@ -18,7 +18,7 @@ public class RepoUsuario : Repo, IRepoUsuario
             _queryDetalleUsuario,
             new
             {
-                idUsuario = idUsuario
+                idUsuario
             }
         );
     }
@@ -31,7 +31,7 @@ public class RepoUsuario : Repo, IRepoUsuario
             _queryDetalleUsuarioXEmail,
             new
             {
-                email = email
+                email
             }
         );
     }
@@ -52,7 +52,7 @@ public class RepoUsuario : Repo, IRepoUsuario
 
     private static readonly string _queryUpdateRolUsu
         = @"UPDATE Usuario SET rol = @rol WHERE idUsuario = @idUsuario";
-    public void ActualizarRol(int idUsuario, ERol rol)
+    public void ActualizarRol(int idUsuario, ERolDto rol)
     {
         _conexion.Execute(
             _queryUpdateRolUsu,

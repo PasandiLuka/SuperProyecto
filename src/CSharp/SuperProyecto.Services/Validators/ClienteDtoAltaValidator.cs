@@ -1,15 +1,17 @@
 using FluentValidation;
 
 using SuperProyecto.Core.Persistencia;
+using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.DTO;
+using SuperProyecto.Core.Enums;
 
 namespace SuperProyecto.Services.Validators;
 
-public class ClienteValidator : AbstractValidator<ClienteDto>
+public class ClienteDtoAltaValidator : AbstractValidator<ClienteDtoAlta>
 {
     IRepoUsuario _repoUsuario;
     IRepoCliente _repoCliente;
-    public ClienteValidator(IRepoUsuario repoUsuario, IRepoCliente repoCliente)
+    public ClienteDtoAltaValidator(IRepoUsuario repoUsuario, IRepoCliente repoCliente)
     {
         _repoUsuario = repoUsuario;
         _repoCliente = repoCliente;
@@ -22,7 +24,12 @@ public class ClienteValidator : AbstractValidator<ClienteDto>
         RuleFor(c => c.idUsuario)
             .NotEmpty().WithMessage("El idUsuario es obligatorio.")
             .GreaterThan(0).WithMessage("El idUsuario debe ser mayor a 0.")
-            .Must(idUsuario => _repoUsuario.DetalleUsuario(idUsuario) is not null).WithMessage("El usuario referenciado no existe.");
+            .Must(idUsuario => _repoUsuario.DetalleUsuario(idUsuario) is not null).WithMessage("El usuario referenciado no existe.")
+            .Must(idUsuario =>
+            {
+                var usuario = _repoUsuario.DetalleUsuario(idUsuario);
+                return usuario is not null && usuario.rol == ERol.Cliente;
+            }).WithMessage("El usuario referenciado debe ser de tipo cliente.");
 
         RuleFor(c => c.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio")

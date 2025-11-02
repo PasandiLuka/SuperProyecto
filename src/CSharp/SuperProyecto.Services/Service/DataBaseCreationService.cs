@@ -26,9 +26,10 @@ public class DataBaseCreationService
         using var connection = new MySqlConnection(builder.ConnectionString);
 
         string schemaDDL = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/00 DDL.sql");
-        string schemaUsers = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/01 USERS.sql");
+        string schemaINSERTS = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/01 INSERTS.sql");
+        string schemaUsers = Path.Combine(AppContext.BaseDirectory, "../../../../../../scripts/bd/MySQL/02 USERS.sql");
 
-        string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaUsers);
+        string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaINSERTS) + File.ReadAllText(schemaUsers);
         
         try
         {

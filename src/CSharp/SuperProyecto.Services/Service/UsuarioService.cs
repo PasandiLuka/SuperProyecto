@@ -1,9 +1,8 @@
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Core.Enums;
 using SuperProyecto.Services.Validators;
-using FluentValidation.Validators;
+using MySqlConnector;
 
 namespace SuperProyecto.Services.Service;
 
@@ -20,34 +19,56 @@ public class UsuarioService : IUsuarioService
 
     public Result<string[]> ObtenerRoles()
     {
-        var resultado = Enum.GetNames(typeof(ERol));
-        return Result<string[]>.Ok(resultado);
+        try
+        {
+            var resultado = Enum.GetNames(typeof(ERolDto));
+            return Result<string[]>.Ok(resultado);  
+        }
+        catch (MySqlException)
+        {
+            return Result<string[]>.Unauthorized();
+        }
     }
 
-    public Result<Usuario> ActualizarRol(int id, ERol nuevoRol)
+    public Result<Usuario> ActualizarRol(int id, int nuevoRol)
     {
-        if (_repoUsuario.DetalleUsuario(id) is null) return Result<Usuario>.NotFound("El usuario solicitado no fue encontrado.");
-        if (nuevoRol != ERol.Administrador || nuevoRol != ERol.Cliente || nuevoRol != ERol.Organizador) return Result<Usuario>.BadRequest();
-        _repoUsuario.ActualizarRol(id, nuevoRol);
-        return Result<Usuario>.Ok();
+        try
+        {
+            if (_repoUsuario.DetalleUsuario(id) is null) return Result<Usuario>.NotFound("El usuario solicitado no fue encontrado.");
+            if (!((ERolDto)nuevoRol == ERolDto.Organizador) && !((ERolDto)nuevoRol == ERolDto.Cliente)) return Result<Usuario>.BadRequest(default, "El rol dado no se encuentra dentro de las opciones.");
+            _repoUsuario.ActualizarRol(id, (ERolDto)nuevoRol);
+            return Result<Usuario>.Ok();
+        }
+        catch (MySqlException)
+        {
+            return Result<Usuario>.Unauthorized();
+        }
+        
     }
 
     public Result<UsuarioDto> AltaUsuario(UsuarioDto usuarioDto)
     {
-        var resultado = _validador.Validate(usuarioDto);
-        if (!resultado.IsValid)
+        try
         {
-            var listaErrores = resultado.Errors
-                .GroupBy(a => a.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-            return Result<UsuarioDto>.BadRequest(listaErrores);
+            var resultado = _validador.Validate(usuarioDto);
+            if (!resultado.IsValid)
+            {
+                var listaErrores = resultado.Errors
+                    .GroupBy(a => a.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).ToArray()
+                    );
+                return Result<UsuarioDto>.BadRequest(listaErrores);
+            }
+            var usuario = ConvertirDtoClase(usuarioDto);
+            _repoUsuario.AltaUsuario(usuario);
+            return Result<UsuarioDto>.Created(usuarioDto);
         }
-        var usuario = ConvertirDtoClase(usuarioDto);
-        _repoUsuario.AltaUsuario(usuario);
-        return Result<UsuarioDto>.Created(usuarioDto);
+        catch (MySqlException)
+        {
+            return Result<UsuarioDto>.Unauthorized();
+        }
     }
 
     static Usuario ConvertirDtoClase(UsuarioDto usuarioDto)
@@ -58,5 +79,6 @@ public class UsuarioService : IUsuarioService
             passwordHash = AuthService.HashPassword(usuarioDto.password),
             rol = usuarioDto.Rol
         };
-    }
+    }    
 }
+
