@@ -128,7 +128,6 @@ public class EventoService : IEventoService
         {
             nombre = eventoDto.nombre,
             descripcion = eventoDto.descripcion,
-            fechaPublicacion = DateTime.Now,
             publicado = eventoDto.publicado,
             cancelado = false
         };

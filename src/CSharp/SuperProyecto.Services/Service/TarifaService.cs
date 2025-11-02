@@ -4,7 +4,6 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Services.Validators;
 using MySqlConnector;
-using System.Formats.Tar;
 
 namespace SuperProyecto.Services.Service;
 
@@ -95,7 +94,10 @@ public class TarifaService : ITarifaService
     {
         return new Tarifa
         {
-            precio = tarifaDto.precio
+            idFuncion = tarifaDto.idFuncion,
+            idSector = tarifaDto.idSector,
+            precio = tarifaDto.precio,
+            stock = tarifaDto.stock
         };
     }
 }

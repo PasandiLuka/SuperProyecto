@@ -12,8 +12,8 @@ public class TestAdoEvento
         var mockService = new Mock<IEventoService>();
         var eventos = new List<Evento>
         {
-            new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", fechaPublicacion = DateTime.Today, publicado = true, cancelado = false },
-            new Evento { idEvento = 2, nombre = "Teatro", descripcion = "Obra de teatro", fechaPublicacion = DateTime.Today, publicado = false, cancelado = false }
+            new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", publicado = true, cancelado = false },
+            new Evento { idEvento = 2, nombre = "Teatro", descripcion = "Obra de teatro", publicado = false, cancelado = false }
         };
 
         mockService.Setup(s => s.GetEventos()).Returns(Result<IEnumerable<Evento>>.Ok(eventos));
@@ -32,7 +32,7 @@ public class TestAdoEvento
     {
         // Arrange
         var mockService = new Mock<IEventoService>();
-        var evento = new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", fechaPublicacion = DateTime.Today, publicado = true, cancelado = false };
+        var evento = new Evento { idEvento = 1, nombre = "Concierto", descripcion = "Música en vivo", publicado = true, cancelado = false };
 
         mockService.Setup(s => s.DetalleEvento(evento.idEvento)).Returns(Result<Evento>.Ok(evento));
 
@@ -71,8 +71,7 @@ public class TestAdoEvento
                 nombre = evento.nombre,
                 descripcion = evento.descripcion,
                 publicado = evento.publicado,
-                cancelado = false,
-                fechaPublicacion = DateTime.Today
+                cancelado = false
             });
         }
 
@@ -109,8 +108,7 @@ public class TestAdoEvento
                 nombre = evento.nombre,
                 descripcion = evento.descripcion,
                 publicado = evento.publicado,
-                cancelado = false,
-                fechaPublicacion = DateTime.Today
+                cancelado = false
             });
         }
 
@@ -147,8 +145,7 @@ public class TestAdoEvento
                 nombre = evento.nombre,
                 descripcion = evento.descripcion,
                 publicado = evento.publicado,
-                cancelado = false,
-                fechaPublicacion = DateTime.Today
+                cancelado = false
             });
         }
 
@@ -185,8 +182,7 @@ public class TestAdoEvento
                 nombre = evento.nombre,
                 descripcion = evento.descripcion,
                 publicado = evento.publicado,
-                cancelado = false,
-                fechaPublicacion = DateTime.Today
+                cancelado = false
             });
         }
 

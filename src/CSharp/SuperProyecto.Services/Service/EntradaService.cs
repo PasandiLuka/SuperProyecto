@@ -52,8 +52,9 @@ public class EntradaService : IEntradaService
             var entrada = _repoEntrada.DetalleEntrada(id);
             if (entrada is null) return Result<object>.BadRequest(default, "Entrada no valida.");
             if (entrada.usada) return Result<object>.BadRequest(default, "La entrada ya fue usada.");
+            if (entrada.anulada) return Result<object>.BadRequest(default, "La entrada se encuentra anulada.");
             _repoEntrada.EntradaUsada(entrada.idEntrada);
-            return Result<object>.Ok();     
+            return Result<object>.Ok();
         }
         catch (MySqlException)
         {

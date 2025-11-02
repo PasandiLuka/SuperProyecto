@@ -13,8 +13,8 @@ public class TestAdoFuncion
         var mockService = new Mock<IFuncionService>();
         var funciones = new List<Funcion>
         {
-            new Funcion { idFuncion = 1, idEvento = 1, fechaHora = DateTime.Today.AddDays(1), stock = 100, cancelada = false },
-            new Funcion { idFuncion = 2, idEvento = 1, fechaHora = DateTime.Today.AddDays(2), stock = 50, cancelada = false }
+            new Funcion { idFuncion = 1, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false },
+            new Funcion { idFuncion = 2, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(2), cancelada = false }
         };
 
         mockService.Setup(s => s.GetFunciones()).Returns(Result<IEnumerable<Funcion>>.Ok(funciones));
@@ -33,7 +33,7 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockService = new Mock<IFuncionService>();
-        var funcion = new Funcion { idFuncion = 1, idEvento = 1, fechaHora = DateTime.Today.AddDays(1), stock = 100, cancelada = false };
+        var funcion = new Funcion { idFuncion = 1, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false };
 
         mockService.Setup(s => s.DetalleFuncion(funcion.idFuncion)).Returns(Result<Funcion>.Ok(funcion));
 
@@ -51,17 +51,18 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockRepoEvento = new Mock<IRepoEvento>();
-        var mockRepoTarifa = new Mock<IRepoTarifa>();
-        var validator = new FuncionValidator(mockRepoEvento.Object);
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var validator = new FuncionValidator(mockRepoEvento.Object, mockRepoLocal.Object);
 
         mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns(new Evento { cancelado = false });
-        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns(new Tarifa());
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns(new Local());
 
         var funcion = new FuncionDto
         {
             idEvento = 1,
+            idLocal = 1,
             fechaHora = DateTime.Today.AddDays(1),
-            stock = 50
         };
 
         // Act
@@ -79,9 +80,9 @@ public class TestAdoFuncion
             resultado = Result<Funcion>.Created(new Funcion
             {
                 idFuncion = 1,
+                idLocal = 1,
                 idEvento = funcion.idEvento,
                 fechaHora = funcion.fechaHora,
-                stock = funcion.stock,
                 cancelada = false
             });
         }
@@ -97,17 +98,18 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockRepoEvento = new Mock<IRepoEvento>();
-        var mockRepoTarifa = new Mock<IRepoTarifa>();
-        var validator = new FuncionValidator(mockRepoEvento.Object);
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var validator = new FuncionValidator(mockRepoEvento.Object, mockRepoLocal.Object);
 
         mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns((Evento)null);
-        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns((Tarifa)null);
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns((Local)null);
 
         var funcion = new FuncionDto
         {
             idEvento = 0,
+            idLocal = 0,
             fechaHora = DateTime.Today.AddDays(-1),
-            stock = -5
         };
 
         // Act
@@ -125,9 +127,9 @@ public class TestAdoFuncion
             resultado = Result<Funcion>.Created(new Funcion
             {
                 idFuncion = 1,
+                idLocal = 1,
                 idEvento = funcion.idEvento,
                 fechaHora = funcion.fechaHora,
-                stock = funcion.stock,
                 cancelada = false
             });
         }
@@ -145,17 +147,18 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockRepoEvento = new Mock<IRepoEvento>();
-        var mockRepoTarifa = new Mock<IRepoTarifa>();
-        var validator = new FuncionValidator(mockRepoEvento.Object);
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var validator = new FuncionValidator(mockRepoEvento.Object, mockRepoLocal.Object);
 
         mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns(new Evento { cancelado = false });
-        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns(new Tarifa());
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns(new Local());
 
         var funcion = new FuncionDto
         {
             idEvento = 1,
+            idLocal = 1,
             fechaHora = DateTime.Today.AddDays(2),
-            stock = 20
         };
 
         // Act
@@ -174,8 +177,8 @@ public class TestAdoFuncion
             {
                 idFuncion = 1,
                 idEvento = funcion.idEvento,
+                idLocal = funcion.idLocal,
                 fechaHora = funcion.fechaHora,
-                stock = funcion.stock,
                 cancelada = false
             });
         }
@@ -191,17 +194,18 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockRepoEvento = new Mock<IRepoEvento>();
-        var mockRepoTarifa = new Mock<IRepoTarifa>();
-        var validator = new FuncionValidator(mockRepoEvento.Object);
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var validator = new FuncionValidator(mockRepoEvento.Object, mockRepoLocal.Object);
 
         mockRepoEvento.Setup(r => r.DetalleEvento(It.IsAny<int>())).Returns((Evento)null);
-        mockRepoTarifa.Setup(r => r.DetalleTarifa(It.IsAny<int>())).Returns((Tarifa)null);
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns((Local)null);
 
         var funcion = new FuncionDto
         {
             idEvento = 0,
-            fechaHora = DateTime.Today.AddDays(-1),
-            stock = -1
+            idLocal = 0,
+            fechaHora = DateTime.Today.AddDays(-1)
         };
 
         // Act
@@ -220,8 +224,8 @@ public class TestAdoFuncion
             {
                 idFuncion = 1,
                 idEvento = funcion.idEvento,
+                idLocal = funcion.idLocal,
                 fechaHora = funcion.fechaHora,
-                stock = funcion.stock,
                 cancelada = false
             });
         }

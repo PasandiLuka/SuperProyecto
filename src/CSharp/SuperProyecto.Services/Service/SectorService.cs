@@ -115,10 +115,7 @@ public class SectorService : ISectorService
         return new Sector
         {
             idLocal = sectorDto.idLocal,
-            idFuncion = sectorDto.idFuncion,
-            idTarifa = sectorDto.idTarifa,
-            nombre = sectorDto.nombre,
-            capacidad = sectorDto.capacidad
+            nombre = sectorDto.nombre
         };
     }
 }

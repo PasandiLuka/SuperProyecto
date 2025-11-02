@@ -100,8 +100,8 @@ public class FuncionService : IFuncionService
         return new Funcion
         {
             idEvento = funcionDto.idEvento,
+            idLocal = funcionDto.idLocal,
             fechaHora = funcionDto.fechaHora,
-            stock = funcionDto.stock,
             cancelada = false
         };
     }

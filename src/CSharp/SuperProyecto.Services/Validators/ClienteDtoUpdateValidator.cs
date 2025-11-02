@@ -17,8 +17,5 @@ public class ClienteDtoUpdateValidator : AbstractValidator<ClienteDtoUpdate>
             .NotEmpty().WithMessage("El apellido es obligatorio")
             .MinimumLength(3).WithMessage("El apellido debe tener al menos 3 caracteres.")
             .MaximumLength(45).WithMessage("El apellido debe tener como máximo 45 caracteres.");
-
-        RuleFor(c => c.telefono)
-            .NotEmpty().WithMessage("El telefono es obligatorio");
     }
 }

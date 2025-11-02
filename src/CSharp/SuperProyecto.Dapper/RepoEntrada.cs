@@ -17,14 +17,15 @@ public class RepoEntrada : Repo, IRepoEntrada
     public Entrada? DetalleEntrada(int idEntrada) => _conexion.QueryFirstOrDefault<Entrada>(_queryDetalleEntrada, new { idEntrada });
 
     private static readonly string _queryAltaEntrada
-        = @"INSERT INTO Entrada (idOrden) VALUES (@idOrden)";
+        = @"INSERT INTO Entrada (idOrden, idTarifa) VALUES (@idOrden, @idTarifa)";
     public void AltaEntrada(Entrada entrada)
     {
         _conexion.Execute(
             _queryAltaEntrada,
             new
             {
-                entrada.idOrden
+                entrada.idOrden,
+                entrada.idTarifa
             });
     }
 
@@ -37,6 +38,20 @@ public class RepoEntrada : Repo, IRepoEntrada
             new
             {
                 usada = true,
+                idEntrada
+            }
+        );
+    }
+
+    private static readonly string _queryEntradaAnulada
+        = @"UPDATE Entrada SET anulada = @anulada WHERE idEntrada = @idEntrada";
+    public void EntradaAnulada(int idEntrada)
+    {
+        _conexion.Execute(
+            _queryEntradaAnulada,
+            new
+            {
+                anulada = true,
                 idEntrada
             }
         );

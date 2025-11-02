@@ -20,7 +20,7 @@ public class RepoEvento : Repo, IRepoEvento
 
 
     private static readonly string _queryAltaEvento
-        = @"INSERT INTO Evento (nombre, descripcion, fechaPublicacion, publicado) VALUES (@nombre, @descripcion, @fechaPublicacion, @publicado)";
+        = @"INSERT INTO Evento (nombre, descripcion, publicado) VALUES (@nombre, @descripcion, @publicado)";
     public void AltaEvento(Evento evento)
     {
         _conexion.Execute(
@@ -29,14 +29,13 @@ public class RepoEvento : Repo, IRepoEvento
             {
                 evento.nombre,
                 evento.descripcion,
-                evento.fechaPublicacion,
                 evento.publicado
             });
     }
 
 
     private static readonly string _queryUpdateEvento
-        = @"UPDATE Evento SET nombre = @nombre, descripcion = @descripcion, fechaPublicacion = @fechaPublicacion, publicado = @publicado WHERE idEvento = @idEvento";
+        = @"UPDATE Evento SET nombre = @nombre, descripcion = @descripcion, publicado = @publicado WHERE idEvento = @idEvento";
     public void UpdateEvento(Evento evento, int id)
     {
         _conexion.Execute(
@@ -45,7 +44,6 @@ public class RepoEvento : Repo, IRepoEvento
             {
                 evento.nombre,
                 evento.descripcion,
-                evento.fechaPublicacion,
                 evento.publicado,
                 idEvento = id
             });

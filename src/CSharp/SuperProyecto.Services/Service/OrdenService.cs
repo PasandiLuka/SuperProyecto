@@ -76,7 +76,8 @@ public class OrdenService : IOrdenService
     {
         try
         {
-            if(_repoOrden.DetalleOrden(id) is null) return Result<Orden>.NotFound("La orden a pagar no fue encontrada.");
+            if (_repoOrden.DetalleOrden(id) is null) return Result<Orden>.NotFound("La orden a pagar no fue encontrada.");
+            if (_repoOrden.DetalleOrden(id).pagada) return Result<Orden>.NotFound("La orden a pagar ya fue pagada.");
             _repoOrden.PagarOrden(id);
             var url = _qrService.GenerarQrUrl(id);
             _repoQr.AltaQr(id, url);
@@ -87,16 +88,15 @@ public class OrdenService : IOrdenService
             return Result<Orden>.Unauthorized();
         }
     }
-
+    
 
     static Orden ConvertirDtoClase(OrdenDto ordenDto)
     {
         return new Orden
         {
-            DNI = ordenDto.DNI,
+            idCliente = ordenDto.idCliente,
             idSector = ordenDto.idSector,
-            fecha = DateTime.Now,
-            pagada = false
+            fecha = DateTime.Now
         };
     }
 }

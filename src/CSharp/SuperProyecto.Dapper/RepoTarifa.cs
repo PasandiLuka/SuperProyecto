@@ -27,27 +27,32 @@ public class RepoTarifa : Repo, IRepoTarifa
     }
 
     private static readonly string _queryAltaTarifa
-        = @"INSERT INTO Tarifa (idTarifa, precio) VALUES (@idTarifa, @precio)";
+        = @"INSERT INTO Tarifa (idFuncion, idSector, precio, stock) VALUES (@idFuncion, @idSector, @precio, @stock)";
     public void AltaTarifa(Tarifa tarifa)
     {
         _conexion.Execute(
             _queryAltaTarifa,
             new
             {
-                tarifa.idTarifa,
-                tarifa.precio
+                tarifa.idFuncion,
+                tarifa.idSector,
+                tarifa.precio,
+                tarifa.stock
             });
     }
 
     private static readonly string _queryUpdateTarifa
-        = @"UPDATE Tarifa SET precio = @precio WHERE idTarifa = @idTarifa";
+        = @"UPDATE Tarifa SET idFuncion = @idFuncion, idSector = @idSector, precio = @precio, stock = @stock WHERE idTarifa = @idTarifa";
     public void UpdateTarifa(Tarifa tarifa, int id)
     {
         _conexion.Execute(
             _queryUpdateTarifa,
             new
             {
+                tarifa.idFuncion,
+                tarifa.idSector,
                 tarifa.precio,
+                tarifa.stock,
                 idTarifa = id
             });
     }

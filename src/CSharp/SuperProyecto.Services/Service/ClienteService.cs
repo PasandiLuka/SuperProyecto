@@ -64,8 +64,7 @@ public class ClienteService : IClienteService
                 DNI = clienteDtoAlta.DNI,
                 idUsuario = clienteDtoAlta.idUsuario,
                 nombre = clienteDtoAlta.nombre,
-                apellido = clienteDtoAlta.apellido,
-                telefono = clienteDtoAlta.telefono
+                apellido = clienteDtoAlta.apellido
             };
             _repoCliente.AltaCliente(cliente);
             return Result<ClienteResponse>.Created(ConvertirClienteAResponse(cliente)); 
@@ -95,8 +94,7 @@ public class ClienteService : IClienteService
             Cliente cliente = new Cliente
             {
                 nombre = clienteDto.nombre,
-                apellido = clienteDto.apellido,
-                telefono = clienteDto.telefono
+                apellido = clienteDto.apellido
             };
             _repoCliente.UpdateCliente(cliente, id);
             return Result<ClienteResponse>.Ok(ConvertirClienteAResponse(cliente));
@@ -114,8 +112,7 @@ public class ClienteService : IClienteService
             DNI = cliente.DNI,
             idUsuario = cliente.idUsuario,
             nombre = cliente.nombre,
-            apellido = cliente.apellido,
-            telefono = cliente.telefono
+            apellido = cliente.apellido
         };
     }
 }

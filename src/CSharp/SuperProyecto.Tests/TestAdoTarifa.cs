@@ -13,8 +13,8 @@ public class TestAdoTarifa
         var mockService = new Mock<ITarifaService>();
         var tarifas = new List<Tarifa>
         {
-            new Tarifa { idTarifa = 1, precio = 1500 },
-            new Tarifa { idTarifa = 2, precio = 2000 }
+            new Tarifa { idTarifa = 1, idFuncion = 1, idSector = 1, precio = 1500, stock = 100 },
+            new Tarifa { idTarifa = 2, idFuncion = 1, idSector = 1, precio = 1500, stock = 100 }
         };
 
         mockService.Setup(s => s.GetTarifas())
@@ -34,7 +34,7 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifa = new Tarifa { idTarifa = 1, precio = 1800 };
+        var tarifa = new Tarifa { idTarifa = 1, idFuncion = 1, idSector = 1, precio = 1500, stock = 100 };
 
         mockService.Setup(s => s.DetalleTarifa(tarifa.idTarifa))
             .Returns(Result<Tarifa>.Ok(tarifa));
@@ -53,12 +53,15 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { precio = 2500 };
+        var tarifaDto = new TarifaDto { idFuncion = 1, idSector = 1, precio = 1500, stock = 100 };
 
         mockService.Setup(s => s.AltaTarifa(tarifaDto))
             .Returns(Result<TarifaDto>.Created(new TarifaDto
             {
-                precio = tarifaDto.precio
+                idFuncion = tarifaDto.idFuncion,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio,
+                stock = tarifaDto.stock
             }));
 
         // Act
@@ -75,12 +78,15 @@ public class TestAdoTarifa
     {
         // Arrange
         var mockService = new Mock<ITarifaService>();
-        var tarifaDto = new TarifaDto { precio = 2200 };
+        var tarifaDto = new TarifaDto { idFuncion = 1, idSector = 1, precio = 1500, stock = 100 };
 
         mockService.Setup(s => s.UpdateTarifa(tarifaDto, 1))
             .Returns(Result<TarifaDto>.Ok(new TarifaDto
             {
-                precio = tarifaDto.precio
+                idFuncion = tarifaDto.idFuncion,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio,
+                stock = tarifaDto.stock
             }));
 
         // Act
@@ -96,8 +102,10 @@ public class TestAdoTarifa
     public void CuandoRealizoUnAltaDeTarifaInvalida_DebeRetornarBadRequest()
     {
         // Arrange
-        var tarifaDto = new TarifaDto { precio = -10 };
-        var validator = new TarifaValidator();
+        var mockRepoFuncion = new Mock<IRepoFuncion>();
+        var mockRepoSector = new Mock<IRepoSector>();
+        var tarifaDto = new TarifaDto { idFuncion = 0, idSector = 0, precio = -1500, stock = -100 };
+        var validator = new TarifaValidator(mockRepoFuncion.Object, mockRepoSector.Object);
 
         // Act
         var validationResult = validator.Validate(tarifaDto);
@@ -116,13 +124,19 @@ public class TestAdoTarifa
             resultado = Result<Tarifa>.Created(new Tarifa
             {
                 idTarifa = 0,
-                precio = tarifaDto.precio
+                idFuncion = tarifaDto.idFuncion,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio,
+                stock = tarifaDto.stock
             });
         }
 
         // Assert
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.True(resultado.Errors.ContainsKey("idFuncion"));
+        Assert.True(resultado.Errors.ContainsKey("idSector"));
         Assert.True(resultado.Errors.ContainsKey("precio"));
+        Assert.True(resultado.Errors.ContainsKey("stock"));
     }
 }

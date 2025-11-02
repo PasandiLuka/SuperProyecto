@@ -101,12 +101,10 @@ public class TestAdoSector
     {
         // Arrange
         var mockRepoLocal = new Mock<IRepoLocal>();
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var mockRepoTarifa = new Mock<IRepoTarifa>();
         mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns((Local?)null);
 
         var sectorDto = new SectorDto { idLocal = 0, nombre = "AB" };
-        var validator = new SectorValidator(mockRepoLocal.Object, mockRepoFuncion.Object, mockRepoTarifa.Object);
+        var validator = new SectorValidator(mockRepoLocal.Object);
 
         // Act
         var validationResult = validator.Validate(sectorDto);

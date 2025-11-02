@@ -15,41 +15,38 @@ public class RepoCliente : Repo, IRepoCliente
     public IEnumerable<ClienteResponse> GetClientes() => _conexion.Query<ClienteResponse>(_queryClientes); 
     
     private static readonly string _queryDetalleCliente 
-        = @"SELECT * FROM Cliente WHERE DNI = @unDNI"; 
-    public Cliente? DetalleCliente(int DNI) 
+        = @"SELECT * FROM Cliente WHERE idCliente = @idCliente"; 
+    public Cliente? DetalleCliente(int idCliente) 
     {
-        return _conexion.QueryFirstOrDefault<Cliente>(_queryDetalleCliente, new { unDNI = DNI });
+        return _conexion.QueryFirstOrDefault<Cliente>(_queryDetalleCliente, new { idCliente });
     }
 
     private static readonly string _queryAltaCliente
-        = @"INSERT INTO Cliente (DNI, idUsuario, nombre, apellido, telefono) VALUES (@unDNI, @unIdUsuario, @unNombre, @unApellido, @unTelefono)";
+        = @"INSERT INTO Cliente (idUsuario, DNI, nombre, apellido) VALUES (@unIdUsuario, @unDNI, @unNombre, @unApellido, @unTelefono)";
     public void AltaCliente(Cliente cliente)
     {
         _conexion.Execute(
             _queryAltaCliente,
             new
             {
-                unDNI = cliente.DNI,
                 unIdUsuario = cliente.idUsuario,
+                unDNI = cliente.DNI,
                 unNombre = cliente.nombre,
-                unApellido = cliente.apellido,
-                unTelefono = cliente.telefono
+                unApellido = cliente.apellido
             });
     }
 
     private static readonly string _queryUpdateCliente
-        = @"UPDATE Cliente SET nombre = @nombre, apellido = @apellido, telefono = @telefono WHERE DNI = @DNI";
-    public void UpdateCliente(Cliente cliente, int id)
+        = @"UPDATE Cliente SET nombre = @nombre, apellido = @apellido WHERE idCliente = @idCliente";
+    public void UpdateCliente(Cliente cliente, int idCliente)
     {
         _conexion.Execute(
             _queryUpdateCliente,
             new
             {
                 cliente.nombre,
-                cliente.idUsuario,
                 cliente.apellido,
-                cliente.telefono,
-                DNI = id
+                idCliente
             });
     }
 }
