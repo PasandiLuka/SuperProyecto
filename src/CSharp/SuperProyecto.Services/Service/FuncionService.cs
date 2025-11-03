@@ -68,26 +68,39 @@ public class FuncionService : IFuncionService
         {
             return Result<FuncionDto>.Unauthorized();
         }
-    } 
+    }
 
     public Result<FuncionDto> AltaFuncion(FuncionDto funcionDto)
     {
         try
         {
-        var resultado = _validador.Validate(funcionDto);
-        if (!resultado.IsValid)
-        {
-            var listaErrores = resultado.Errors
-                .GroupBy(a => a.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-            return Result<FuncionDto>.BadRequest(listaErrores);
+            var resultado = _validador.Validate(funcionDto);
+            if (!resultado.IsValid)
+            {
+                var listaErrores = resultado.Errors
+                    .GroupBy(a => a.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).ToArray()
+                    );
+                return Result<FuncionDto>.BadRequest(listaErrores);
+            }
+            Funcion funcion = ConvertirDtoClase(funcionDto);
+            _repoFuncion.AltaFuncion(funcion);
+            return Result<FuncionDto>.Ok(funcionDto);
         }
-        Funcion funcion = ConvertirDtoClase(funcionDto);
-        _repoFuncion.AltaFuncion(funcion);
-        return Result<FuncionDto>.Ok(funcionDto);  
+        catch (MySqlException)
+        {
+            return Result<FuncionDto>.Unauthorized();
+        }
+    }
+    
+    public Result<FuncionDto> CancelarFuncion(int id)
+    {
+        try
+        {
+            _repoFuncion.CancelarFuncion(id);
+            return Result<FuncionDto>.Ok();
         }
         catch (MySqlException)
         {

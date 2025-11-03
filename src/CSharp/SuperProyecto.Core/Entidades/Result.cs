@@ -39,5 +39,5 @@ public class Result<T>
         => new(false, EResultType.BadRequest, default, message, errors);
     
     public static Result<T> File(byte[]? bytes)
-        => new(false, EResultType.File, default, default, default, bytes);
+        => new(true, EResultType.File, default, default, default, bytes);
 }

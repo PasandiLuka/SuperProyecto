@@ -22,7 +22,7 @@ public class RepoCliente : Repo, IRepoCliente
     }
 
     private static readonly string _queryAltaCliente
-        = @"INSERT INTO Cliente (idUsuario, DNI, nombre, apellido) VALUES (@unIdUsuario, @unDNI, @unNombre, @unApellido, @unTelefono)";
+        = @"INSERT INTO Cliente (idUsuario, DNI, nombre, apellido) VALUES (@unIdUsuario, @unDNI, @unNombre, @unApellido)";
     public void AltaCliente(Cliente cliente)
     {
         _conexion.Execute(

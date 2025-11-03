@@ -48,7 +48,7 @@ public class RepoLocal : Repo, IRepoLocal
     }
 
     private static readonly string _queryDeleteLocal
-        = @"DELETE FROM Local WHERE idLocal = @idLocal";
+        = @"UPDATE Local SET eliminado = true WHERE idLocal = @idLocal";
     public void DeleteLocal(int IdLocal)
     {
         _conexion.Execute(

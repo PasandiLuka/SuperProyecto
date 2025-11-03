@@ -4,7 +4,7 @@ public static class UsuarioEndpoints
 {
     public static void MapUsuarioEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/Usuario/roles", (IUsuarioService service) =>
+        app.MapGet("/api/auth/roles", (IUsuarioService service) =>
         {
             var result = service.ObtenerRoles();
             return result.ToMinimalResult();
@@ -16,7 +16,7 @@ public static class UsuarioEndpoints
             return result.ToMinimalResult();
         }).WithTags("01 - Usuario");
         
-        app.MapPut("/api/Usuario/{id}/rol", (int id, int nuevoRol, IUsuarioService service) =>
+        app.MapPut("/api/usuarios/{id}/roles", (int id, int nuevoRol, IUsuarioService service) =>
         {
             var result = service.ActualizarRol(id, nuevoRol);
             return result.ToMinimalResult();

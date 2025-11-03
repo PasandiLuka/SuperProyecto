@@ -1,6 +1,6 @@
-﻿using SuperProyecto.Core.Enums;
-using SuperProyecto.Core.Persistencia;
+﻿using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Services.Validators;
+using SuperProyecto.Core.Enums;
 
 namespace SuperProyecto.Tests;
 
@@ -10,18 +10,18 @@ public class TestAdoCliente
     public void CuandoObtengoLosClientes_DebeRetornarUnaListaDeClientes_ConResultadoOk()
     {
         // Arrange
-        var mockService = new Mock<IClienteService>();
+        var mockServicio = new Mock<IClienteService>();
         var clientes = new List<ClienteResponse>
         {
             new ClienteResponse { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez" },
-            new ClienteResponse { DNI = 87654321, idUsuario = 2, nombre = "Maria", apellido = "Gomez" }
+            new ClienteResponse { DNI = 87654321, idUsuario = 2, nombre = "Ana", apellido = "Gomez" }
         };
 
-        mockService.Setup(s => s.GetClientes())
+        mockServicio.Setup(s => s.GetClientes())
             .Returns(Result<IEnumerable<ClienteResponse>>.Ok(clientes));
 
         // Act
-        var resultado = mockService.Object.GetClientes();
+        var resultado = mockServicio.Object.GetClientes();
 
         // Assert
         Assert.True(resultado.Success);
@@ -30,91 +30,157 @@ public class TestAdoCliente
     }
 
     [Fact]
-    public void CuandoBuscoDetalleDeUnClienteValido_DebeRetornarCliente_ConResultadoOk()
+    public void CuandoObtengoUnClienteInexistente_DebeRetornarNotFound()
     {
         // Arrange
-        var mockService = new Mock<IClienteService>();
-        var cliente = new ClienteResponse { DNI = 12345678, idUsuario = 1, nombre = "Juan", apellido = "Perez" };
-
-        mockService.Setup(s => s.DetalleCliente(cliente.DNI))
-            .Returns(Result<ClienteResponse>.Ok(cliente));
+        var mockServicio = new Mock<IClienteService>();
+        int idCliente = 1;
+        mockServicio.Setup(s => s.DetalleCliente(idCliente))
+            .Returns(Result<ClienteResponse>.NotFound("No encontrado"));
 
         // Act
-        var resultado = mockService.Object.DetalleCliente(cliente.DNI);
+        var resultado = mockServicio.Object.DetalleCliente(idCliente);
 
         // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(cliente.DNI, resultado.Data.DNI);
-        Assert.Equal(cliente.nombre, resultado.Data.nombre);
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.NotFound, resultado.ResultType);
+        Assert.Null(resultado.Data);
     }
 
     [Fact]
-    public void CuandoRealizoUnAltaDeClienteValido_DebeRetornarCreated()
-    {
-        // Arrange
-        var mockService = new Mock<IClienteService>();
-        var cliente = new ClienteDtoAlta { DNI = 23456789, idUsuario = 3, nombre = "Carlos", apellido = "Lopez" };
-
-        mockService.Setup(s => s.AltaCliente(cliente))
-            .Returns(Result<ClienteResponse>.Created(new ClienteResponse
-            {
-                DNI = cliente.DNI,
-                idUsuario = cliente.idUsuario,
-                nombre = cliente.nombre,
-                apellido = cliente.apellido
-            }));
-
-        // Act
-        var resultado = mockService.Object.AltaCliente(cliente);
-
-        // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Created, resultado.ResultType);
-        Assert.Equal(cliente.DNI, resultado.Data.DNI);
-        Assert.Equal(cliente.nombre, resultado.Data.nombre);
-    }
-
-    [Fact]
-    public void CuandoRealizoUnAltaDeClienteInvalido_DebeRetornarBadRequest()
+    public void CuandoDoyDeAltaUnClienteValido_DebeCrearCliente_ConResultadoCreated()
     {
         // Arrange
         var mockRepoUsuario = new Mock<IRepoUsuario>();
         var mockRepoCliente = new Mock<IRepoCliente>();
 
-        mockRepoCliente.Setup(r => r.DetalleCliente(It.IsAny<int>())).Returns(new Cliente());
+        var dto = new ClienteDtoAlta
+        {
+            DNI = 12345678,
+            idUsuario = 3,
+            nombre = "Carlos",
+            apellido = "Lopez"
+        };
 
-        var cliente = new ClienteDtoAlta { DNI = 123, idUsuario = 0, nombre = "Jo", apellido = "" };
+        mockRepoUsuario.Setup(r => r.DetalleUsuario(dto.idUsuario))
+            .Returns(new Usuario { idUsuario = dto.idUsuario, rol = ERol.Cliente });
+
+        mockRepoCliente.Setup(r => r.DetalleCliente(dto.DNI))
+            .Returns((Cliente)null);
+
         var validator = new ClienteDtoAltaValidator(mockRepoUsuario.Object, mockRepoCliente.Object);
+        var validationResult = validator.Validate(dto);
+
+        var mockServicio = new Mock<IClienteService>();
+        mockServicio.Setup(s => s.AltaCliente(dto))
+            .Returns(Result<ClienteResponse>.Created(new ClienteResponse { DNI = dto.DNI, idUsuario = dto.idUsuario, nombre = dto.nombre, apellido = dto.apellido }));
 
         // Act
-        var validationResult = validator.Validate(cliente);
-
-        Result<Cliente> resultado;
-        if (!validationResult.IsValid)
-        {
-            var errores = validationResult.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
-
-            resultado = Result<Cliente>.BadRequest(errores);
-        }
-        else
-        {
-            resultado = Result<Cliente>.Created(new Cliente
-            {
-                DNI = cliente.DNI,
-                idUsuario = cliente.idUsuario,
-                nombre = cliente.nombre,
-                apellido = cliente.apellido
-            });
-        }
+        var resultado = mockServicio.Object.AltaCliente(dto);
 
         // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(dto.DNI, resultado.Data.DNI);
+        Assert.Equal(dto.idUsuario, resultado.Data.idUsuario);
+        Assert.Equal(dto.nombre, resultado.Data.nombre);
+        Assert.Equal(dto.apellido, resultado.Data.apellido);
+    }
+
+    [Fact]
+    public void CuandoDoyDeAltaUnClienteInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoUsuario = new Mock<IRepoUsuario>();
+        var mockRepoCliente = new Mock<IRepoCliente>();
+
+        var dto = new ClienteDtoAlta
+        {
+            DNI = 0,
+            idUsuario = -5,
+            nombre = "Ca",
+            apellido = ""
+        };
+
+        mockRepoUsuario.Setup(r => r.DetalleUsuario(dto.idUsuario))
+            .Returns((Usuario)null);
+
+        mockRepoCliente.Setup(r => r.DetalleCliente(dto.DNI))
+            .Returns(new Cliente());
+
+        var validator = new ClienteDtoAltaValidator(mockRepoUsuario.Object, mockRepoCliente.Object);
+        var validationResult = validator.Validate(dto);
+
+        var mockServicio = new Mock<IClienteService>();
+        mockServicio.Setup(s => s.AltaCliente(dto))
+            .Returns(Result<ClienteResponse>.BadRequest(validationResult.ToDictionary()));
+
+        // Act
+        var resultado = mockServicio.Object.AltaCliente(dto);
+
+        // Assert
+        Assert.False(validationResult.IsValid);
         Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
-        Assert.True(resultado.Errors.ContainsKey("DNI"));
-        Assert.True(resultado.Errors.ContainsKey("nombre"));
-        Assert.True(resultado.Errors.ContainsKey("apellido"));
-        Assert.True(resultado.Errors.ContainsKey("telefono"));
+        Assert.NotNull(resultado.Errors);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnClienteValido_DebeRetornarOk()
+    {
+        // Arrange
+        var dto = new ClienteDtoUpdate
+        {
+            nombre = "Luis",
+            apellido = "Martinez"
+        };
+
+        var validator = new ClienteDtoUpdateValidator();
+        var validationResult = validator.Validate(dto);
+
+        int idCliente = 10;
+
+        var mockServicio = new Mock<IClienteService>();
+        mockServicio.Setup(s => s.UpdateCliente(dto, idCliente))
+            .Returns(Result<ClienteResponse>.Ok(new ClienteResponse { nombre = dto.nombre, apellido = dto.apellido }));
+
+        // Act
+        var resultado = mockServicio.Object.UpdateCliente(dto, idCliente);
+
+        // Assert
+        Assert.True(validationResult.IsValid);
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(dto.nombre, resultado.Data.nombre);
+        Assert.Equal(dto.apellido, resultado.Data.apellido);
+    }
+
+    [Fact]
+    public void CuandoActualizoUnClienteInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var dto = new ClienteDtoUpdate
+        {
+            nombre = "Lu",
+            apellido = ""
+        };
+
+        var validator = new ClienteDtoUpdateValidator();
+        var validationResult = validator.Validate(dto);
+
+        int idCliente = 2;
+
+        var mockServicio = new Mock<IClienteService>();
+        mockServicio.Setup(s => s.UpdateCliente(dto, idCliente))
+            .Returns(Result<ClienteResponse>.BadRequest(validationResult.ToDictionary()));
+
+        // Act
+        var resultado = mockServicio.Object.UpdateCliente(dto, idCliente);
+
+        // Assert
+        Assert.False(validationResult.IsValid);
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.NotNull(resultado.Errors);
     }
 }

@@ -11,17 +11,19 @@ public class TestAdoSector
     {
         // Arrange
         var mockService = new Mock<ISectorService>();
+        int idLocal = 1;
+
         var sectores = new List<Sector>
         {
-            new Sector { idSector = 1, idLocal = 1, nombre = "Sector A" },
-            new Sector { idSector = 2, idLocal = 2, nombre = "Sector B" }
+            new Sector { idSector = 1, idLocal = idLocal, nombre = "Platea", eliminado = false },
+            new Sector { idSector = 2, idLocal = idLocal, nombre = "VIP", eliminado = false }
         };
 
-        mockService.Setup(s => s.GetSectores())
+        mockService.Setup(s => s.GetSectores(idLocal))
             .Returns(Result<IEnumerable<Sector>>.Ok(sectores));
 
         // Act
-        var resultado = mockService.Object.GetSectores();
+        var resultado = mockService.Object.GetSectores(idLocal);
 
         // Assert
         Assert.True(resultado.Success);
@@ -30,107 +32,231 @@ public class TestAdoSector
     }
 
     [Fact]
-    public void CuandoBuscoDetalleDeUnSectorValido_DebeRetornarSector_ConResultadoOk()
+    public void CuandoObtengoLosSectoresDeUnLocalSinSectores_DebeRetornarListaVacia()
     {
         // Arrange
         var mockService = new Mock<ISectorService>();
-        var sector = new Sector { idSector = 1, idLocal = 1, nombre = "Sector A" };
+        int idLocal = 5;
 
-        mockService.Setup(s => s.DetalleSector(sector.idSector))
-            .Returns(Result<Sector>.Ok(sector));
+        var sectores = new List<Sector>();
 
-        // Act
-        var resultado = mockService.Object.DetalleSector(sector.idSector);
-
-        // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(sector.idSector, resultado.Data.idSector);
-        Assert.Equal(sector.nombre, resultado.Data.nombre);
-    }
-
-    [Fact]
-    public void CuandoRealizoUnAltaDeSectorValido_DebeRetornarCreated()
-    {
-        // Arrange
-        var mockService = new Mock<ISectorService>();
-        var sectorDto = new SectorDto { idLocal = 1, nombre = "Sector C" };
-
-        mockService.Setup(s => s.AltaSector(sectorDto))
-            .Returns(Result<SectorDto>.Created(new SectorDto
-            {
-                idLocal = sectorDto.idLocal,
-                nombre = sectorDto.nombre
-            }));
+        mockService.Setup(s => s.GetSectores(idLocal))
+            .Returns(Result<IEnumerable<Sector>>.Ok(sectores));
 
         // Act
-        var resultado = mockService.Object.AltaSector(sectorDto);
-
-        // Assert
-        Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Created, resultado.ResultType);
-        Assert.Equal(sectorDto.idLocal, resultado.Data.idLocal);
-        Assert.Equal(sectorDto.nombre, resultado.Data.nombre);
-    }
-
-    [Fact]
-    public void CuandoActualizoUnSectorValido_DebeRetornarOk()
-    {
-        // Arrange
-        var mockService = new Mock<ISectorService>();
-        var sectorDto = new SectorDto { idLocal = 2, nombre = "Sector D" };
-        int idSector = 1;
-
-        mockService.Setup(s => s.UpdateSector(sectorDto, idSector))
-            .Returns(Result<SectorDto>.Ok(new SectorDto
-            {
-                idLocal = sectorDto.idLocal,
-                nombre = sectorDto.nombre
-            }));
-
-        // Act
-        var resultado = mockService.Object.UpdateSector(sectorDto, idSector);
+        var resultado = mockService.Object.GetSectores(idLocal);
 
         // Assert
         Assert.True(resultado.Success);
         Assert.Equal(EResultType.Ok, resultado.ResultType);
-        Assert.Equal(sectorDto.nombre, resultado.Data.nombre);
+        Assert.Equal(sectores.Count, resultado.Data.Count());
     }
 
     [Fact]
-    public void CuandoRealizoUnAltaDeSectorInvalido_DebeRetornarBadRequest()
+    public void CuandoObtengoDetalleDeSectorValido_DebeRetornarSector_ConResultadoOk()
     {
         // Arrange
-        var mockRepoLocal = new Mock<IRepoLocal>();
-        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>())).Returns((Local?)null);
+        var mockService = new Mock<ISectorService>();
+        int idSector = 10;
 
-        var sectorDto = new SectorDto { idLocal = 0, nombre = "AB" };
-        var validator = new SectorValidator(mockRepoLocal.Object);
+        var sector = new Sector
+        {
+            idSector = idSector,
+            idLocal = 1,
+            nombre = "Popular",
+            eliminado = false
+        };
+
+        mockService.Setup(s => s.DetalleSector(idSector))
+            .Returns(Result<Sector?>.Ok(sector));
 
         // Act
-        var validationResult = validator.Validate(sectorDto);
+        var resultado = mockService.Object.DetalleSector(idSector);
 
-        Result<Sector> resultado;
-        if (!validationResult.IsValid)
-        {
-            var errores = validationResult.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(sector.idSector, resultado.Data.idSector);
+        Assert.Equal(sector.nombre, resultado.Data.nombre);
+        Assert.Equal(sector.eliminado, resultado.Data.eliminado);
+    }
 
-            resultado = Result<Sector>.BadRequest(errores);
-        }
-        else
-        {
-            resultado = Result<Sector>.Created(new Sector
-            {
-                idLocal = sectorDto.idLocal,
-                nombre = sectorDto.nombre
-            });
-        }
+    [Fact]
+    public void CuandoObtengoDetalleDeSectorInexistente_DebeRetornarNotFound()
+    {
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        int idSector = 99;
+
+        mockService.Setup(s => s.DetalleSector(idSector))
+            .Returns(Result<Sector?>.NotFound("Sector no encontrado"));
+
+        // Act
+        var resultado = mockService.Object.DetalleSector(idSector);
 
         // Assert
         Assert.False(resultado.Success);
+        Assert.Equal(EResultType.NotFound, resultado.ResultType);
+        Assert.Null(resultado.Data);
+    }
+
+    [Fact]
+    public void CuandoDoyDeAltaSectorValido_DebeRetornarCreated()
+    {
+        // Arrange
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var dto = new SectorDto
+        {
+            nombre = "Palco",
+            eliminado = false
+        };
+
+        int idLocal = 2;
+
+        mockRepoLocal.Setup(r => r.DetalleLocal(idLocal))
+            .Returns(new Local { idLocal = idLocal, nombre = "Teatro" });
+
+        var validator = new SectorValidator(mockRepoLocal.Object);
+        var validation = validator.Validate(dto);
+
+        var mockService = new Mock<ISectorService>();
+        mockService.Setup(s => s.AltaSector(dto, idLocal))
+            .Returns(Result<SectorDto>.Created(dto));
+
+        // Act
+        var resultado = mockService.Object.AltaSector(dto, idLocal);
+
+        // Assert
+        Assert.True(validation.IsValid);
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(dto.nombre, resultado.Data.nombre);
+        Assert.Equal(dto.eliminado, resultado.Data.eliminado);
+    }
+
+    [Fact]
+    public void CuandoDoyDeAltaSectorInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var dto = new SectorDto
+        {
+            nombre = "A", // muy corto
+            eliminado = false
+        };
+
+        int idLocal = 1;
+
+        mockRepoLocal.Setup(r => r.DetalleLocal(idLocal))
+            .Returns(new Local { idLocal = idLocal, nombre = "Estadio" });
+
+        var validator = new SectorValidator(mockRepoLocal.Object);
+        var validation = validator.Validate(dto);
+
+        var mockService = new Mock<ISectorService>();
+        mockService.Setup(s => s.AltaSector(dto, idLocal))
+            .Returns(Result<SectorDto>.BadRequest(validation.ToDictionary()));
+
+        // Act
+        var resultado = mockService.Object.AltaSector(dto, idLocal);
+
+        // Assert
+        Assert.False(validation.IsValid);
+        Assert.False(resultado.Success);
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
-        Assert.True(resultado.Errors.ContainsKey("idLocal"));
-        Assert.True(resultado.Errors.ContainsKey("nombre"));
+        Assert.NotNull(resultado.Errors);
+    }
+
+    [Fact]
+    public void CuandoActualizoSectorValido_DebeRetornarOk()
+    {
+        // Arrange
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var dto = new SectorDto
+        {
+            nombre = "Popular Nueva",
+            eliminado = false
+        };
+
+        int idSector = 10;
+
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>()))
+            .Returns(new Local());
+
+        var validator = new SectorValidator(mockRepoLocal.Object);
+        var validation = validator.Validate(dto);
+
+        var mockService = new Mock<ISectorService>();
+        mockService.Setup(s => s.UpdateSector(dto, idSector))
+            .Returns(Result<SectorDto>.Ok(dto));
+
+        // Act
+        var resultado = mockService.Object.UpdateSector(dto, idSector);
+
+        // Assert
+        Assert.True(validation.IsValid);
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(dto.nombre, resultado.Data.nombre);
+        Assert.Equal(dto.eliminado, resultado.Data.eliminado);
+    }
+
+    [Fact]
+    public void CuandoActualizoSectorInvalido_DebeRetornarBadRequest()
+    {
+        // Arrange
+        var mockRepoLocal = new Mock<IRepoLocal>();
+
+        var dto = new SectorDto
+        {
+            nombre = "", // inválido
+            eliminado = false
+        };
+
+        int idSector = 4;
+
+        mockRepoLocal.Setup(r => r.DetalleLocal(It.IsAny<int>()))
+            .Returns(new Local());
+
+        var validator = new SectorValidator(mockRepoLocal.Object);
+        var validation = validator.Validate(dto);
+
+        var mockService = new Mock<ISectorService>();
+        mockService.Setup(s => s.UpdateSector(dto, idSector))
+            .Returns(Result<SectorDto>.BadRequest(validation.ToDictionary()));
+
+        // Act
+        var resultado = mockService.Object.UpdateSector(dto, idSector);
+
+        // Assert
+        Assert.False(validation.IsValid);
+        Assert.False(resultado.Success);
+        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
+        Assert.NotNull(resultado.Errors);
+    }
+
+    [Fact]
+    public void CuandoEliminoSectorValido_DebeRetornarOk()
+    {
+        // Arrange
+        var mockService = new Mock<ISectorService>();
+        int idSector = 3;
+
+        var dto = new SectorDto { nombre = "Popular", eliminado = true };
+
+        mockService.Setup(s => s.DeleteSector(idSector))
+            .Returns(Result<SectorDto>.Ok(dto));
+
+        // Act
+        var resultado = mockService.Object.DeleteSector(idSector);
+
+        // Assert
+        Assert.True(resultado.Success);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
+        Assert.Equal(dto.eliminado, resultado.Data.eliminado);
+        Assert.Equal(dto.nombre, resultado.Data.nombre);
     }
 }

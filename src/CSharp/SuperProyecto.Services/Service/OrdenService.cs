@@ -10,15 +10,19 @@ namespace SuperProyecto.Services.Service;
 public class OrdenService : IOrdenService
 {
     readonly IRepoOrden _repoOrden;
+    readonly IRepoTarifa _repoTarifa;
     readonly IRepoQr _repoQr;
     readonly IQrService _qrService;
+    readonly IRepoEntrada _repoEntrada;
     readonly OrdenValidator _validador;
 
-    public OrdenService(IRepoOrden repoOrden, IRepoQr repoQr, IQrService qrService, OrdenValidator validador)
+    public OrdenService(IRepoTarifa repoTarifa, IRepoOrden repoOrden, IRepoQr repoQr, IQrService qrService, IRepoEntrada repoEntrada, OrdenValidator validador)
     {
+        _repoTarifa = repoTarifa;
         _repoOrden = repoOrden;
         _repoQr = repoQr;
         _qrService = qrService;
+        _repoEntrada = repoEntrada;
         _validador = validador;
     }
 
@@ -78,9 +82,14 @@ public class OrdenService : IOrdenService
         {
             if (_repoOrden.DetalleOrden(id) is null) return Result<Orden>.NotFound("La orden a pagar no fue encontrada.");
             if (_repoOrden.DetalleOrden(id).pagada) return Result<Orden>.NotFound("La orden a pagar ya fue pagada.");
+            var entradas = _repoEntrada.GetEntradasXOrden(id);
+            if (entradas is null) return Result<Orden>.NotFound("La orden a no posee entradas.");
             _repoOrden.PagarOrden(id);
-            var url = _qrService.GenerarQrUrl(id);
-            _repoQr.AltaQr(id, url);
+            foreach(var entrada in entradas)
+            {
+                var url = _qrService.GenerarQrUrl(entrada.idEntrada);
+                _repoQr.AltaQr(entrada.idEntrada, url);
+            }
             return Result<Orden>.Ok();
         }
         catch (MySqlException)
@@ -89,6 +98,49 @@ public class OrdenService : IOrdenService
         }
     }
     
+    public Result<Orden> CancelarOrden(int idOrden)
+    {
+        try
+        {
+            if (_repoOrden.DetalleOrden(idOrden) is null) return Result<Orden>.NotFound("La orden a cancelar no fue encontrada.");
+            if (_repoOrden.DetalleOrden(idOrden).cancelada) return Result<Orden>.NotFound("La orden a cancelar ya fue cancelada.");
+            _repoOrden.CancelarOrden(idOrden);
+            var entradas = _repoEntrada.GetEntradasXOrden(idOrden);
+            var precioADescontar = decimal.Zero;
+            foreach (var entrada in entradas)
+            {
+                precioADescontar += _repoTarifa.DetalleTarifa(entrada.idTarifa).precio;
+            }
+            _repoOrden.RestarPrecio(idOrden, precioADescontar);
+            return Result<Orden>.Ok();
+        }
+        catch (MySqlException)
+        {
+            return Result<Orden>.Unauthorized();
+        }
+    }
+
+    public Result<Orden> CrearEntrada(int idOrden, int idTarifa)
+    {
+        try
+        {
+            var orden = _repoOrden.DetalleOrden(idOrden);
+            if (orden is null) return Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
+            Entrada entrada = new Entrada
+            {
+                idOrden = idOrden,
+                idTarifa = idTarifa
+            };
+            _repoEntrada.AltaEntrada(entrada);
+            var tarifa = _repoTarifa.DetalleTarifa(idTarifa);
+            _repoOrden.AgregarPrecio(orden.idOrden, tarifa.precio);
+            return Result<Orden>.Ok();
+        }
+        catch (MySqlException)
+        {
+            return Result<Orden>.Unauthorized();
+        }
+    }
 
     static Orden ConvertirDtoClase(OrdenDto ordenDto)
     {

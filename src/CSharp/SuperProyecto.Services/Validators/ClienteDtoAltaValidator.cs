@@ -1,7 +1,6 @@
 using FluentValidation;
 
 using SuperProyecto.Core.Persistencia;
-using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Core.Enums;
 
@@ -15,7 +14,7 @@ public class ClienteDtoAltaValidator : AbstractValidator<ClienteDtoAlta>
     {
         _repoUsuario = repoUsuario;
         _repoCliente = repoCliente;
-
+        
         RuleFor(c => c.DNI)
             .NotEmpty().WithMessage("El DNI es obligatorio.")
             .InclusiveBetween(1000000, 99999999).WithMessage("El DNI debe tener entre 7 y 8 dígitos.")
@@ -29,7 +28,8 @@ public class ClienteDtoAltaValidator : AbstractValidator<ClienteDtoAlta>
             {
                 var usuario = _repoUsuario.DetalleUsuario(idUsuario);
                 return usuario is not null && usuario.rol == ERol.Cliente;
-            }).WithMessage("El usuario referenciado debe ser de tipo cliente.");
+            }).WithMessage("El usuario referenciado debe ser de tipo cliente.")
+            .Must(idUsuario => _repoUsuario.DetalleUsuario(idUsuario) is null).WithMessage("El ya existe un cliente creado bajo ese usuario.");
 
         RuleFor(c => c.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio")

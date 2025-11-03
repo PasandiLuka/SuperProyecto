@@ -8,4 +8,5 @@ public interface IRepoFuncion
     Funcion? DetalleFuncion(int idFuncion);
     void AltaFuncion(Funcion funcion);
     void UpdateFuncion(Funcion funcion, int id);
+    void CancelarFuncion(int id);
 }

@@ -4,6 +4,7 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Services.Validators;
 using MySqlConnector;
+using System.Formats.Tar;
 
 namespace SuperProyecto.Services.Service;
 
@@ -17,11 +18,11 @@ public class TarifaService : ITarifaService
         _validador = validador;
     }
 
-    public Result<IEnumerable<Tarifa>> GetTarifas()
+    public Result<IEnumerable<Tarifa>> GetTarifas(int idFuncion)
     {
         try
         {
-            return Result<IEnumerable<Tarifa>>.Ok(_repoTarifa.GetTarifas());
+            return Result<IEnumerable<Tarifa>>.Ok(_repoTarifa.GetTarifas(idFuncion));
         }catch(MySqlException)
         {
             return Result<IEnumerable<Tarifa>>.Unauthorized();
@@ -41,7 +42,7 @@ public class TarifaService : ITarifaService
         }
     }
 
-    public Result<TarifaDto> AltaTarifa(TarifaDto tarifaDto)
+    public Result<TarifaDto> AltaTarifa(TarifaDtoAlta tarifaDto)
     {
         try
         {
@@ -56,7 +57,13 @@ public class TarifaService : ITarifaService
                     );
                 return Result<TarifaDto>.BadRequest(listaErrores);
             }
-            var tarifa = ConvertirDtoClase(tarifaDto);
+            var tarifa = new Tarifa
+            {
+                idFuncion = tarifaDto.idFuncion,
+                idSector = tarifaDto.idSector,
+                precio = tarifaDto.precio,
+                stock = tarifaDto.stock
+            };
             _repoTarifa.AltaTarifa(tarifa);
             return Result<TarifaDto>.Ok(tarifaDto);
         }catch(MySqlException)
@@ -65,7 +72,7 @@ public class TarifaService : ITarifaService
         }
     }
 
-    public Result<TarifaDto> UpdateTarifa(TarifaDto tarifaDto, int id)
+    public Result<TarifaDto> UpdateTarifa(TarifaDtoAlta tarifaDto, int id)
     {
         try
         {
@@ -80,8 +87,7 @@ public class TarifaService : ITarifaService
                     );
                 return Result<TarifaDto>.BadRequest(listaErrores);
             }
-            var tarifa = ConvertirDtoClase(tarifaDto);
-            _repoTarifa.UpdateTarifa(tarifa, id);
+            _repoTarifa.UpdateTarifa(tarifaDto, id);
             return Result<TarifaDto>.Ok(tarifaDto);
         }catch(MySqlException)
         {
@@ -94,8 +100,6 @@ public class TarifaService : ITarifaService
     {
         return new Tarifa
         {
-            idFuncion = tarifaDto.idFuncion,
-            idSector = tarifaDto.idSector,
             precio = tarifaDto.precio,
             stock = tarifaDto.stock
         };

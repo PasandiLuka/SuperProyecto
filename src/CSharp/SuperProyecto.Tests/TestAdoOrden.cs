@@ -63,7 +63,7 @@ public class TestAdoOrden
         // Act
         var validationResult = validator.Validate(orden);
         Result<Orden> resultado;
-        if (validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
@@ -147,7 +147,7 @@ public class TestAdoOrden
         // Act
         var validationResult = validator.Validate(orden);
         Result<Orden> resultado;
-        if (validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)

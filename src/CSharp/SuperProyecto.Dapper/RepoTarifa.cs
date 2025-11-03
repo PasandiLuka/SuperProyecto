@@ -2,6 +2,7 @@ using Dapper;
 
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.Entidades;
+using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Dapper;
 
@@ -10,8 +11,8 @@ public class RepoTarifa : Repo, IRepoTarifa
     public RepoTarifa(IAdo _ado) : base(_ado) { }
 
     private static readonly string _queryTarifa
-        = "SELECT * FROM Tarifa";
-    public IEnumerable<Tarifa> GetTarifas() => _conexion.Query<Tarifa>(_queryTarifa);
+        = "SELECT * FROM Tarifa WHERE idFuncion = @idFuncion";
+    public IEnumerable<Tarifa> GetTarifas(int idFuncion) => _conexion.Query<Tarifa>(_queryTarifa, new { idFuncion });
     
     
     private static readonly string _queryDetalleTarifa
@@ -42,17 +43,16 @@ public class RepoTarifa : Repo, IRepoTarifa
     }
 
     private static readonly string _queryUpdateTarifa
-        = @"UPDATE Tarifa SET idFuncion = @idFuncion, idSector = @idSector, precio = @precio, stock = @stock WHERE idTarifa = @idTarifa";
-    public void UpdateTarifa(Tarifa tarifa, int id)
+        = @"UPDATE Tarifa SET precio = @precio, stock = @stock, activo = @activo WHERE idTarifa = @idTarifa";
+    public void UpdateTarifa(TarifaDto tarifa, int id)
     {
         _conexion.Execute(
             _queryUpdateTarifa,
             new
             {
-                tarifa.idFuncion,
-                tarifa.idSector,
                 tarifa.precio,
                 tarifa.stock,
+                tarifa.activo,
                 idTarifa = id
             });
     }

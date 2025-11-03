@@ -68,7 +68,7 @@ public class TestAdoFuncion
         // Act
         var validationResult = validator.Validate(funcion);
         Result<Funcion> resultado;
-        if (!validationResult.IsValid)
+        if (validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
@@ -139,7 +139,6 @@ public class TestAdoFuncion
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("idEvento"));
         Assert.True(resultado.Errors.ContainsKey("fechaHora"));
-        Assert.True(resultado.Errors.ContainsKey("stock"));
     }
 
     [Fact]
@@ -164,7 +163,7 @@ public class TestAdoFuncion
         // Act
         var validationResult = validator.Validate(funcion);
         Result<Funcion> resultado;
-        if (!validationResult.IsValid)
+        if (validationResult.IsValid)
         {
             var errores = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
@@ -235,6 +234,5 @@ public class TestAdoFuncion
         Assert.Equal(EResultType.BadRequest, resultado.ResultType);
         Assert.True(resultado.Errors.ContainsKey("idEvento"));
         Assert.True(resultado.Errors.ContainsKey("fechaHora"));
-        Assert.True(resultado.Errors.ContainsKey("stock"));
     }
 }

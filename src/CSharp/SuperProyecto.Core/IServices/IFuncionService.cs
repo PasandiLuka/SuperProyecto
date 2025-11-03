@@ -9,4 +9,5 @@ public interface IFuncionService
     Result<Funcion?> DetalleFuncion(int id);
     Result<FuncionDto> UpdateFuncion(FuncionDto funcion, int id);
     Result<FuncionDto> AltaFuncion(FuncionDto funcion);
+    Result<FuncionDto> CancelarFuncion(int id);
 }

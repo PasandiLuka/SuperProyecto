@@ -48,4 +48,17 @@ public class RepoFuncion : Repo, IRepoFuncion
                 unIdFuncion = id
             });
     }
+
+    private static readonly string _queryCancelarFuncion
+        = @"UPDATE Funcion SET cancelada = true WHERE idFuncion = @idFuncion";
+    public void CancelarFuncion(int idFuncion)
+    {
+        _conexion.Execute(
+            _queryCancelarFuncion,
+            new
+            {
+                idFuncion
+            }
+        );   
+    }
 }

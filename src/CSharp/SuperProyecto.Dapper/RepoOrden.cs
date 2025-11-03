@@ -44,6 +44,18 @@ public class RepoOrden : Repo, IRepoOrden
             });
     }
 
+    private static readonly string _queryCancelarOrden
+        = @"UPDATE Orden SET cancelada = TRUE WHERE idOrden = @unIdOrden";
+    public void CancelarOrden(int idOrden)
+    {
+        _conexion.Execute(
+            _queryCancelarOrden,
+            new
+            {
+                unIdOrden = idOrden
+            });
+    }
+
     private static readonly string _queryDetalleOrdenDeleteSector
         = @"SELECT * FROM Orden WHERE idSector = @idSector";
     public Orden? DetalleOrdenDeleteSector(int idSector)
@@ -53,6 +65,34 @@ public class RepoOrden : Repo, IRepoOrden
             new
             {
                 idSector
+            }
+        );
+    }
+
+    private static readonly string _queryAgregarPrecio
+        = @"UPDATE Orden SET total = total + @total WHERE idOrden = @idOrden";
+    public void AgregarPrecio(int idOrden, decimal precio)
+    {
+        _conexion.Execute(
+            _queryAgregarPrecio,
+            new
+            {
+                precio,
+                idOrden
+            }
+        );
+    }
+
+    private static readonly string _queryRestarPrecio
+        = @"UPDATE Orden SET total = total - @total WHERE idOrden = @idOrden";
+    public void RestarPrecio(int idOrden, decimal precio)
+    {
+        _conexion.Execute(
+            _queryRestarPrecio,
+            new
+            {
+                precio,
+                idOrden
             }
         );
     }

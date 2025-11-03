@@ -20,11 +20,11 @@ public class SectorService : ISectorService
         _validador = validador;
     }
 
-    public Result<IEnumerable<Sector>> GetSectores()
+    public Result<IEnumerable<Sector>> GetSectores(int idLocal)
     {
         try
         {
-            return Result<IEnumerable<Sector>>.Ok(_repoSector.GetSectores());
+            return Result<IEnumerable<Sector>>.Ok(_repoSector.GetSectores(idLocal));
         }
         catch (MySqlException)
         {
@@ -45,7 +45,7 @@ public class SectorService : ISectorService
         }
     }
 
-    public Result<SectorDto> AltaSector(SectorDto sectorDto)
+    public Result<SectorDto> AltaSector(SectorDto sectorDto, int idLocal)
     {
         try
         {
@@ -61,7 +61,7 @@ public class SectorService : ISectorService
                 return Result<SectorDto>.BadRequest(listaErrores);
             }
             var sector = ConvertirDtoClase(sectorDto);
-            _repoSector.AltaSector(sector);
+            _repoSector.AltaSector(sector, idLocal);
             return Result<SectorDto>.Ok(sectorDto);
         }
         catch (MySqlException)
@@ -114,7 +114,6 @@ public class SectorService : ISectorService
     {
         return new Sector
         {
-            idLocal = sectorDto.idLocal,
             nombre = sectorDto.nombre
         };
     }

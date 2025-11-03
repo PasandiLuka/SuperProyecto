@@ -1,4 +1,3 @@
-using SuperProyecto.Core.Enums;
 using SuperProyecto.Core.Entidades;
 
 namespace SuperProyecto.Api.Helper;
@@ -31,7 +30,7 @@ public static class ResultExtensions
             EResultType.NotFound => Results.NotFound(new { message = result.Message }),
             EResultType.Unauthorized => Results.Unauthorized(),
             EResultType.BadRequest => result.Message is null ? Results.BadRequest(new { error = result.Errors }) : Results.BadRequest(new { message = result.Message })/* Results.BadRequest(new { errors = result.Errors, message = result.Message }) */,
-            EResultType.File => Results.File(result.Bytes ?? Array.Empty<byte>(), "qr/image"),
+            EResultType.File => Results.File(result.Bytes, "image/png"),
             _ => Results.StatusCode(500)
         };
     }

@@ -8,5 +8,7 @@ public interface IOrdenService
     Result<IEnumerable<Orden>> GetOrdenes();
     Result<Orden?> DetalleOrden(int id);
     Result<OrdenDto> AltaOrden(OrdenDto orden);
-    Result<Orden> PagarOrden(int id);   
+    Result<Orden> PagarOrden(int id);
+    Result<Orden> CancelarOrden(int id);
+    Result<Orden> CrearEntrada(int id, int idTarifa);
 }

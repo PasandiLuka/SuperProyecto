@@ -10,8 +10,8 @@ public class RepoSector : Repo, IRepoSector
     public RepoSector(IAdo _ado) : base(_ado) { }
 
     private static readonly string _querySector
-        = "SELECT * FROM Sector";
-    public IEnumerable<Sector> GetSectores() => _conexion.Query<Sector>(_querySector);
+        = "SELECT * FROM Sector WHERE idLocal = @idLocal";
+    public IEnumerable<Sector> GetSectores(int idLocal) => _conexion.Query<Sector>(_querySector, new { idLocal });
     
     private static readonly string _queryDetalleSector
         = @"SELECT * FROM Sector WHERE  idSector= @idSector";
@@ -22,26 +22,25 @@ public class RepoSector : Repo, IRepoSector
 
     private static readonly string _queryAltaSector
         = @"INSERT INTO Sector (idLocal, nombre) VALUES (@idLocal, @nombre)";
-    public void AltaSector(Sector sector)
+    public void AltaSector(Sector sector, int idLocal)
     {
         _conexion.Execute(
             _queryAltaSector,
             new
             {
-                sector.idLocal,
+                idLocal,
                 sector.nombre
             });
     }
 
     private static readonly string _queryUpdateSector
-        = @"UPDATE Sector SET idLocal = @idLocal, nombre = @nombre WHERE idSector = @idSector";
+        = @"UPDATE Sector SET nombre = @nombre WHERE idSector = @idSector";
     public void UpdateSector(Sector sector, int id)
     {
         _conexion.Execute(
             _queryUpdateSector,
             new
             {
-                sector.idLocal,
                 sector.nombre,
                 idSector = id
             });
@@ -60,7 +59,7 @@ public class RepoSector : Repo, IRepoSector
     }
 
     private static readonly string _queryDeleteSector
-        = @"DELETE FROM Sector WHERE idSector = @idSector";
+        = @"UPDATE Sector SET eliminado = true WHERE idSector = @idSector";
     public void DeleteSector(int id)
     {
         _conexion.Execute(_queryDeleteSector, new { id });

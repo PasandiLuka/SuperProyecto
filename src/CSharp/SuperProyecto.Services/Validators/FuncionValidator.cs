@@ -28,7 +28,7 @@ public class FuncionValidator : AbstractValidator<FuncionDto>
 
         RuleFor(f => f.fechaHora)
             .NotEmpty().WithMessage("La fecha es obligatoria.")
-            .Must(date => date > DateTime.Today).WithMessage("La fecha de la funcion debe ser posterior a la fecha actual.");
+            .Must(date => date > DateTime.UtcNow).WithMessage("La fecha de la funcion debe ser posterior a la fecha actual.");
 
     }
 }

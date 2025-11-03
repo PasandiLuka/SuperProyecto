@@ -5,7 +5,7 @@ using SuperProyecto.Core.DTO;
 
 namespace SuperProyecto.Services.Validators;
 
-public class TarifaValidator : AbstractValidator<TarifaDto>
+public class TarifaValidator : AbstractValidator<TarifaDtoAlta>
 {
     readonly IRepoFuncion _repoFuncion;
     readonly IRepoSector _repoSector;
@@ -17,7 +17,12 @@ public class TarifaValidator : AbstractValidator<TarifaDto>
         RuleFor(t => t.idFuncion)
             .NotEmpty().WithMessage("El idLocal es obligatorio.")
             .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.")
-            .Must(idFuncion => _repoFuncion.DetalleFuncion(idFuncion) is not null).WithMessage("La función referenciada no existe.");
+            .Must(idFuncion => _repoFuncion.DetalleFuncion(idFuncion) is not null).WithMessage("La función referenciada no existe.")
+            .Must(idFuncion =>
+            {
+                var funcion = _repoFuncion.DetalleFuncion(idFuncion);
+                return funcion is not null && !funcion.cancelada;
+            }).WithMessage("La función referenciada fue cancelada.");
 
         RuleFor(t => t.idSector)
             .NotEmpty().WithMessage("El idLocal es obligatorio.")

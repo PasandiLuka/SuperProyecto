@@ -2,7 +2,6 @@ using FluentValidation;
 
 using SuperProyecto.Core.Persistencia;
 using SuperProyecto.Core.DTO;
-using System.Data;
 
 namespace SuperProyecto.Services.Validators;
 
@@ -18,8 +17,10 @@ public class EntradaValidator : AbstractValidator<EntradaDto>
         RuleFor(e => e.idOrden)
             .NotEmpty().WithMessage("El idOrden es obligatorio.")
             .GreaterThan(0).WithMessage("El idOrden debe ser mayor a 0.")
-            .Must(idOrden => _repoOrden.DetalleOrden(idOrden) is not null).WithMessage("La orden referenciada no existe.");
-        
+            .Must(idOrden => _repoOrden.DetalleOrden(idOrden) is not null).WithMessage("La orden referenciada no existe.")
+            .Must(idOrden => _repoOrden.DetalleOrden(idOrden).cancelada).WithMessage("La orden referenciada se encuentra cancelada.")
+            .Must(idOrden => _repoOrden.DetalleOrden(idOrden).pagada).WithMessage("La orden referenciada ya se encuentra pagada.");
+
         RuleFor(e => e.idTarifa)
             .NotEmpty().WithMessage("El idOrden es obligatorio.")
             .GreaterThan(0).WithMessage("El idOrden debe ser mayor a 0.")

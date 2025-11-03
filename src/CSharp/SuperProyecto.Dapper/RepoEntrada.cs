@@ -56,4 +56,42 @@ public class RepoEntrada : Repo, IRepoEntrada
             }
         );
     }
+    private static readonly string _queryGetEntradasXOrden
+        = @"SELECT * FROM Entrada WHERE idOrden = @idOrden";
+    public IEnumerable<Entrada> GetEntradasXOrden(int idOrden)
+    {
+        return _conexion.Query<Entrada>(
+            _queryGetEntradasXOrden,
+            new
+            {
+                idOrden
+            }
+        );
+    }
+
+    private static readonly string _queryRestarStock
+        = @"UPDATE Tarifa SET stock = stock - 1 WHERE idTarifa = @idTarifa";
+    public void RestarStock(int idTarifa)
+    {
+        _conexion.Execute(
+            _queryRestarStock,
+            new
+            {
+                idTarifa
+            }
+        );
+    }
+    
+    private static readonly string _queryDevolverStock
+        = @"UPDATE Tarifa SET stock = stock + 1 WHERE idTarifa = @idTarifa";
+    public void DevolverStock(int idTarifa)
+    {
+        _conexion.Execute(
+            _queryDevolverStock,
+            new
+            {
+                idTarifa
+            }
+        );
+    }
 }
