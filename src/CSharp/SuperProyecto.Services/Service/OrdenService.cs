@@ -4,6 +4,7 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Services.Validators;
 using MySqlConnector;
+using System.Data;
 
 namespace SuperProyecto.Services.Service;
 
@@ -103,15 +104,14 @@ public class OrdenService : IOrdenService
         try
         {
             if (_repoOrden.DetalleOrden(idOrden) is null) return Result<Orden>.NotFound("La orden a cancelar no fue encontrada.");
+            if (_repoOrden.DetalleOrden(idOrden).pagada) return Result<Orden>.NotFound("La orden ya fue pagada.");
             if (_repoOrden.DetalleOrden(idOrden).cancelada) return Result<Orden>.NotFound("La orden a cancelar ya fue cancelada.");
             _repoOrden.CancelarOrden(idOrden);
             var entradas = _repoEntrada.GetEntradasXOrden(idOrden);
-            var precioADescontar = decimal.Zero;
             foreach (var entrada in entradas)
             {
-                precioADescontar += _repoTarifa.DetalleTarifa(entrada.idTarifa).precio;
+                _repoEntrada.DevolverStock(entrada.idTarifa);
             }
-            _repoOrden.RestarPrecio(idOrden, precioADescontar);
             return Result<Orden>.Ok();
         }
         catch (MySqlException)
@@ -126,14 +126,18 @@ public class OrdenService : IOrdenService
         {
             var orden = _repoOrden.DetalleOrden(idOrden);
             if (orden is null) return Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
+            if (orden.pagada) Result<Orden>.BadRequest(default, "La orden referenciada ya fue pagada.");
+            if (orden.cancelada) Result<Orden>.BadRequest(default, "La orden referenciada se encuentra anulada.");
+            var tarifa = _repoTarifa.DetalleTarifa(idTarifa);
+            if (tarifa.stock <= 0) return Result<Orden>.BadRequest(default, "La tarifa seleccionada ya no dispone de stock.");
             Entrada entrada = new Entrada
             {
                 idOrden = idOrden,
                 idTarifa = idTarifa
             };
             _repoEntrada.AltaEntrada(entrada);
-            var tarifa = _repoTarifa.DetalleTarifa(idTarifa);
             _repoOrden.AgregarPrecio(orden.idOrden, tarifa.precio);
+            _repoEntrada.RestarStock(tarifa.idTarifa);
             return Result<Orden>.Ok();
         }
         catch (MySqlException)
@@ -147,7 +151,6 @@ public class OrdenService : IOrdenService
         return new Orden
         {
             idCliente = ordenDto.idCliente,
-            idSector = ordenDto.idSector,
             fecha = DateTime.Now
         };
     }

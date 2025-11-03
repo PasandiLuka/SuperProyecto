@@ -15,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 #endregion
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -182,8 +181,3 @@ app.MapEntradaEndpoints();
 
 
 app.Run();
-
-//ClienteRequestDto
-//ClienteResponseDto
-
-//Patron CQRS (Command Query Responsibility Segregation)

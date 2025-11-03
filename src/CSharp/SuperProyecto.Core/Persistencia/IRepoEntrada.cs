@@ -9,6 +9,7 @@ public interface IRepoEntrada
     Entrada? DetalleEntrada(int idEntrada);
     void AltaEntrada(Entrada entrada);
     void EntradaUsada(int id);
+    void CancelarEntrada(int id);
     void RestarStock(int id);
     void DevolverStock(int id);
 }

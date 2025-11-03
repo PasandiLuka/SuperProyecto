@@ -30,11 +30,9 @@ CREATE TABLE Evento (
 CREATE TABLE Funcion (
     idFuncion INT PRIMARY KEY AUTO_INCREMENT,
     idEvento INT NOT NULL,
-    idLocal INT NOT NULL,
     fechaHora DATETIME NOT NULL,
     cancelada BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (idEvento) REFERENCES Evento(idEvento),
-    FOREIGN KEY (idLocal) REFERENCES Local(idLocal)
+    FOREIGN KEY (idEvento) REFERENCES Evento(idEvento)
 );
 
 -- Tabla Sector
@@ -74,13 +72,11 @@ CREATE TABLE Cliente (
 CREATE TABLE Orden (
     idOrden INT PRIMARY KEY AUTO_INCREMENT,
     idCliente INT NOT NULL,
-    idSector INT NOT NULL,
     fecha DATETIME NOT NULL,
     pagada BOOL NOT NULL DEFAULT FALSE,
     cancelada BOOL NOT NULL DEFAULT FALSE,
     total DECIMAL(10,2) NOT NULL DEFAULT 0,
-    FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente),
-    FOREIGN KEY (idSector) REFERENCES Sector(idSector)
+    FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)
 );
 
 -- Tabla Entrada

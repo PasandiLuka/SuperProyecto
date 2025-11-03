@@ -53,7 +53,7 @@ Toda la documentación técnica y funcional del proyecto se encuentra en un arch
 
 ---
 
-### **3 - Configuracion del appsettings.json:**
+### **3 - Configuracion del appsettings.json (opcional):**
 
 ### En el caso de que hayas modificado las contraseñas de los usuarios en tu archivo 01 USERS.sql, tambien deberas hacerlo acá.
 
@@ -61,16 +61,16 @@ Toda la documentación técnica y funcional del proyecto se encuentra en un arch
 
 ~~~json
 "Users": {
-    "Administrador":"Server=localhost;Uid=administrador;Pwd=contraseñaNueva;Database=bd_boleteria;",
-    "Cliente":"Server=localhost;Uid=cliente;Pwd=contraseñaNueva;Database=bd_boleteria;",
-    "Organizador":"Server=localhost;Uid=organizador;Pwd=contraseñaNueva;Database=bd_boleteria;",
-    "Default":"Server=localhost;Uid=default;Pwd=contraseñaNueva;Database=bd_boleteria;"
+    "Administrador":"Server=localhost;Uid=administrador;Pwd=contraseniaNueva;Database=bd_boleteria;",
+    "Cliente":"Server=localhost;Uid=cliente;Pwd=contraseniaNueva;Database=bd_boleteria;",
+    "Organizador":"Server=localhost;Uid=organizador;Pwd=contraseniaNueva;Database=bd_boleteria;",
+    "Default":"Server=localhost;Uid=default;Pwd=contraseniaNueva;Database=bd_boleteria;"
   }
 ~~~
 
 ---
 
-## **4 - Configuracion de tu Super Usuario:**
+## **4 - Configuración de tu Super Usuario:**
 
 - ### Este super usuario te permitirá crear la base de datos, y eso, nada más.
 
@@ -78,8 +78,8 @@ Toda la documentación técnica y funcional del proyecto se encuentra en un arch
 
 ~~~json
 "Root":{
-    "UserRoot1":"Server=localhost;Uid=root;Pwd=contraseña;Database=bd_boleteria;",
-    "UserRoot2":"Server=localhost;Uid=5to_agbd;Pwd=contraseña;Database=bd_boleteria;"
+    "UserRoot1":"Server=localhost;Uid=root;Pwd=contrasenia;Database=bd_boleteria;",
+    "UserRoot2":"Server=localhost;Uid=5to_agbd;Pwd=contrasenia;Database=bd_boleteria;"
   }
 ~~~
 

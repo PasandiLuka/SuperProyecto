@@ -109,23 +109,22 @@ public class TestAdoSector
         var dto = new SectorDto
         {
             nombre = "Palco",
+            idLocal = 1,
             eliminado = false
         };
 
-        int idLocal = 2;
-
-        mockRepoLocal.Setup(r => r.DetalleLocal(idLocal))
-            .Returns(new Local { idLocal = idLocal, nombre = "Teatro" });
+        mockRepoLocal.Setup(r => r.DetalleLocal(dto.idLocal))
+            .Returns(new Local { idLocal = dto.idLocal, nombre = "Teatro" });
 
         var validator = new SectorValidator(mockRepoLocal.Object);
         var validation = validator.Validate(dto);
 
         var mockService = new Mock<ISectorService>();
-        mockService.Setup(s => s.AltaSector(dto, idLocal))
+        mockService.Setup(s => s.AltaSector(dto, dto.idLocal))
             .Returns(Result<SectorDto>.Created(dto));
 
         // Act
-        var resultado = mockService.Object.AltaSector(dto, idLocal);
+        var resultado = mockService.Object.AltaSector(dto, dto.idLocal);
 
         // Assert
         Assert.True(validation.IsValid);
@@ -178,6 +177,7 @@ public class TestAdoSector
         var dto = new SectorDto
         {
             nombre = "Popular Nueva",
+            idLocal = 1,
             eliminado = false
         };
 

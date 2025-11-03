@@ -10,13 +10,13 @@ namespace SuperProyecto.Services.Service;
 public class SectorService : ISectorService
 {
     readonly IRepoSector _repoSector;
-    readonly IRepoOrden _repoOrden;
+    readonly IRepoTarifa _repoTarifa;
     readonly SectorValidator _validador;
 
-    public SectorService(IRepoSector repoSector, IRepoOrden repoOrden, SectorValidator validador)
+    public SectorService(IRepoSector repoSector, IRepoTarifa repoTarifa, IRepoOrden repoOrden, SectorValidator validador)
     {
         _repoSector = repoSector;
-        _repoOrden = repoOrden;
+        _repoTarifa = repoTarifa;
         _validador = validador;
     }
 
@@ -99,8 +99,8 @@ public class SectorService : ISectorService
     {
         try
         {
-            var orden = _repoOrden.DetalleOrdenDeleteSector(id);
-            if (orden is not null) return Result<SectorDto>.BadRequest(default, "No se puede eliminar el sector indicado.");
+            var tarifa = _repoTarifa.DetalleTarifaDeleteSector(id);
+            if (tarifa is not null) return Result<SectorDto>.BadRequest(default, "No se puede eliminar el sector indicado.");
             _repoSector.DeleteSector(id);
             return Result<SectorDto>.Ok();
         }

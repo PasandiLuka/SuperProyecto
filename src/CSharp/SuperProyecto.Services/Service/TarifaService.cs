@@ -4,7 +4,6 @@ using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Services.Validators;
 using MySqlConnector;
-using System.Formats.Tar;
 
 namespace SuperProyecto.Services.Service;
 
@@ -93,15 +92,5 @@ public class TarifaService : ITarifaService
         {
             return Result<TarifaDto>.Unauthorized();
         }
-    }
-
-
-    static Tarifa ConvertirDtoClase(TarifaDto tarifaDto)
-    {
-        return new Tarifa
-        {
-            precio = tarifaDto.precio,
-            stock = tarifaDto.stock
-        };
     }
 }

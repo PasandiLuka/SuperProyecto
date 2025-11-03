@@ -56,4 +56,17 @@ public class RepoTarifa : Repo, IRepoTarifa
                 idTarifa = id
             });
     }
+
+    private static readonly string _queryDetalleOrdenDeleteSector
+        = @"SELECT * FROM Tarifa WHERE idSector = @idSector";
+    public Tarifa? DetalleTarifaDeleteSector(int idSector)
+    {
+        return _conexion.QueryFirstOrDefault(
+            _queryDetalleOrdenDeleteSector,
+            new
+            {
+                idSector
+            }
+        );
+    }
 }

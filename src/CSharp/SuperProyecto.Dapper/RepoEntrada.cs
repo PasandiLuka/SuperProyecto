@@ -94,4 +94,17 @@ public class RepoEntrada : Repo, IRepoEntrada
             }
         );
     }
+
+    private static readonly string _queryCancelarEntrada
+        = @"UPDATE Entrada SET anulada = TRUE WHERE idEntrada = @idEntrada";
+    public void CancelarEntrada(int idEntrada)
+    {
+        _conexion.Execute(
+            _queryCancelarEntrada,
+            new
+            {
+                idEntrada
+            }
+        );
+    }
 }

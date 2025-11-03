@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using SuperProyecto.Core.DTO;
 using SuperProyecto.Core.Entidades;
 
@@ -9,4 +10,5 @@ public interface IRepoTarifa
     Tarifa? DetalleTarifa(int idTarifa);
     void AltaTarifa(Tarifa tarifa);
     void UpdateTarifa(TarifaDto tarifa, int id);
+    Tarifa? DetalleTarifaDeleteSector(int id);
 }

@@ -18,91 +18,60 @@ public class ClienteService : IClienteService
         _repoCliente = repoCliente;
     }
 
-    public Result<IEnumerable<ClienteResponse>> GetClientes()
-    {
-        try
-        {
-            return Result<IEnumerable<ClienteResponse>>.Ok(_repoCliente.GetClientes());
-        }
-        catch (MySqlException)
-        {
-            return Result<IEnumerable<ClienteResponse>>.Unauthorized();
-        }
-    }
+    public Result<IEnumerable<ClienteResponse>> GetClientes() => Result<IEnumerable<ClienteResponse>>.Ok(_repoCliente.GetClientes());
 
     public Result<ClienteResponse?> DetalleCliente(int id)
     {
-        try
-        {
-            var cliente = _repoCliente.DetalleCliente(id);
-            if (cliente is null) return Result<ClienteResponse?>.NotFound("El cliente solicitado no fue encontrado.");
-            return Result<ClienteResponse>.Ok(ConvertirClienteAResponse(cliente));
-        }
-        catch (MySqlException)
-        {
-            return Result<ClienteResponse?>.Unauthorized();
-        }
+        var cliente = _repoCliente.DetalleCliente(id);
+        if (cliente is null) return Result<ClienteResponse?>.NotFound("El cliente solicitado no fue encontrado.");
+        return Result<ClienteResponse>.Ok(ConvertirClienteAResponse(cliente));
     } 
 
     public Result<ClienteResponse> AltaCliente(ClienteDtoAlta clienteDtoAlta)
     {
-        try
+        var resultado = _validador.Validate(clienteDtoAlta);
+        if (!resultado.IsValid)
         {
-            var resultado = _validador.Validate(clienteDtoAlta);
-            if (!resultado.IsValid)
-            {
-                var listaErrores = resultado.Errors
-                    .GroupBy(a => a.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
-                return Result<ClienteResponse>.BadRequest(listaErrores);
-            }
-            Cliente cliente = new Cliente
-            {
-                DNI = clienteDtoAlta.DNI,
-                idUsuario = clienteDtoAlta.idUsuario,
-                nombre = clienteDtoAlta.nombre,
-                apellido = clienteDtoAlta.apellido
-            };
-            _repoCliente.AltaCliente(cliente);
-            return Result<ClienteResponse>.Created(ConvertirClienteAResponse(cliente)); 
+            var listaErrores = resultado.Errors
+                .GroupBy(a => a.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+            return Result<ClienteResponse>.BadRequest(listaErrores);
         }
-        catch (MySqlException)
+        Cliente cliente = new Cliente
         {
-            return Result<ClienteResponse>.Unauthorized();
-        }
+            DNI = clienteDtoAlta.DNI,
+            idUsuario = clienteDtoAlta.idUsuario,
+            nombre = clienteDtoAlta.nombre,
+            apellido = clienteDtoAlta.apellido
+        };
+        _repoCliente.AltaCliente(cliente);
+        return Result<ClienteResponse>.Created(ConvertirClienteAResponse(cliente)); 
     }
 
     public Result<ClienteResponse> UpdateCliente(ClienteDtoUpdate clienteDto, int id)
     {
-        try
+        var resultado = _validadorDto.Validate(clienteDto);
+        if (!resultado.IsValid)
         {
-            var resultado = _validadorDto.Validate(clienteDto);
-            if (!resultado.IsValid)
-            {
-                var listaErrores = resultado.Errors
-                    .GroupBy(a => a.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
-                return Result<ClienteResponse>.BadRequest(listaErrores);
-            }
-            if (_repoCliente.DetalleCliente(id) is null) return Result<ClienteResponse>.NotFound("El cliente a modificar no fue encontrado.");
-            Cliente cliente = new Cliente
-            {
-                nombre = clienteDto.nombre,
-                apellido = clienteDto.apellido
-            };
-            _repoCliente.UpdateCliente(cliente, id);
-            return Result<ClienteResponse>.Ok(ConvertirClienteAResponse(cliente));
+            var listaErrores = resultado.Errors
+                .GroupBy(a => a.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+            return Result<ClienteResponse>.BadRequest(listaErrores);
         }
-        catch (MySqlException)
+        if (_repoCliente.DetalleCliente(id) is null) return Result<ClienteResponse>.NotFound("El cliente a modificar no fue encontrado.");
+        Cliente cliente = new Cliente
         {
-            return Result<ClienteResponse>.Unauthorized();
-        }
+            nombre = clienteDto.nombre,
+            apellido = clienteDto.apellido
+        };
+        _repoCliente.UpdateCliente(cliente, id);
+        return Result<ClienteResponse>.Ok(ConvertirClienteAResponse(cliente));
     }
     
     private static ClienteResponse ConvertirClienteAResponse(Cliente cliente)

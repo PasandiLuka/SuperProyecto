@@ -12,15 +12,10 @@ public class SectorValidator : AbstractValidator<SectorDto>
     {
         _repoLocal = repoLocal;
         
-        /* RuleFor(s => s.idFuncion)
-            .NotEmpty().WithMessage("El idFuncion es obligatorio.")
-            .GreaterThan(0).WithMessage("El idFuncion debe ser mayor a 0.")
-            .Must(idFuncion => _repoFuncion.DetalleFuncion(idFuncion) is not null).WithMessage("La funcion referenciada no existe.")
-            .Must(idFuncion =>
-            {
-                var funcion = _repoFuncion.DetalleFuncion(idFuncion);
-                return funcion is not null && funcion.stock > 0;
-            }).WithMessage("La funcion seleccionada ya no tiene stock."); */
+        RuleFor(f => f.idLocal)
+            .NotEmpty().WithMessage("El idLocal es obligatorio.")
+            .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.")
+            .Must(idLocal => _repoLocal.DetalleLocal(idLocal) is not null).WithMessage("El local referenciado no existe.");
 
         RuleFor(s => s.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio.")

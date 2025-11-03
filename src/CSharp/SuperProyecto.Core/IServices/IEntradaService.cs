@@ -8,4 +8,5 @@ public interface IEntradaService
     Result<Entrada?> DetalleEntrada(int id);
     Result<byte[]?> GetQr(int id);
     Result<object> ValidarQr(int id);
+    Result<Entrada> CancelarEntrada(int id);
 }

@@ -22,6 +22,12 @@ public static class EntradaEndpoints
             return result.ToMinimalResult();
         }).WithTags("10 - Entrada").RequireAuthorization("Cliente");
 
+        app.MapPut("/api/entradas/{id}/anular", (int id, IEntradaService service) =>
+        {
+            var result = service.CancelarEntrada(id);
+            return result.ToMinimalResult();
+        }).WithTags("10 - Entrada").RequireAuthorization("Cliente");
+
         app.MapPut("/api/entradas/qr/validar", (int id, IEntradaService service) =>
         {
             var result = service.ValidarQr(id);

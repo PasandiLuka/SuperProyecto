@@ -36,7 +36,7 @@ public static class OrdenEnpoints
             return result.ToMinimalResult();
         }).WithTags("09 - Orden").RequireAuthorization("Cliente");
 
-        app.MapPost("api/ordenes/{id}/crearentrada", (int id, [FromBody] int idTarifa, IOrdenService service) =>
+        app.MapPost("api/ordenes/{id}/crearentrada", (int id, [FromQuery] int idTarifa, IOrdenService service) =>
         {
             var result = service.CrearEntrada(id, idTarifa);
             return result.ToMinimalResult();

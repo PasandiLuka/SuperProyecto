@@ -1,7 +1,6 @@
 using SuperProyecto.Core.IServices;
 using MySqlConnector;
 using Microsoft.Extensions.Configuration;
-using SuperProyecto.Core.Enums;
 
 
 namespace SuperProyecto.Services.Service;

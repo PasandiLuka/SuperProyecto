@@ -19,7 +19,7 @@ public class RepoOrden : Repo, IRepoOrden
     public Orden? DetalleOrden(int numeroOrden) => _conexion.QueryFirstOrDefault<Orden>(_queryDetalleOrden, new { unIdOrden = numeroOrden });
 
     private static readonly string _queryAltaOrden
-        = @"INSERT INTO Orden (idCliente, idSector, fecha) VALUES (@idCliente, @idSector, @fecha)";
+        = @"INSERT INTO Orden (idCliente, fecha) VALUES (@idCliente, @fecha)";
     public void AltaOrden(Orden orden)
     {
         _conexion.Execute(
@@ -27,7 +27,6 @@ public class RepoOrden : Repo, IRepoOrden
             new
             {
                 orden.idCliente,
-                orden.idSector,
                 orden.fecha
             });
     }
@@ -56,19 +55,6 @@ public class RepoOrden : Repo, IRepoOrden
             });
     }
 
-    private static readonly string _queryDetalleOrdenDeleteSector
-        = @"SELECT * FROM Orden WHERE idSector = @idSector";
-    public Orden? DetalleOrdenDeleteSector(int idSector)
-    {
-        return _conexion.QueryFirstOrDefault(
-            _queryDetalleOrdenDeleteSector,
-            new
-            {
-                idSector
-            }
-        );
-    }
-
     private static readonly string _queryAgregarPrecio
         = @"UPDATE Orden SET total = total + @total WHERE idOrden = @idOrden";
     public void AgregarPrecio(int idOrden, decimal precio)
@@ -77,7 +63,7 @@ public class RepoOrden : Repo, IRepoOrden
             _queryAgregarPrecio,
             new
             {
-                precio,
+                total = precio,
                 idOrden
             }
         );
@@ -91,7 +77,7 @@ public class RepoOrden : Repo, IRepoOrden
             _queryRestarPrecio,
             new
             {
-                precio,
+                total = precio,
                 idOrden
             }
         );

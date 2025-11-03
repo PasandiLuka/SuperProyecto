@@ -13,8 +13,8 @@ public class TestAdoFuncion
         var mockService = new Mock<IFuncionService>();
         var funciones = new List<Funcion>
         {
-            new Funcion { idFuncion = 1, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false },
-            new Funcion { idFuncion = 2, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(2), cancelada = false }
+            new Funcion { idFuncion = 1, idEvento = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false },
+            new Funcion { idFuncion = 2, idEvento = 1, fechaHora = DateTime.Today.AddDays(2), cancelada = false }
         };
 
         mockService.Setup(s => s.GetFunciones()).Returns(Result<IEnumerable<Funcion>>.Ok(funciones));
@@ -33,7 +33,7 @@ public class TestAdoFuncion
     {
         // Arrange
         var mockService = new Mock<IFuncionService>();
-        var funcion = new Funcion { idFuncion = 1, idEvento = 1, idLocal = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false };
+        var funcion = new Funcion { idFuncion = 1, idEvento = 1, fechaHora = DateTime.Today.AddDays(1), cancelada = false };
 
         mockService.Setup(s => s.DetalleFuncion(funcion.idFuncion)).Returns(Result<Funcion>.Ok(funcion));
 
@@ -61,7 +61,6 @@ public class TestAdoFuncion
         var funcion = new FuncionDto
         {
             idEvento = 1,
-            idLocal = 1,
             fechaHora = DateTime.Today.AddDays(1),
         };
 
@@ -80,7 +79,6 @@ public class TestAdoFuncion
             resultado = Result<Funcion>.Created(new Funcion
             {
                 idFuncion = 1,
-                idLocal = 1,
                 idEvento = funcion.idEvento,
                 fechaHora = funcion.fechaHora,
                 cancelada = false
@@ -108,7 +106,6 @@ public class TestAdoFuncion
         var funcion = new FuncionDto
         {
             idEvento = 0,
-            idLocal = 0,
             fechaHora = DateTime.Today.AddDays(-1),
         };
 
@@ -127,7 +124,6 @@ public class TestAdoFuncion
             resultado = Result<Funcion>.Created(new Funcion
             {
                 idFuncion = 1,
-                idLocal = 1,
                 idEvento = funcion.idEvento,
                 fechaHora = funcion.fechaHora,
                 cancelada = false
@@ -156,7 +152,6 @@ public class TestAdoFuncion
         var funcion = new FuncionDto
         {
             idEvento = 1,
-            idLocal = 1,
             fechaHora = DateTime.Today.AddDays(2),
         };
 
@@ -176,7 +171,6 @@ public class TestAdoFuncion
             {
                 idFuncion = 1,
                 idEvento = funcion.idEvento,
-                idLocal = funcion.idLocal,
                 fechaHora = funcion.fechaHora,
                 cancelada = false
             });
@@ -203,7 +197,6 @@ public class TestAdoFuncion
         var funcion = new FuncionDto
         {
             idEvento = 0,
-            idLocal = 0,
             fechaHora = DateTime.Today.AddDays(-1)
         };
 
@@ -223,7 +216,6 @@ public class TestAdoFuncion
             {
                 idFuncion = 1,
                 idEvento = funcion.idEvento,
-                idLocal = funcion.idLocal,
                 fechaHora = funcion.fechaHora,
                 cancelada = false
             });
