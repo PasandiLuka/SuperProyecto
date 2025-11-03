@@ -49,7 +49,7 @@ Toda la documentación técnica y funcional del proyecto se encuentra en un arch
 
 #### Para este paso deberás modificar las contraseñas de cada usuario que se registra en el siguiente archivo:
 
-[01 USERS.sql](scripts\bd\MySQL\01 USERS.sql)
+[01 USERS.sql](scripts/bd/MySQL/02-USERS.sql)
 
 ---
 
