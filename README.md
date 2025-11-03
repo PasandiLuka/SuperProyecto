@@ -83,4 +83,16 @@ Toda la documentación técnica y funcional del proyecto se encuentra en un arch
   }
 ~~~
 
+---
+
+## En el caso de que surja un error donde el puerto ip ya se encuentre en uso, ir a la carpeta src/CSharp/SuperProyecto.Api/Properties donde se encuentra el archivo launchsettings.json, en este modificar el puerto de la conexión:
+
+~~~bash
+Ip      Puerto
+0.0.0.0:5000
+~~~
+
+---
+
 ## Y con todo esto nuestro proyecto ya debería estar operativo.
+

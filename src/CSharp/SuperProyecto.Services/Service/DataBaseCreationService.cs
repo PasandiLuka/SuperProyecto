@@ -1,5 +1,3 @@
-using System.Data;
-using System.Linq.Expressions;
 using Dapper;
 using MySqlConnector;
 using SuperProyecto.Core.IServices;
@@ -31,6 +29,8 @@ public class DataBaseCreationService
 
         string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaINSERTS) + File.ReadAllText(schemaUsers);
         
+        
+        
         try
         {
             if (!DatabaseExists(databaseName))
@@ -41,14 +41,8 @@ public class DataBaseCreationService
             }
             else return;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Si algo explota, limpiamos
-            using var cleanConn = new MySqlConnection(builder.ConnectionString);
-            cleanConn.Open();
-            cleanConn.Execute($"DROP DATABASE `{databaseName}`;");
-            
-            throw new Exception("Error creando la base, se eliminó por seguridad", ex);
         }
     }
     
