@@ -30,7 +30,6 @@ public class DataBaseCreationService
         string schemaSql = File.ReadAllText(schemaDDL) + File.ReadAllText(schemaINSERTS) + File.ReadAllText(schemaUsers);
         
         
-        
         try
         {
             if (!DatabaseExists(databaseName))
@@ -41,8 +40,14 @@ public class DataBaseCreationService
             }
             else return;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            // Si algo explota, limpiamos
+            using var cleanConn = new MySqlConnection(builder.ConnectionString);
+            cleanConn.Open();
+            cleanConn.Execute($"DROP DATABASE `{databaseName}`;");
+            
+            throw new Exception("Error creando la base, se eliminó por seguridad", ex);
         }
     }
     
