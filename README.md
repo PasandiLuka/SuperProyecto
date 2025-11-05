@@ -10,7 +10,7 @@ Bienvenido al repositorio del proyecto **Boletería Digital**.
 
 Toda la documentación técnica y funcional del proyecto se encuentra en un archivo separado:
 
-📄 [Ver Documentación del Proyecto](doc\README.md)
+📄 [Ver Documentación del Proyecto](doc/README.md)
 
 ---
 
@@ -95,4 +95,3 @@ Ip      Puerto
 ---
 
 ## Y con todo esto nuestro proyecto ya debería estar operativo.
-

@@ -145,3 +145,8 @@ return respuesta.ToMinimalResult();
 ### La base de datos se crea utilizando un tipo de servicio especifico
 
 - Para no tener que andar creando la conexión a la BD manualmente mejor se lo delegamos a un servicio, este es de tipo "HostedService" el cual simplemente se ejecuta una vez cada vez que inicio la aplicación, y dentro de ese sericio se encuentra la lógica para crear la BD. 
+
+Hacer monolingue todo.
+result pattern c#
+La entrada es una por evento. Orden 1--1 Entrada.
+Ponerle los emoticonos de github para que quede mas astetic.
