@@ -1,91 +1,98 @@
-# Proyecto Boletería Digital
+# :tickets: **Proyecto Boletería Digital**
 
-Bienvenido al repositorio del proyecto **Boletería Digital**.  
+¡Bienvenido al repositorio del proyecto **Boletería Digital**! :bulb:  
 
-### La aplicación emplea programación orientada a objetos (POO) y principios SOLID para lograr un diseño modular y mantenible. Se modelan las entidades (Cliente, Evento, Entrada, etc.) usando clases con encapsulamiento y herencia. Los Principios SOLID son pautas clave que mejoran la calidad, extensibilidad y mantenibilidad del código
-
----
-
-## Documentación completa
-
-Toda la documentación técnica y funcional del proyecto se encuentra en un archivo separado:
-
-📄 [Ver Documentación del Proyecto](doc/README.md)
+### :computer: La aplicación emplea **programación orientada a objetos (POO)** y principios **SOLID** para lograr un diseño modular y mantenible.  
+Se modelan las entidades (:walking: Cliente, :ticket: Evento, :stadium: Entrada, etc.) usando clases con **encapsulamiento y herencia**.  
+Los principios SOLID son pautas clave que mejoran la **calidad**, **extensibilidad** y **mantenibilidad del código**.  
 
 ---
 
-## **Contenido destacado de la documentación**
+## :book: **Documentación completa**
 
-- **Principios SOLID y POO**: diseño modular, mantenible y extensible.
-- **Arquitectura en capas**: Core, Dapper, Services, API, Tests.
-- **Persistencia de datos**: micro-ORM Dapper y patrón Repositorio.
-- **Autenticación y autorización**: JWT y gestión de roles.
-- **Endpoints REST**: CRUD y operaciones específicas para cada entidad.
-- **Pruebas unitarias**: xUnit y Moq.
-- **Documentación interactiva**: Swagger/OpenAPI.
-- **Generación y validación de códigos QR**: con librería QRCoder.
-- **Tareas y planificación**: lista de tareas y diagrama Gantt.
+Toda la documentación técnica y funcional del proyecto se encuentra en un archivo separado:  
+
+:page_facing_up: [**Ver Documentación del Proyecto**](doc/README.md)
 
 ---
 
-## **Pasos para la instalacion:**
+## :star2: **Contenido destacado de la documentación**
 
-### **Requerimiento:**
-
-- Se requiere tener instalado el SDK 8 de .NET
+- :jigsaw: **Principios SOLID y POO** → diseño modular, mantenible y extensible.  
+- :building_construction: **Arquitectura en capas** → Core, Dapper, Services, API, Tests.  
+- :floppy_disk: **Persistencia de datos** → micro-ORM Dapper y patrón Repositorio.  
+- :lock: **Autenticación y autorización** → JWT y gestión de roles.  
+- :globe_with_meridians: **Endpoints REST y Result pattern** → CRUD y operaciones específicas para cada entidad.  
+- :test_tube: **Pruebas unitarias** → xUnit y Moq.  
+- :books: **Documentación interactiva** → Swagger / OpenAPI.  
+- :white_square_button: **Generación y validación de códigos QR** → librería QRCoder.  
+- :calendar: **Tareas y planificación** → lista de tareas y diagrama Gantt.
 
 ---
 
-## **1 - Clonar repositorio:**
+## :gear: **Pasos para la instalación**
 
-#### Ejecute el siguiente comando en su VSCode:
+### :scroll: **Requerimiento**
+
+- Se requiere tener instalado el **SDK 8 de .NET** :brick:
+
+---
+
+## :compass: **1 - Clonar repositorio**
+
+Ejecutá el siguiente comando en tu terminal de VSCode:  
+
 ~~~bash
-    git clone https://github.com/PasandiLuka/SuperProyecto.git
+git clone https://github.com/PasandiLuka/SuperProyecto.git
 ~~~
 
 ---
 
-## **2 - Modificar contraseñas usuarios BD (opcional):**
+## :key: **2 - Modificar contraseñas de usuarios BD (opcional)**
 
-#### Para este paso deberás modificar las contraseñas de cada usuario que se registra en el siguiente archivo:
+Debés modificar las contraseñas de cada usuario en el siguiente archivo:  
 
-[01 USERS.sql](scripts/bd/MySQL/02-USERS.sql)
+:file_folder: [**02-USERS.sql**](scripts/bd/MySQL/02-USERS.sql)
 
 ---
 
-### **3 - Configuracion del appsettings.json (opcional):**
+## :hammer_and_wrench: **3 - Configuración del appsettings.json (opcional)**
 
-### En el caso de que hayas modificado las contraseñas de los usuarios en tu archivo 01 USERS.sql, tambien deberas hacerlo acá.
+Si cambiaste las contraseñas en tu archivo `02-USERS.sql`, también debés hacerlo aquí :point_down:  
 
-### Bajo la key llamada "Users" deberas cambiar las contraseñas de cada usuario:
+Dentro de la key `"Users"` actualizá las contraseñas correspondientes:
 
 ~~~json
 "Users": {
-    "Administrador":"Server=localhost;Uid=administrador;Pwd=contraseniaNueva;Database=bd_boleteria;",
-    "Cliente":"Server=localhost;Uid=cliente;Pwd=contraseniaNueva;Database=bd_boleteria;",
-    "Organizador":"Server=localhost;Uid=organizador;Pwd=contraseniaNueva;Database=bd_boleteria;",
-    "Default":"Server=localhost;Uid=default;Pwd=contraseniaNueva;Database=bd_boleteria;"
-  }
+  "Administrador":"Server=localhost;Uid=administrador;Pwd=contraseniaNueva;Database=bd_boleteria;",
+  "Cliente":"Server=localhost;Uid=cliente;Pwd=contraseniaNueva;Database=bd_boleteria;",
+  "Organizador":"Server=localhost;Uid=organizador;Pwd=contraseniaNueva;Database=bd_boleteria;",
+  "Default":"Server=localhost;Uid=default;Pwd=contraseniaNueva;Database=bd_boleteria;"
+}
 ~~~
 
 ---
 
-## **4 - Configuración de tu Super Usuario:**
+## :crown: **4 - Configuración de tu Super Usuario**
 
-- ### Este super usuario te permitirá crear la base de datos, y eso, nada más.
+Este **super usuario** te permitirá crear la base de datos :toolbox:  
 
-### Tenemos que acceder nuevamente a nuestro appsettings.json y bajo la key "Root" debemos agregar un usuario ya creado que poseea permisos de creación de bases de datos (No es igual a los usuarios en "Users", ya que estos son para cuando la app ya esta operativa) de la siguiente manera:
+Ingresá en tu archivo `appsettings.json` y bajo la key `"Root"`, agregá un usuario con permisos de **creación de bases de datos** (distinto a los usuarios en `"Users"`):
 
 ~~~json
-"Root":{
-    "UserRoot1":"Server=localhost;Uid=root;Pwd=contrasenia;Database=bd_boleteria;",
-    "UserRoot2":"Server=localhost;Uid=5to_agbd;Pwd=contrasenia;Database=bd_boleteria;"
-  }
+"Root": {
+  "UserRoot1":"Server=localhost;Uid=root;Pwd=contrasenia;Database=bd_boleteria;",
+  "UserRoot2":"Server=localhost;Uid=5to_agbd;Pwd=contrasenia;Database=bd_boleteria;"
+}
 ~~~
 
 ---
 
-## En el caso de que surja un error donde el puerto ip ya se encuentre en uso, ir a la carpeta src/CSharp/SuperProyecto.Api/Properties donde se encuentra el archivo launchsettings.json, en este modificar el puerto de la conexión:
+## :rotating_light: **Error común: puerto en uso**
+
+Si aparece un error indicando que el **puerto IP ya está en uso**, dirigite a la carpeta  
+`src/CSharp/SuperProyecto.Api/Properties` y abrí el archivo `launchSettings.json`.  
+Luego modificá el puerto de conexión, por ejemplo:
 
 ~~~bash
 Ip      Puerto
@@ -94,4 +101,6 @@ Ip      Puerto
 
 ---
 
-## Y con todo esto nuestro proyecto ya debería estar operativo.
+## :white_check_mark: **¡Y listo!**
+
+Con todos estos pasos completados, tu proyecto **Boletería Digital** :tickets: ya debería estar **totalmente operativo** :rocket:  

@@ -125,9 +125,11 @@ public class OrdenService : IOrdenService
         try
         {
             var orden = _repoOrden.DetalleOrden(idOrden);
-            if (orden is null) return Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
+            if (orden is null) Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
             if (orden.pagada) Result<Orden>.BadRequest(default, "La orden referenciada ya fue pagada.");
             if (orden.cancelada) Result<Orden>.BadRequest(default, "La orden referenciada se encuentra anulada.");
+            var ordenEntrada = _repoEntrada.GetEntradasXOrden(idOrden);
+            if (ordenEntrada.Count() > 0) Result<Orden>.BadRequest(default, "La orden referenciada ya posee una entrada.");
             var tarifa = _repoTarifa.DetalleTarifa(idTarifa);
             if (tarifa.stock <= 0) return Result<Orden>.BadRequest(default, "La tarifa seleccionada ya no dispone de stock.");
             Entrada entrada = new Entrada
