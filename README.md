@@ -1,6 +1,15 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 # :tickets: **Proyecto Boletería Digital**
 
 ¡Bienvenido al repositorio del proyecto **Boletería Digital**! :bulb:  
+
+>### Trabajo realizado por:
+>
+>- #### Pasandi, Luka [(<i class='fab fa-brands fa-github'></i>**PasandiLuka**)](https://github.com/PasandiLuka)
+>- #### Luna, Enzo [(<i class='fab fa-brands fa-github'></i>**LunaEnzo875**)](https://github.com/LunaEnzo875)
+>- #### Yurita, Celeste [(<i class='fab fa-brands fa-github'></i>**R-skyblue**)](https://github.com/R-skyblue)
+><br>
 
 ### :computer: La aplicación emplea **programación orientada a objetos (POO)** y principios **SOLID** para lograr un diseño modular y mantenible.  
 Se modelan las entidades (:walking: Cliente, :ticket: Evento, :stadium: Entrada, etc.) usando clases con **encapsulamiento y herencia**.  
@@ -104,3 +113,5 @@ Ip      Puerto
 ## :white_check_mark: **¡Y listo!**
 
 Con todos estos pasos completados, tu proyecto **Boletería Digital** :tickets: ya debería estar **totalmente operativo** :rocket:  
+
+---
