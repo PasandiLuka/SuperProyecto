@@ -36,7 +36,7 @@ public class TestAdoEntrada
         Assert.Equal(entrada.idOrden, resultado.Data.idOrden);
         Assert.Equal(entrada.idTarifa, resultado.Data.idTarifa);
         Assert.Equal(entrada.usada, resultado.Data.usada);
-    }  
+    }
 
     //Cancela una entrada
     [Fact]
@@ -45,7 +45,7 @@ public class TestAdoEntrada
         //arrange
         var moq = new Mock<IEntradaService>();
         var id = 1;
-        var entrada = new Entrada { idEntrada = 1, idOrden = 1, usada = true, anulada=true };
+        var entrada = new Entrada { idEntrada = 1, idOrden = 1, usada = true, anulada = true };
 
         //act
         moq.Setup(c => c.CancelarEntrada(id)).Returns(Result<Entrada>.Ok(entrada));
@@ -55,4 +55,5 @@ public class TestAdoEntrada
         Assert.NotNull(resultado);
         Assert.Equal(entrada.anulada, resultado.Data.anulada);
     }
+    
 }
