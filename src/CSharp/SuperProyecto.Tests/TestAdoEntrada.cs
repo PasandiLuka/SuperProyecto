@@ -37,4 +37,22 @@ public class TestAdoEntrada
         Assert.Equal(entrada.idTarifa, resultado.Data.idTarifa);
         Assert.Equal(entrada.usada, resultado.Data.usada);
     }  
+
+    //Cancela una entrada
+    [Fact]
+    public void Debe_cancelar_una_entrada()
+    {
+        //arrange
+        var moq = new Mock<IEntradaService>();
+        var id = 1;
+        var entrada = new Entrada { idEntrada = 1, idOrden = 1, usada = true, anulada=true };
+
+        //act
+        moq.Setup(c => c.CancelarEntrada(id)).Returns(Result<Entrada>.Ok(entrada));
+        var resultado = moq.Object.CancelarEntrada(id);
+
+        //Assert
+        Assert.NotNull(resultado);
+        Assert.Equal(entrada.anulada, resultado.Data.anulada);
+    }
 }
