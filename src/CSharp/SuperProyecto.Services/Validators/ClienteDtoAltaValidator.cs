@@ -29,7 +29,7 @@ public class ClienteDtoAltaValidator : AbstractValidator<ClienteDtoAlta>
                 var usuario = _repoUsuario.DetalleUsuario(idUsuario);
                 return usuario is not null && usuario.rol == ERol.Cliente;
             }).WithMessage("El usuario referenciado debe ser de tipo cliente.")
-            .Must(idUsuario => _repoUsuario.DetalleUsuario(idUsuario) is null).WithMessage("El ya existe un cliente creado bajo ese usuario.");
+            .Must(idUsuario => _repoCliente.DetalleClienteXIdUsuario(idUsuario) is null).WithMessage("Ya existe un cliente creado bajo ese usuario.");
 
         RuleFor(c => c.nombre)
             .NotEmpty().WithMessage("El nombre es obligatorio")

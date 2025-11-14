@@ -49,4 +49,16 @@ public class RepoCliente : Repo, IRepoCliente
                 idCliente
             });
     }
+
+    private static readonly string _queryDetalleClienteXIdUsuario
+        = @"SELECT * FROM Cliente WHERE idUsuario = @idUsuario";
+    public Cliente? DetalleClienteXIdUsuario(int idUsuario)
+    {
+        return _conexion.QueryFirstOrDefault<Cliente>(
+            _queryDetalleClienteXIdUsuario,
+            new
+            {
+                idUsuario
+            });
+    }
 }

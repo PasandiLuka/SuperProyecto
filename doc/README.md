@@ -248,5 +248,3 @@ La creación de la base de datos está automatizada mediante un HostedService.
 - Contiene la lógica necesaria para crear la BD y sus estructuras.
 
 - Así se evita la creación manual de la conexión inicial.
-
-Hacer monolingue todo.

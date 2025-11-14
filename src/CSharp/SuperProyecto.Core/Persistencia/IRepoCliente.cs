@@ -9,4 +9,5 @@ public interface IRepoCliente
     Cliente? DetalleCliente(int idCliente);
     void AltaCliente(Cliente cliente);
     void UpdateCliente(Cliente cliente, int id);
+    Cliente? DetalleClienteXIdUsuario(int idUsuario);
 }

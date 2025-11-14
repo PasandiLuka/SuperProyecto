@@ -110,6 +110,19 @@ Ip      Puerto
 
 ---
 
+## **Test de la aplicación: Usuario admin**
+
+El programa dispone de un usuario admin, el cual tiene permiso de acceso a todas las tablas.
+
+- Este es el mail y contraseña de dicho usuario:
+~~~json
+{
+  "email": "admin@test.com",
+  "password": "123456"
+}
+~~~
+
+---
 ## :white_check_mark: **¡Y listo!**
 
 Con todos estos pasos completados, tu proyecto **Boletería Digital** :tickets: ya debería estar **totalmente operativo** :rocket:  

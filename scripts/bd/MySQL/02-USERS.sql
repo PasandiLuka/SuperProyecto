@@ -34,6 +34,7 @@ GRANT SELECT, INSERT ON 5to_boleteria.Qr TO 'cliente'@'localhost';
 
 DROP USER IF EXISTS 'organizador'@'localhost';
 CREATE USER IF NOT EXISTS 'organizador'@'localhost' IDENTIFIED BY 'Trigg3rs!';
+GRANT SELECT ON 5to_boleteria.Usuario TO 'organizador'@'localhost';
 GRANT SELECT, UPDATE, INSERT ON 5to_boleteria.Evento TO 'organizador'@'localhost';
 GRANT SELECT, UPDATE, INSERT, DELETE ON 5to_boleteria.Local TO 'organizador'@'localhost';
 GRANT SELECT, UPDATE, INSERT ON 5to_boleteria.Sector TO 'organizador'@'localhost';
