@@ -27,6 +27,7 @@ public class UsuarioValidator : AbstractValidator<UsuarioDto>
 
         RuleFor(u => u.Rol)
             .NotEmpty().WithMessage("El rol es obligatorio.")
-            .Must(rol => (rol == ERol.Cliente) || (rol == ERol.Organizador)).WithMessage("El rol dado no se encuentra dentro de las opciones.");
+            .Must(rol => rol == ERol.Cliente || rol == ERol.Organizador || rol == ERol.Administrador)
+            .WithMessage("El rol dado no se encuentra dentro de las opciones.");
     }
 }
