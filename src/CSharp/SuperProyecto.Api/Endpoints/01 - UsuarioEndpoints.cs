@@ -4,6 +4,12 @@ public static class UsuarioEndpoints
 {
     public static void MapUsuarioEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/api/usuarios", (IUsuarioService service) =>
+        {
+            var result = service.GetUsuarios();
+            return result.ToMinimalResult();
+        }).WithTags("01 - Usuario").RequireAuthorization("Administrador");
+
         app.MapGet("/api/auth/roles", (IUsuarioService service) =>
         {
             var result = service.ObtenerRoles();

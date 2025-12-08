@@ -15,19 +15,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 #endregion
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);// "Creo una variable llamada builder que es el constructor de la aplicación.
 
-
+//JWT (JSON Web Token) es un estándar para crear tokens seguros
 #region Auth
 //Servicios para implementar la autenticacion y autorizacion por tokens JWT
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options => //Se utiliza la autentificaciony configura opciones por defecto
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters 
     {
         ValidateIssuer = true,
         ValidateAudience = true,
