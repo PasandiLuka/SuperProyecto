@@ -11,6 +11,17 @@ public class UsuarioService : IUsuarioService
     readonly IRepoUsuario _repoUsuario;
     readonly UsuarioValidator _validador;
 
+    public Result<IEnumerable<Usuario>> GetUsuarios()
+    {
+        try
+        {
+            return Result<IEnumerable<Usuario>>.Ok(_repoUsuario.GetUsuarios());
+        }
+        catch (MySqlException)
+        {
+            return Result<IEnumerable<Usuario>>.Unauthorized();
+        }
+    }
     public UsuarioService(IRepoUsuario repoUsuario, UsuarioValidator validador)
     {
         _repoUsuario = repoUsuario;

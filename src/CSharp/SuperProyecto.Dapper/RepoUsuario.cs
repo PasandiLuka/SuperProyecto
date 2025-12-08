@@ -10,6 +10,9 @@ public class RepoUsuario : Repo, IRepoUsuario
 {
     public RepoUsuario(IAdo ado) : base(ado) { }
 
+    private static readonly string _queryUsuarios
+            = @"SELECT * FROM Usuario";
+        public IEnumerable<Usuario> GetUsuarios() => _conexion.Query<Usuario>(_queryUsuarios);
     private static readonly string _queryDetalleUsuario
         = @"SELECT * FROM Usuario WHERE idUsuario = @idUsuario";
     public Usuario? DetalleUsuario(int idUsuario)

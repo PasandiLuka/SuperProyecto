@@ -6,6 +6,7 @@ namespace SuperProyecto.Core.Persistencia;
 
 public interface IRepoUsuario
 {
+    IEnumerable<Usuario> GetUsuarios();
     public Usuario? DetalleUsuario(int id);
     void AltaUsuario(Usuario usuario);
     void ActualizarRol(int id, ERolDto rol);
