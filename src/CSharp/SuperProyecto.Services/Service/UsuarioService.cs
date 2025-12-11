@@ -46,7 +46,7 @@ public class UsuarioService : IUsuarioService
         try
         {
             if (_repoUsuario.DetalleUsuario(id) is null) return Result<Usuario>.NotFound("El usuario solicitado no fue encontrado.");
-            if (!((ERolDto)nuevoRol == ERolDto.Organizador) && !((ERolDto)nuevoRol == ERolDto.Cliente)|| !((ERolDto)nuevoRol == ERolDto.Cliente)) return Result<Usuario>.BadRequest(default, "El rol dado no se encuentra dentro de las opciones.");
+            if (!Enum.IsDefined(typeof(ERolDto), nuevoRol)) return Result<Usuario>.BadRequest(default, "El rol dado no se encuentra dentro de las opciones.");
             _repoUsuario.ActualizarRol(id, (ERolDto)nuevoRol);
             return Result<Usuario>.Ok();
         }
