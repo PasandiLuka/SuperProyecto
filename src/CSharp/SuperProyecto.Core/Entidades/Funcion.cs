@@ -6,11 +6,5 @@ public class Funcion
     public int idEvento { get; set; }
     public DateTime fechaHora { get; set; }
     public bool cancelada { get; set; }
-
-    /* 
-        CantaLali a las:
-        15hs
-        19hs
-        22hs
-     */
+    public int idLocal {get; set; }
 }
