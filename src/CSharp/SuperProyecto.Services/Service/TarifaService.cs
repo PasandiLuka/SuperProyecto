@@ -41,7 +41,7 @@ public class TarifaService : ITarifaService
         }
     }
 
-    public Result<TarifaDto> AltaTarifa(TarifaDtoAlta tarifaDto)
+    public Result<TarifaDto> AltaTarifa(TarifaDtoAlta tarifaDto, Sector SectorDto)
     {
         try
         {
@@ -54,6 +54,14 @@ public class TarifaService : ITarifaService
                         g => g.Key,
                         g => g.Select(e => e.ErrorMessage).ToArray()
                     );
+                return Result<TarifaDto>.BadRequest(listaErrores);
+            }
+             if (tarifaDto.stock > SectorDto.capacidadMaximaDeAsientos)
+            {
+                var listaErrores = new Dictionary<string, string[]>
+                {
+                    { "stock", new[] { "El stock no puede superar la capacidad máxima de asientos del sector." } }
+                };
                 return Result<TarifaDto>.BadRequest(listaErrores);
             }
             var tarifa = new Tarifa

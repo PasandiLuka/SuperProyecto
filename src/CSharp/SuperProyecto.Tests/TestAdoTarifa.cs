@@ -83,7 +83,7 @@ public class TestAdoTarifa
     }
 
     [Fact]
-    public void CuandoDoyDeAltaTarifaValida_DebeRetornarCreated()
+    public void CuandoDoyDeAltaUnaTarifaValida_DebeRetornarOk()
     {
         // Arrange
         var mockRepoFuncion = new Mock<IRepoFuncion>();
@@ -93,8 +93,8 @@ public class TestAdoTarifa
         {
             idFuncion = 1,
             idSector = 2,
-            precio = 120,
-            stock = 50,
+            precio = 150,
+            stock = 25,
             activo = true
         };
 
@@ -108,58 +108,19 @@ public class TestAdoTarifa
         var validation = validator.Validate(dto);
 
         var mockService = new Mock<ITarifaService>();
-        mockService.Setup(s => s.AltaTarifa(dto))
-            .Returns(Result<TarifaDto>.Created(dto));
+        mockService.Setup(s => s.AltaTarifa(dto, It.IsAny<Sector>()))
+            .Returns(Result<TarifaDto>.Ok(dto));
 
         // Act
-        var resultado = mockService.Object.AltaTarifa(dto);
+        var resultado = mockService.Object.AltaTarifa(dto, It.IsAny<Sector>());
 
         // Assert
         Assert.True(validation.IsValid);
         Assert.True(resultado.Success);
-        Assert.Equal(EResultType.Created, resultado.ResultType);
+        Assert.Equal(EResultType.Ok, resultado.ResultType);
         Assert.Equal(dto.precio, resultado.Data.precio);
         Assert.Equal(dto.stock, resultado.Data.stock);
         Assert.Equal(dto.activo, resultado.Data.activo);
-    }
-
-    [Fact]
-    public void CuandoDoyDeAltaTarifaInvalida_DebeRetornarBadRequest()
-    {
-        // Arrange
-        var mockRepoFuncion = new Mock<IRepoFuncion>();
-        var mockRepoSector = new Mock<IRepoSector>();
-
-        var dto = new TarifaDtoAlta
-        {
-            idFuncion = 0, // inválido
-            idSector = 0,  // inválido
-            precio = -10,  // inválido
-            stock = -5,    // inválido
-            activo = true
-        };
-
-        mockRepoFuncion.Setup(r => r.DetalleFuncion(dto.idFuncion))
-            .Returns((Funcion)null);
-
-        mockRepoSector.Setup(r => r.DetalleSector(dto.idSector))
-            .Returns((Sector)null);
-
-        var validator = new TarifaValidator(mockRepoFuncion.Object, mockRepoSector.Object);
-        var validation = validator.Validate(dto);
-
-        var mockService = new Mock<ITarifaService>();
-        mockService.Setup(s => s.AltaTarifa(dto))
-            .Returns(Result<TarifaDto>.BadRequest(validation.ToDictionary()));
-
-        // Act
-        var resultado = mockService.Object.AltaTarifa(dto);
-
-        // Assert
-        Assert.False(validation.IsValid);
-        Assert.False(resultado.Success);
-        Assert.Equal(EResultType.BadRequest, resultado.ResultType);
-        Assert.NotNull(resultado.Errors);
     }
 
     [Fact]

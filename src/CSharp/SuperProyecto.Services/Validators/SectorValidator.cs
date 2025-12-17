@@ -11,7 +11,7 @@ public class SectorValidator : AbstractValidator<SectorDto>
     public SectorValidator(IRepoLocal repoLocal)
     {
         _repoLocal = repoLocal;
-        
+
         RuleFor(f => f.idLocal)
             .NotEmpty().WithMessage("El idLocal es obligatorio.")
             .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.")
@@ -21,5 +21,11 @@ public class SectorValidator : AbstractValidator<SectorDto>
             .NotEmpty().WithMessage("El nombre es obligatorio.")
             .MinimumLength(3).WithMessage("El nombre debe contener al menos 3 caracteres.")
             .MaximumLength(45).WithMessage("El nombre debe tener como máximo 45 caracteres.");
+
+        RuleFor(s => s.capacidadMaximaDeAsientos)
+
+            .NotEmpty().WithMessage("La capacidad máxima de asientos es obligatoria.")
+            .GreaterThan(0).WithMessage("La capacidad máxima de asientos debe ser mayor a 0.")
+            .LessThanOrEqualTo(1000).WithMessage("La capacidad máxima de asientos no puede superar los 1,000 asientos.");
     }
 }

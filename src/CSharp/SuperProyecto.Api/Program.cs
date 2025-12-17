@@ -2,6 +2,7 @@
 //Carpeta donde se encuentran los endpoints
 using SuperProyecto.Api.Endpoints;
 
+
 //Referencias a los proyectos
 using SuperProyecto.Dapper;
 using SuperProyecto.Services.Validators;

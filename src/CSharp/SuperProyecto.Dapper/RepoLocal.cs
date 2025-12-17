@@ -21,7 +21,7 @@ public class RepoLocal : Repo, IRepoLocal
     public IEnumerable<Local> GetLocales() => _conexion.Query<Local>(_queryLocal);
 
     private static readonly string _queryAltaLocal
-        = @"INSERT INTO Local (nombre, direccion) VALUES (@nombre, @direccion)";
+        = @"INSERT INTO Local (nombre, direccion,capacidadMaximaDeSectores) VALUES (@nombre, @direccion,@capacidadMaximaDeSectores)";
     public void AltaLocal(Local local)
     {
         _conexion.Execute(
@@ -29,12 +29,13 @@ public class RepoLocal : Repo, IRepoLocal
             new
             {
                 local.nombre,
-                local.direccion
+                local.direccion,
+                local.capacidadMaximaDeSectores
             });
     }
     
     private static readonly string _queryUpdateLocal
-        = @"UPDATE Local SET nombre = @nombre, direccion = @direccion  WHERE idLocal = @idLocal";
+        = @"UPDATE Local SET nombre = @nombre, direccion = @direccion,capacidadMaximaDeSectores=@capacidadMaximaDeSectores  WHERE idLocal = @idLocal";
     public void UpdateLocal(Local local, int id)
     {
         _conexion.Execute(
@@ -43,6 +44,7 @@ public class RepoLocal : Repo, IRepoLocal
             {
                 local.nombre,
                 local.direccion,
+                local.capacidadMaximaDeSectores,
                 idLocal = id
             });
     }

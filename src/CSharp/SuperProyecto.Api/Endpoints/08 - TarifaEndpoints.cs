@@ -1,3 +1,5 @@
+using SuperProyecto.Core.Entidades;
+
 namespace SuperProyecto.Api.Endpoints;
 
 public static class TarifaEndpoints
@@ -21,11 +23,21 @@ public static class TarifaEndpoints
             var result = service.UpdateTarifa(tarifaDto, id);
             return result.ToMinimalResult();
         }).WithTags("08 - Tarifa").RequireAuthorization("Organizador");
-                
-        app.MapPost("/api/tarifas", (TarifaDtoAlta tarifaDto, ITarifaService service) =>
+
+        app.MapPost("/api/tarifas", (TarifaDtoAlta tarifaDto, ITarifaService service, IRepoSector repoSector) =>
         {
-            var result = service.AltaTarifa(tarifaDto);
+            var sector = repoSector.DetalleSector(tarifaDto.idSector);
+            Result<TarifaDto> result;
+            if (sector is null)
+            {
+                result = Result<TarifaDto>.BadRequest(default, "El sector referenciado no existe.");
+            }
+            else
+            {
+                result = service.AltaTarifa(tarifaDto, sector);
+            }
             return result.ToMinimalResult();
-        }).WithTags("08 - Tarifa").RequireAuthorization("Organizador");
+          }).WithTags("08 - Tarifa").RequireAuthorization("Administrador");
+
     }
 }

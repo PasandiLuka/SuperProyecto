@@ -6,10 +6,6 @@ public class Sector
     public int idLocal { get; set; }
     public string nombre { get; set; }
     public bool eliminado { get; set; }
-    
-    /* 
-        Platea
-        Popular
-        Sector Vip
-    */
+    public int capacidadMaximaDeAsientos { get; set; }
+  
 }

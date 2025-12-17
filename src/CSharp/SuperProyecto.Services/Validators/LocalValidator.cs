@@ -13,6 +13,10 @@ public class LocalValidator : AbstractValidator<LocalDto>
             .MinimumLength(3).WithMessage("El nombre debe contener al menos 3 caracteres.")
             .MaximumLength(45).WithMessage("El nombre debe tener como máximo 45 caracteres.");
 
+        RuleFor(l => l.capacidadMaximaDeSectores)
+            .GreaterThan(0).WithMessage("La capacidad debe ser un número positivo mayor que cero.")
+            .LessThanOrEqualTo(500).WithMessage("La capacidad máxima de sectores no puede exceder 500.");
+
         RuleFor(l => l.direccion)
             .NotEmpty().WithMessage("La descripcion es obligatoria.")
             .MinimumLength(3).WithMessage("La direccion debe contener al menos 3 caracteres.")

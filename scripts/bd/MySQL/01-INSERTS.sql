@@ -17,11 +17,11 @@ INSERT INTO Cliente (idUsuario, DNI, nombre, apellido) VALUES
 (6, 45678901, 'Carla', 'Rivas');
 
 -- Local
-INSERT INTO Local (nombre, direccion, eliminado) VALUES
-('Teatro Central', 'Av. Siempre Viva 123', FALSE),
-('Auditorio Norte', 'Calle Falsa 456', FALSE),
-('Centro Cultural Sur', 'Av. Libertad 789', TRUE),
-('Anfiteatro Parque', 'Ruta 12 KM 5', FALSE);
+INSERT INTO Local (nombre, direccion, eliminado,capacidadMaximaDeSectores) VALUES
+('Teatro Central', 'Av. Siempre Viva 123', FALSE,20),
+('Auditorio Norte', 'Calle Falsa 456', FALSE,35),
+('Centro Cultural Sur', 'Av. Libertad 789', TRUE,45),
+('Anfiteatro Parque', 'Ruta 12 KM 5', FALSE,13);
 
 -- Evento
 INSERT INTO Evento (nombre, descripcion, publicado, cancelado) VALUES
@@ -38,11 +38,12 @@ INSERT INTO Funcion (idEvento, fechaHora, cancelada) VALUES
 (4, '2025-12-30 21:00:00', FALSE);
 
 -- Sector
-INSERT INTO Sector (idLocal, nombre, eliminado) VALUES
-(1, 'Platea', FALSE),
-(1, 'VIP', FALSE),
-(2, 'General', FALSE),
-(2, 'Lateral', TRUE);
+INSERT INTO Sector (idLocal, nombre, eliminado,capacidadMaximaDeAsientos) VALUES
+(1, 'Platea', FALSE,110),
+(1, 'Popular', FALSE,300),
+(1, 'VIP', FALSE,50),
+(2, 'General', FALSE,200),
+(2, 'Lateral', TRUE,100);
 
 -- Tarifa
 INSERT INTO Tarifa (idFuncion, idSector, precio, stock, activo) VALUES

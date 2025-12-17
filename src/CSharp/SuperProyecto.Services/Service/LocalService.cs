@@ -35,7 +35,7 @@ public class LocalService : ILocalService
     {
         try
         {
-            return Result<Local?>.Ok(_repoLocal.DetalleLocal(id)); 
+            return Result<Local?>.Ok(_repoLocal.DetalleLocal(id));
         }
         catch (MySqlException)
         {
@@ -83,7 +83,7 @@ public class LocalService : ILocalService
                     );
                 return Result<LocalDto>.BadRequest(listaErrores);
             }
-            if(_repoLocal.DetalleLocal(id) is null) return Result<LocalDto>.NotFound("El local a modificar no fue encontrado.");
+            if (_repoLocal.DetalleLocal(id) is null) return Result<LocalDto>.NotFound("El local a modificar no fue encontrado.");
             Local local = ConvertirDtoClase(localDto);
             _repoLocal.UpdateLocal(local, id);
             return Result<LocalDto>.Ok(localDto);
@@ -108,13 +108,13 @@ public class LocalService : ILocalService
             return Result<Local>.Unauthorized();
         }
     }
-
     static Local ConvertirDtoClase(LocalDto funcionDto)
     {
         return new Local
         {
             nombre = funcionDto.nombre,
-            direccion = funcionDto.direccion
+            direccion = funcionDto.direccion,
+            capacidadMaximaDeSectores = funcionDto.capacidadMaximaDeSectores
         };
     }
 }

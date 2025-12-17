@@ -14,7 +14,8 @@ CREATE TABLE Local (
     idLocal INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
-    eliminado BOOL DEFAULT FALSE
+    eliminado BOOL DEFAULT FALSE,
+    capacidadMaximaDeSectores INT NOT NULL
 );
 
 -- Tabla Evento
@@ -41,6 +42,7 @@ CREATE TABLE Sector (
     idLocal INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     eliminado BOOL DEFAULT FALSE,
+    capacidadMaximaDeAsientos INT NOT NULL,
     FOREIGN KEY (idLocal) REFERENCES Local(idLocal)
 );
 

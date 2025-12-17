@@ -114,7 +114,8 @@ public class SectorService : ISectorService
     {
         return new Sector
         {
-            nombre = sectorDto.nombre
+            nombre = sectorDto.nombre,
+            capacidadMaximaDeAsientos = sectorDto.capacidadMaximaDeAsientos
         };
     }
 }
