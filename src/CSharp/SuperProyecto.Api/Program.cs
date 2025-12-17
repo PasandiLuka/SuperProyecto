@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);// "Creo una variable llamada builder que es el constructor de la aplicación.
