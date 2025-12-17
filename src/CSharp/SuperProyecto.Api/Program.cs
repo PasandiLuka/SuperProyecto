@@ -39,6 +39,22 @@ builder.Services.AddAuthentication(options => //Se utiliza la autentificaciony c
         ),
         ClockSkew = TimeSpan.Zero //tiempo de tolerancia por defecto de 5mins antes de inhabilitar el token
     };
+    
+    // LOGGING PARA DIAGNOSTICO
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"[JWT Auth Failed] {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            var rolClaim = context.Principal?.FindFirst(ClaimTypes.Role)?.Value;
+            Console.WriteLine($"[JWT Valid] User: {context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value}, Rol: {rolClaim}");
+            return Task.CompletedTask;
+        }
+    };
 }); // Ejemplo con JWT
 builder.Services.AddAuthorization(options =>
 {

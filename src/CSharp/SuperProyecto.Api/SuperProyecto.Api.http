@@ -1,6 +1,37 @@
-@SuperProyecto.Api_HostAddress = http://localhost:5083
+@SuperProyecto.Api_HostAddress = http://localhost:5068
 
-GET {{SuperProyecto.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### LOGIN - Obtener Token Administrador
+POST {{SuperProyecto.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "123456"
+}
+
+###
+
+### LOGIN - Obtener Token Organizador
+POST {{SuperProyecto.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "organizador@test.com",
+  "password": "123456"
+}
+
+###
+
+### CREAR FUNCION - Con Token (reemplaza TOKEN aqui)
+POST {{SuperProyecto.Api_HostAddress}}/api/funciones
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YzQxOTk5OS0wOTEzLTQwNjgtYTUwOS01NTAxZTg3OTAxODQiLCJuYW1laWQiOiIyIiwiZW1haWwiOiJvcmdhbml6YWRvckB0ZXN0LmNvbSIsInJvbGUiOiJPcmdhbml6YWRvciIsImRvYiI6IjEyLzE2LzIwMjUgMDo0OTozOCIsIm5iZiI6MTczNDMwODAyOCwiZXhwIjoxNzM0MzE5ODI4LCJpYXQiOjE3MzQzMDgwMjgsImlzcyI6IlN1cGVyUHJveWVjdG8iLCJhdWQiOiJTdXBlclByb3llY3RvVXN1YXJpb3MifQ.w7YHVVtKmMRZrYMCNRwVYGV-r7x_Xp_MqFwVzN9VvK0
+
+{
+  "idEvento": 1,
+  "idLocal": 1,
+  "fechaHora": "2025-12-31T20:00:00",
+  "cancelada": false
+}
 
 ###
