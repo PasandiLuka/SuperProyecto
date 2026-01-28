@@ -6,5 +6,4 @@ public class Funcion
     public int idEvento { get; set; }
     public DateTime fechaHora { get; set; }
     public bool cancelada { get; set; }
-    public int idLocal {get; set; }
 }

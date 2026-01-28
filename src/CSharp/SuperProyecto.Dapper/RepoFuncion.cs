@@ -21,16 +21,16 @@ public class RepoFuncion : Repo, IRepoFuncion
     }
 
     private static readonly string _queryAltaFuncion
-        = @"INSERT INTO Funcion (idEvento,idLocal, fechaHora,cancelada) VALUES ( @idEvento, @idLocal, @fechaHora, @cancelada)";
+        = @"INSERT INTO Funcion (idEvento, fechaHora, cancelada) VALUES ( @idEvento, @fechaHora, @cancelada)";
     public void AltaFuncion(Funcion funcion)
     {
         _conexion.Execute(
             _queryAltaFuncion,
             new
             {
-                
                 funcion.idEvento,
-                funcion.fechaHora
+                funcion.fechaHora,
+                funcion.cancelada
             });
     }
     

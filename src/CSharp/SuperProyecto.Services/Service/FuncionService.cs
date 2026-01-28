@@ -89,9 +89,13 @@ public class FuncionService : IFuncionService
             _repoFuncion.AltaFuncion(funcion);
             return Result<FuncionDto>.Ok(funcionDto);
         }
-        catch (MySqlException)
+        catch (Exception ex)
         {
-            return Result<FuncionDto>.Unauthorized();
+            var listaErrores = new Dictionary<string, string[]>
+            {
+                { "exception", new[] { ex.Message } }
+            };
+            return Result<FuncionDto>.BadRequest(listaErrores);
         }
     }
     
