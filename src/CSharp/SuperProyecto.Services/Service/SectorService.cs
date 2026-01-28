@@ -1,4 +1,5 @@
 using SuperProyecto.Core.Persistencia;
+using System.Linq;
 using SuperProyecto.Core.Entidades;
 using SuperProyecto.Core.IServices;
 using SuperProyecto.Core.DTO;
@@ -12,11 +13,13 @@ public class SectorService : ISectorService
     readonly IRepoSector _repoSector;
     readonly IRepoTarifa _repoTarifa;
     readonly SectorValidator _validador;
+    readonly IRepoLocal _repoLocal;
 
-    public SectorService(IRepoSector repoSector, IRepoTarifa repoTarifa, IRepoOrden repoOrden, SectorValidator validador)
+    public SectorService(IRepoSector repoSector, IRepoTarifa repoTarifa, IRepoOrden repoOrden, IRepoLocal repoLocal, SectorValidator validador)
     {
         _repoSector = repoSector;
         _repoTarifa = repoTarifa;
+        _repoLocal = repoLocal;
         _validador = validador;
     }
 
@@ -60,6 +63,17 @@ public class SectorService : ISectorService
                     );
                 return Result<SectorDto>.BadRequest(listaErrores);
             }
+            // Obtener la capacidad máxima de sectores desde el Local
+            var local = _repoLocal.DetalleLocal(idLocal);
+            if (local is null) return Result<SectorDto>.BadRequest(default, "Local no encontrado.");
+
+            var sectoresExistentes = _repoSector.GetSectores(idLocal);
+            var cantidadActual = sectoresExistentes?.Count() ?? 0;
+            if (cantidadActual + 1 > local.capacidadMaximaDeSectores)
+            {
+                return Result<SectorDto>.BadRequest(default, "No se puede crear el sector: se excede la capacidad máxima de sectores para el local.");
+            }
+
             var sector = ConvertirDtoClase(sectorDto);
             _repoSector.AltaSector(sector, idLocal);
             return Result<SectorDto>.Ok(sectorDto);
