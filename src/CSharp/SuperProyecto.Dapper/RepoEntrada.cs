@@ -29,6 +29,8 @@ public class RepoEntrada : Repo, IRepoEntrada
             });
     }
 
+
+
     private static readonly string _queryEntradaUsada
         = @"UPDATE Entrada SET usada = @usada WHERE idEntrada = @idEntrada";
     public void EntradaUsada(int idEntrada)

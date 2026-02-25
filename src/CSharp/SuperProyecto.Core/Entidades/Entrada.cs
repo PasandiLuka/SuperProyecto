@@ -7,4 +7,5 @@ public class Entrada
     public int idTarifa { get; set; }
     public bool anulada { get; set; }
     public bool usada { get; set; }
+    public decimal precioTotal { get; set; }
 }

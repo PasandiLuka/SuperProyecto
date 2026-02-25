@@ -25,5 +25,8 @@ public class EntradaValidator : AbstractValidator<EntradaDto>
             .NotEmpty().WithMessage("El idOrden es obligatorio.")
             .GreaterThan(0).WithMessage("El idOrden debe ser mayor a 0.")
             .Must(idTarifa => _repoTarifa.DetalleTarifa(idTarifa) is not null).WithMessage("La tarifa referenciada no existe.");
+
+        RuleFor(e => e.precioTotal)
+            .GreaterThanOrEqualTo(0).WithMessage("El precio debe ser mayor o igual a 0.");
     }
 }

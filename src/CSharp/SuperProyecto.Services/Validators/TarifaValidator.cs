@@ -29,12 +29,16 @@ public class TarifaValidator : AbstractValidator<TarifaDtoAlta>
             .GreaterThan(0).WithMessage("El idLocal debe ser mayor a 0.")
             .Must(idSector => _repoSector.DetalleSector(idSector) is not null).WithMessage("El sector referenciado no existe.");
 
-        RuleFor(t => t.precio)
+        RuleFor(t => t.PrecioUnitario)
             .NotEmpty().WithMessage("El precio es obligatorio.")
             .GreaterThanOrEqualTo(0).WithMessage("El precio debe ser mayor o igual a 0");
 
         RuleFor(t => t.stock)
             .NotEmpty().WithMessage("El stock es obligatorio.")
             .GreaterThanOrEqualTo(0).WithMessage("El stock debe ser mayor o igual a 0");
+
+        RuleFor(t => t.descuento)
+            .GreaterThanOrEqualTo(0).WithMessage("El descuento debe ser mayor o igual a 0")
+            .LessThanOrEqualTo(100).WithMessage("El descuento debe ser menor o igual a 100");
     }
 }

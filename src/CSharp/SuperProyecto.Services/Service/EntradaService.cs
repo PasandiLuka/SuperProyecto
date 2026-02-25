@@ -48,7 +48,7 @@ public class EntradaService : IEntradaService
         if (entrada is null) return Result<Entrada>.NotFound("La entrada a cancelar no fue encontrada");
         if (entrada.anulada) return Result<Entrada>.BadRequest(default, "La entrada ya fue anulada");
         if (entrada.usada) return Result<Entrada>.BadRequest(default, "La entrada ya fue usada");
-        _repoOrden.RestarPrecio(entrada.idOrden, _repoTarifa.DetalleTarifa(entrada.idTarifa).precio);
+        _repoOrden.RestarPrecio(entrada.idOrden, _repoTarifa.DetalleTarifa(entrada.idTarifa).PrecioUnitario);
         _repoEntrada.DevolverStock(entrada.idTarifa);
         _repoEntrada.CancelarEntrada(id);
         return Result<Entrada>.Ok();

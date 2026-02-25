@@ -8,4 +8,5 @@ public class Orden
     public bool pagada { get; set; }
     public bool cancelada { get; set; }
     public decimal total { get; set; }
+    public int descuento { get; set; }
 }

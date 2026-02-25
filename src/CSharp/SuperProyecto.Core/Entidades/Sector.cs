@@ -7,5 +7,5 @@ public class Sector
     public string nombre { get; set; }
     public bool eliminado { get; set; }
     public int capacidadMaximaDeAsientos { get; set; }
-  
+
 }

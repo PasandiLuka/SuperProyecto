@@ -79,6 +79,7 @@ CREATE TABLE Orden (
     pagada BOOL NOT NULL DEFAULT FALSE,
     cancelada BOOL NOT NULL DEFAULT FALSE,
     total DECIMAL(10,2) NOT NULL DEFAULT 0,
+    descuento INT NOT NULL DEFAULT 0,
     FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)
 );
 
@@ -89,6 +90,7 @@ CREATE TABLE Entrada (
     idTarifa INT NOT NULL,
     anulada BOOLEAN DEFAULT FALSE,
     usada BOOLEAN DEFAULT FALSE,
+    precioTotal DECIMAL NOT NULL,
     FOREIGN KEY (idOrden) REFERENCES Orden(idOrden),
     FOREIGN KEY (idTarifa) REFERENCES Tarifa(idTarifa)
 );

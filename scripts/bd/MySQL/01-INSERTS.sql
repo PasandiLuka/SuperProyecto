@@ -54,7 +54,7 @@ INSERT INTO Tarifa (idFuncion, idSector, precio, stock, activo) VALUES
 (4, 1, 6000.00, 40, TRUE);
 
 -- Orden
-INSERT INTO Orden (idCliente, fecha, pagada, cancelada, total) VALUES
+INSERT INTO Orden (idCliente, fecha, pagada, cancelada, total,descuento) VALUES
 (1, '2025-12-01 10:00:00', FALSE, FALSE, 0),
 (2, '2025-12-02 11:30:00', FALSE, TRUE, 0),
 (3, '2025-12-03 12:45:00', FALSE, FALSE, 0),

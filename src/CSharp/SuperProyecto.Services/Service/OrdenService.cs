@@ -138,7 +138,7 @@ public class OrdenService : IOrdenService
                 idTarifa = idTarifa
             };
             _repoEntrada.AltaEntrada(entrada);
-            _repoOrden.AgregarPrecio(orden.idOrden, tarifa.precio);
+            _repoOrden.AgregarPrecio(orden.idOrden, tarifa.PrecioUnitario);
             _repoEntrada.RestarStock(tarifa.idTarifa);
             return Result<Orden>.Ok();
         }
@@ -153,7 +153,8 @@ public class OrdenService : IOrdenService
         return new Orden
         {
             idCliente = ordenDto.idCliente,
-            fecha = DateTime.Now
+            fecha = DateTime.Now,
+            descuento = ordenDto.descuento
         };
     }
 }

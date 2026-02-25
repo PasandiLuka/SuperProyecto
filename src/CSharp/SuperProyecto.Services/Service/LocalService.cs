@@ -62,9 +62,13 @@ public class LocalService : ILocalService
             _repoLocal.AltaLocal(local);
             return Result<LocalDto>.Ok(localDto);
         }
-        catch (MySqlException)
+        catch (Exception ex)
         {
-            return Result<LocalDto>.Unauthorized();
+            var listaErrores = new Dictionary<string, string[]>
+            {
+                { "exception", new[] { ex.Message } }
+            };
+            return Result<LocalDto>.BadRequest(listaErrores);
         }
     }
 

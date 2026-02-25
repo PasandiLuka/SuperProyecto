@@ -56,7 +56,7 @@ public class TarifaService : ITarifaService
                     );
                 return Result<TarifaDto>.BadRequest(listaErrores);
             }
-             if (tarifaDto.stock > SectorDto.capacidadMaximaDeAsientos)
+            if (tarifaDto.stock > SectorDto.capacidadMaximaDeAsientos)
             {
                 var listaErrores = new Dictionary<string, string[]>
                 {
@@ -68,9 +68,12 @@ public class TarifaService : ITarifaService
             {
                 idFuncion = tarifaDto.idFuncion,
                 idSector = tarifaDto.idSector,
-                precio = tarifaDto.precio,
+                PrecioUnitario = tarifaDto.PrecioUnitario,
                 stock = tarifaDto.stock
             };
+
+        var precioTotal = tarifa.PrecioUnitario * tarifa.descuento/100;
+
             _repoTarifa.AltaTarifa(tarifa);
             return Result<TarifaDto>.Ok(tarifaDto);
         }catch(MySqlException)
