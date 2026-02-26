@@ -47,7 +47,7 @@ INSERT INTO Sector (idLocal, nombre, eliminado,capacidadMaximaDeAsientos) VALUES
 (2, 'Lateral', TRUE,100);
 
 -- Tarifa
-INSERT INTO Tarifa (idFuncion, idSector, precio, stock, activo) VALUES
+INSERT INTO Tarifa (idFuncion, idSector, PrecioUnitario, stock, activo) VALUES
 (1, 1, 5000.00, 100, TRUE),
 (1, 2, 8000.00, 0, TRUE),
 (2, 3, 3000.00, 200, FALSE),
@@ -55,10 +55,10 @@ INSERT INTO Tarifa (idFuncion, idSector, precio, stock, activo) VALUES
 
 -- Orden
 INSERT INTO Orden (idCliente, fecha, pagada, cancelada, total,descuento) VALUES
-(1, '2025-12-01 10:00:00', FALSE, FALSE, 0),
-(2, '2025-12-02 11:30:00', FALSE, TRUE, 0),
-(3, '2025-12-03 12:45:00', FALSE, FALSE, 0),
-(4, '2025-12-04 09:15:00', FALSE, FALSE, 0);
+(1, '2025-12-01 10:00:00', FALSE, FALSE, 1000, 15),
+(2, '2025-12-02 11:30:00', FALSE, TRUE, 1000, 10),
+(3, '2025-12-03 12:45:00', FALSE, FALSE, 1000, 20),
+(4, '2025-12-04 09:15:00', FALSE, FALSE, 1000, 0);
 
 
 COMMIT;

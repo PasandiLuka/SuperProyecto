@@ -6,7 +6,6 @@ public class Tarifa
     public int idFuncion { get; set; }
     public int idSector { get; set; }
     public decimal PrecioUnitario { get; set; }
-    public int descuento { get; set; } 
     public int stock { get; set; }
     
     public bool activo { get; set; }

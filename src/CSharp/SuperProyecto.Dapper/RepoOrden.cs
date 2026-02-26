@@ -19,7 +19,7 @@ public class RepoOrden : Repo, IRepoOrden
     public Orden? DetalleOrden(int numeroOrden) => _conexion.QueryFirstOrDefault<Orden>(_queryDetalleOrden, new { unIdOrden = numeroOrden });
 
     private static readonly string _queryAltaOrden
-        = @"INSERT INTO Orden (idCliente, fecha) VALUES (@idCliente, @fecha)";
+        = @"INSERT INTO Orden (idCliente, fecha, total, descuento) VALUES (@idCliente, @fecha, @total, @descuento)";
     public void AltaOrden(Orden orden)
     {
         _conexion.Execute(
@@ -27,7 +27,9 @@ public class RepoOrden : Repo, IRepoOrden
             new
             {
                 orden.idCliente,
-                orden.fecha
+                orden.fecha,
+                orden.total,
+                orden.descuento
             });
     }
 

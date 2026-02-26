@@ -36,9 +36,5 @@ public class TarifaValidator : AbstractValidator<TarifaDtoAlta>
         RuleFor(t => t.stock)
             .NotEmpty().WithMessage("El stock es obligatorio.")
             .GreaterThanOrEqualTo(0).WithMessage("El stock debe ser mayor o igual a 0");
-
-        RuleFor(t => t.descuento)
-            .GreaterThanOrEqualTo(0).WithMessage("El descuento debe ser mayor o igual a 0")
-            .LessThanOrEqualTo(100).WithMessage("El descuento debe ser menor o igual a 100");
     }
 }

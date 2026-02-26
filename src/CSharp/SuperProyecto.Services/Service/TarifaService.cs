@@ -72,7 +72,6 @@ public class TarifaService : ITarifaService
                 stock = tarifaDto.stock
             };
 
-        var precioTotal = tarifa.PrecioUnitario * tarifa.descuento/100;
 
             _repoTarifa.AltaTarifa(tarifa);
             return Result<TarifaDto>.Ok(tarifaDto);

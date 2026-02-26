@@ -52,7 +52,7 @@ CREATE TABLE Tarifa (
     idTarifa INT PRIMARY KEY AUTO_INCREMENT,
     idFuncion INT NOT NULL,
     idSector INT NOT NULL,
-    precio DECIMAL(10,2) NOT NULL,
+    PrecioUnitario DECIMAL(10,2) NOT NULL,
     stock INT NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (idFuncion) REFERENCES Funcion(idFuncion),
