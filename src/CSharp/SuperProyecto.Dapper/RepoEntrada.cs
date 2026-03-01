@@ -17,7 +17,7 @@ public class RepoEntrada : Repo, IRepoEntrada
     public Entrada? DetalleEntrada(int idEntrada) => _conexion.QueryFirstOrDefault<Entrada>(_queryDetalleEntrada, new { idEntrada });
 
     private static readonly string _queryAltaEntrada
-        = @"INSERT INTO Entrada (idOrden, idTarifa) VALUES (@idOrden, @idTarifa)";
+ = @"INSERT INTO Entrada (idOrden, idTarifa, precioTotal) VALUES (@idOrden, @idTarifa, @precioTotal)";
     public void AltaEntrada(Entrada entrada)
     {
         _conexion.Execute(
@@ -25,7 +25,8 @@ public class RepoEntrada : Repo, IRepoEntrada
             new
             {
                 entrada.idOrden,
-                entrada.idTarifa
+                entrada.idTarifa,
+                entrada.precioTotal 
             });
     }
 

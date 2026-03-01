@@ -120,33 +120,46 @@ public class OrdenService : IOrdenService
         }
     }
 
-    public Result<Orden> CrearEntrada(int idOrden, int idTarifa)
-    {
+        public Result<Orden> CrearEntrada(int idOrden, int idTarifa)
+        {
         try
         {
             var orden = _repoOrden.DetalleOrden(idOrden);
-            if (orden is null) Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
-            if (orden.pagada) Result<Orden>.BadRequest(default, "La orden referenciada ya fue pagada.");
-            if (orden.cancelada) Result<Orden>.BadRequest(default, "La orden referenciada se encuentra anulada.");
+            if (orden is null) return Result<Orden>.NotFound("La orden referenciada no fue encontrada.");
+            if (orden.pagada) return Result<Orden>.BadRequest(default, "La orden referenciada ya fue pagada.");
+            if (orden.cancelada) return Result<Orden>.BadRequest(default, "La orden referenciada se encuentra anulada.");
+
             var ordenEntrada = _repoEntrada.GetEntradasXOrden(idOrden);
-            if (ordenEntrada.Count() > 0) Result<Orden>.BadRequest(default, "La orden referenciada ya posee una entrada.");
+            if (ordenEntrada != null && ordenEntrada.Count() > 0) return Result<Orden>.BadRequest(default, "La orden referenciada ya posee una entrada.");
+
             var tarifa = _repoTarifa.DetalleTarifa(idTarifa);
+            if (tarifa is null) return Result<Orden>.NotFound("La tarifa seleccionada no fue encontrada.");
             if (tarifa.stock <= 0) return Result<Orden>.BadRequest(default, "La tarifa seleccionada ya no dispone de stock.");
+
             Entrada entrada = new Entrada
             {
                 idOrden = idOrden,
-                idTarifa = idTarifa
+                idTarifa = idTarifa,
+                precioTotal = tarifa.PrecioUnitario * ((100m - orden.descuento) / 100m)
             };
+
+            
             _repoEntrada.AltaEntrada(entrada);
-            _repoOrden.AgregarPrecio(orden.idOrden, tarifa.PrecioUnitario);
+            _repoOrden.AgregarPrecio(orden.idOrden, entrada.precioTotal);
             _repoEntrada.RestarStock(tarifa.idTarifa);
             return Result<Orden>.Ok();
         }
-        catch (MySqlException)
+        catch (Exception ex)
         {
-            return Result<Orden>.Unauthorized();
+            var listaErrores = new Dictionary<string, string[]>
+            {
+                { "exception", new[] { ex.Message } }
+            };
+            return Result<Orden>.BadRequest(listaErrores);
         }
     }
+
+    
 
     static Orden ConvertirDtoClase(OrdenDto ordenDto)
     {
@@ -154,7 +167,8 @@ public class OrdenService : IOrdenService
         {
             idCliente = ordenDto.idCliente,
             fecha = DateTime.Now,
-            descuento = ordenDto.descuento
+            descuento = ordenDto.descuento,
+            total=ordenDto.total,
         };
     }
 }
